@@ -28,7 +28,7 @@ apiRouter.use('/', defaultRoutes);
 // Mount the apiRouter as a middleware
 app.use('/api', apiRouter);
 
-const Users = mongoose.model('Users', usersSchema);
+
 
 
 app.get('/', (req, res) => res.send('Hello World!'))
