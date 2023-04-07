@@ -1,0 +1,1 @@
+{"version":3,"file":"testingModel.js","sourceRoot":"","sources":["../../Src/models/testingModel.ts"],"names":[],"mappings":"AAAA,OAAO,QAAQ,MAAM,UAAU,CAAC;AAEhC,MAAM,CAAC,MAAM,WAAW,GAAG,IAAI,QAAQ,CAAC,MAAM,CAAC;IAC3C,GAAG,EAAE,MAAM;IACX,IAAI,EAAE,MAAM;IACZ,QAAQ,EAAE,IAAI;IACd,GAAG,EAAC,MAAM;CACb,CAAC,CAAA"}
