@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export const rolesModel = new mongoose.Schema({
+export const rolesSchema = new mongoose.Schema({
     _id: { type: String, unique: true, required: true },
     roleName: String,
     roleLevel: Number,

@@ -11,4 +11,5 @@ export const approvalsSchema = new mongoose.Schema({
     ApprovedOn: Date,
     sendNotification: Boolean,
 });
+// tyhis entity has one pending approval or completion
 //# sourceMappingURL=approvalsModels.js.map
