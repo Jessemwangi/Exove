@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-// gets feedback from users
+// Store all question allows CRUD
 export const questionsSchema = new mongoose.Schema({
   _id: { type: Number, required: true, unique: true },
   question: String,
