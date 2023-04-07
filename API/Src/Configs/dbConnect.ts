@@ -1,8 +1,8 @@
 import mongoose, { ConnectOptions } from "mongoose";
-
+import * as dotenv from 'dotenv';
+dotenv.config();
 const dbuser = process.env.DBUSERNAME;
 const dbpass = process.env.DBPASSWORD;
-console.log('connect ... ',dbuser,dbpass)
 
 const uri = `mongodb+srv://${dbuser}:${dbpass}@cluster0.hounq81.mongodb.net/?retryWrites=true&w=majority`;
  const options =  { useNewUrlParser: true, useUnifiedTopology: true, } as ConnectOptions;

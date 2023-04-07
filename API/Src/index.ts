@@ -7,8 +7,7 @@ import { reportRoutes } from './routes/reportRoutes.js';
 import { feedsRoutes } from './routes/feedBackRoute.js';
 import { employeeRoutes } from './routes/employeeeRoute.js';
 import { defaultRoutes } from './routes/defaultRoute.js';
-import mongoose from 'mongoose';
-import { usersSchema } from './models/usersModel.js';
+import dotenv from 'dotenv';
 
 const app = express()
 app.use(express.json())
