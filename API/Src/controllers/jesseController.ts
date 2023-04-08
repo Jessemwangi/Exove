@@ -9,8 +9,18 @@ interface Ijesse{
     age:Number,
 }
 
-export const jesseGet = async (req:Request, res:Response) => {
-    res.status(200).json('Hellow Jesse!!!')
+export const jesseGet = async (req: Request, res: Response) => {
+    try {
+        await dbconnect()
+        
+        const jesseData:Ijesse = await JesseM.find()
+        
+        await dbclose()
+
+        res.status(200).json({ data: jesseData })
+    } catch (error:any) {
+        res.status(500).json({ error: error.message })
+    }
 }
 
 export const jesseInsert = async (req: Request, res: Response) => {

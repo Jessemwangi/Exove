@@ -2,7 +2,15 @@ import { JesseM } from '../dbcontext/dbContext.js';
 import { v4 as uuidv4 } from 'uuid';
 import { dbclose, dbconnect } from '../Configs/dbConnect.js';
 export const jesseGet = async (req, res) => {
-    res.status(200).json('Hellow Jesse!!!');
+    try {
+        await dbconnect();
+        const jesseData = await JesseM.find();
+        await dbclose();
+        res.status(200).json({ data: jesseData });
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 export const jesseInsert = async (req, res) => {
     const jessedata = req.body;

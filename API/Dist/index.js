@@ -8,6 +8,7 @@ import { feedsRoutes } from './routes/feedBackRoute.js';
 import { employeeRoutes } from './routes/employeeeRoute.js';
 import { defaultRoutes } from './routes/defaultRoute.js';
 import { jesseRoutes } from './routes/jesseRoute.js';
+import { rolesRoutes } from './routes/rolesRoute.js';
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
@@ -19,6 +20,7 @@ apiRouter.use('/feeds', feedsRoutes);
 apiRouter.use('/reports', reportRoutes);
 apiRouter.use('/employee', employeeRoutes);
 apiRouter.use('/approvals', feedsRoutes);
+apiRouter.use('/roles', rolesRoutes);
 apiRouter.use('/', defaultRoutes);
 apiRouter.use('/jesse', jesseRoutes);
 // Mount the apiRouter as a middleware

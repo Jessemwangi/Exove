@@ -1,12 +1,12 @@
 import express from 'express';
-import { getRoles } from '../controllers/rolesController.js';
+import { createRole, getRoles } from '../controllers/rolesController.js';
 export const rolesRoutes = express.Router()
 
 
 
 rolesRoutes.get('/', getRoles);
 rolesRoutes.get('/:id',);
-rolesRoutes.post('/',);
+rolesRoutes.post('/',createRole);
 rolesRoutes.delete('/:id',);
 rolesRoutes.put('/',);
 rolesRoutes.patch('/',);
