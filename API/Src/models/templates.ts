@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 
 const questionTemplatesSchema = new mongoose.Schema({
-    _id: { type: Number, required: true, unique: true },
+    _id: { type: String, required: true, unique: true },
     templateTitle: String,
     questionSections:[
     {

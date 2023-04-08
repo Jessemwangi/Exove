@@ -1,58 +1,177 @@
-export interface IApprovals{
+export interface IQSchema {
+    category: IFeedCategory;
+  }
+  
+  export interface IFeedCategory {
+    categoryId: String[];
+    questions: String[]; // hold an array of questions
+  }
+
+export interface IApprovals {
+  _id: String;
+  createdOn: Date;
+  createdBy: String; // from which user, automatically selects current user
+  applicationId: String; // will get the primary key of the activity awaiting approval
+  entityname: String; // this will come from entitynamemodel, so as to identify what activity this approval belong to
+  ApprovalStatus: Boolean;
+  approvedBy: String;
+  ApprovedOn: Date;
+  sendNotification: Boolean;
+}
+
+// Approval interfance ends ...
+
+export interface IEntityName {
+  _id: String;
+  name: String; // the name here represent the model name, eg for Uses, Roles etc
+  description: String; // describes  the entity, eg selected five person to get feed, approve selected feedback, report generated, etc
+  approverRole: String;
+}
+
+//EntityName interface ends ...
+
+// feedback interface
+export interface IFeedBacks {
+  _id: String;
+  userId: String; // session logged in user
+  templateId: String;
+  requestpicksId: String; // feedback to from the dashboard
+  createdOn: String;
+  responseByDate: String;
+  progress: String;
+
+  responseDateLog: Date[]; // any time and update is made the date will be logged here
+  questionSections: IQSchema[];
+  submitted: Boolean;
+  submittedOn: Date;
+}
+
+// fed back interface ends ...
+
+export interface ILogs {
     _id: String,
+    userId: String,
+    activity: String,
+    transacteOn:Date,
+}
+
+//Logs interface ends
+
+//Notification interface start
+export interface INotificationsSetting {
+    _id: String,
+    userid: String,
+    entityname:String[], // this will get model name eg, question, category etc so that to enable or disable notification from this entinty
+    notisettingstatus: Boolean, //enable or disable notification from this entity
+    email: String, // this will be used as alternative email if the found
+    enableReminder: Boolean, // if set to true automatic reminder will be send
+}
+
+export interface INotifier {
+    _id: String,
+    applicationid:String, // primary key from the model
+    entityname: String,  // this will get model name eg, question, category etc and from it get the notification message and activity namee
+    message: String,
+    link:String,
+    from: String, // from 
+    to: String[], // notification will be send to user, and this user must have enabled notification in 'notisetting'
+    notifierstatus: Boolean,
     createdOn: Date,
-    createdBy: String, // from which user, automatically selects current user
-    applicationId: String, // will get the primary key of the activity awaiting approval
-    entityname: String, // this will come from entitynamemodel, so as to identify what activity this approval belong to
-    ApprovalStatus: Boolean,
-    approvedBy: String,
-    ApprovedOn: Date,
-    sendNotification: Boolean,
-}
-export interface IEntityName{
-    _id:String,
-    name:String, // the name here represent the model name, eg for Uses, Roles etc
-description: String, // describes  the entity, eg selected five person to get feed, approve selected feedback, report generated, etc
-approverRole:String,
 }
 
-export interface IFeedBacks{
+// Notification interface ends ..
 
-}
-export interface ILogs{
 
-}
 
-export interface INotifications{
-
-}
-
-export interface INotificationsSettings{
-    
-}
-export interface questionCats{
-
+export interface IQuestionCats {
+    _id: String,
+    name: String,
+    createdOn: Date,
+    createdBy: String,
+    categoryStatus:Boolean,
 }
 
-export interface IQuestions{
-
+export interface IQuestions {
+    _id: String,
+    question: String,
+    questionType: String,
+    questionStatus: Boolean,
+    createdBy: String,
+    createdOn:Date
 }
 
-export interface RequestPicks{
-
+// RequestPicks interface  start
+export interface IRequestPicks {
+    _id: String,
+    requestedTo:String, // the person who will recieve and select five individual to give  him /her feedback.
+    requestedBy: String, // user in the role of Hr or higher level
+    requestedOn: Date,
+    SelectedList:ISelectedList[],// an array of user select to give feedback, Hr can increase this number endless,
+      submitted: Boolean,
+    submittedOn:Date,
 }
 
-export interface Roles{
-
+export interface ISelectedList{
+    userId: String,
+    selectionStatus: Boolean, // allow the HR to approve or disapprove,
+    selectedBy: String,
 }
 
-export interface ITemplates{
+// RequestPicks interface ends
 
+export interface IRoles {
+    _id: String,
+roleName: String,
+roleLevel: Number,
+roleStatus: Boolean,
+createBy: String,
+    createdOn: Date,
 }
-export interface IUserRoles{
 
+// roles interface ends ..
+
+export interface ITemplates {
+    _id: String,
+    templateTitle: String,
+    questionSections:IQSchema[],
+    templateStatus: Boolean,
 }
 
-export interface IUser{
+// templates inteface ends ..
 
+export interface IUserRoles {
+    _id: String,
+userId: String,
+    roleId: String,
+}
+
+// userroles interface ends ..
+
+export interface IUser {
+    _id: { type: String, required: true, unique: true },
+    firstName: { type: String, required: true },
+    surname: { type: String, required: true },
+    email: {
+      type: String,
+      required: true,
+    },
+    displayName: String,
+  //   personal:  { type: String, required: true },
+  //   about: [{ type: mongoose.Schema.Types.ObjectId, ref: "About" }],
+    workId: String[],
+    title: String,
+    department: String,
+    site: String,
+    startDate: Date,
+    phone: String,
+    userStatus: Boolean,
+}
+
+export interface IWorksReport{
+    _id: { type: Number, required: true, unique: true },
+    userId: String,
+    reportsTo: String,
+    workReportStatus: Boolean,
+    createdOn: Date,
+    deactivatedOn: Date,
 }

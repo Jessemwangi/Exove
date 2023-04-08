@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export const usersSchema = new mongoose.Schema({
-  _id: { type: Number, required: true, unique: true },
+  _id: { type: String, required: true, unique: true },
   firstName: { type: String, required: true },
   surname: { type: String, required: true },
   email: {
@@ -32,6 +32,7 @@ export const usersSchema = new mongoose.Schema({
   userStatus: Boolean,
 });
 
+//  worker report to who, this schema has all the reporting channel and allow connecting and disconnecting
 export const worksReportSchema = new mongoose.Schema({
   _id: { type: Number, required: true, unique: true },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
