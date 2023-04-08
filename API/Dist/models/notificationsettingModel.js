@@ -1,19 +1,23 @@
 import mongoose from "mongoose";
-const notisettingSchema = new mongoose.Schema({
+// user enables a list of notification that he can receive, this notification should be availble base on the user level
+export const notisettingSchema = new mongoose.Schema({
     _id: { type: String, unique: true, required: true },
     userid: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
     entityname: [{ type: String, required: true }],
     notisettingstatus: Boolean,
-    email: String, // this will be used as alternative email if the found
+    email: String,
+    enableReminder: Boolean, // if set to true automatic reminder will be send
 });
-const notifierSchema = new mongoose.Schema({
+export const notifierSchema = new mongoose.Schema({
     _id: { type: String, unique: true, required: true },
     applicationid: { type: String, unique: true, required: true },
     entityname: String,
     message: String,
+    link: String,
     from: { type: mongoose.Schema.Types.ObjectId },
-    to: { type: mongoose.Schema.Types.ObjectId },
+    to: [{ type: mongoose.Schema.Types.ObjectId }],
     notifierstatus: Boolean,
+    createdOn: Date,
 });
 //during insert the system will check if the users involve in the transaction should recieve notificationSchema, hence if yes then insert into notifier
 //# sourceMappingURL=notificationsettingModel.js.map

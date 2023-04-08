@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-const questionTemplatesSchema = new mongoose.Schema({
-    _id: { type: Number, required: true, unique: true },
+export const questionTemplatesSchema = new mongoose.Schema({
+    _id: { type: String, required: true, unique: true },
     templateTitle: String,
     questionSections: [
         {

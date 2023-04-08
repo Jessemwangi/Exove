@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const requestpicksModel = new mongoose.Schema({
+export const requestpicksSchema= new mongoose.Schema({
   _id: String,
   requestedTo: { type: mongoose.Schema.Types.ObjectId }, // the person who will recieve and select five individual to give  him /her feedback.
   requestedBy: { type: mongoose.Schema.Types.ObjectId }, // user in the role of Hr or higher level
