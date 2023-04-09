@@ -15,7 +15,7 @@ export const getRoles = async (req, res) => {
 };
 export const createRole = async (req, res) => {
     const rolesHttpBody = req.body;
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjgwOTYzMjQ5fQ.LKF3KPknCu-YKDeuCIgpT7LuclYusn9E0UN-SMqgT2c'; // req.cookies.access_token;
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjgwOTYzMjQ5fQ.LKF3KPknCu-YKDeuCIgpT7LuclYusn9E0UN-SMqgT2c';
     if (!token)
         return res.status(401).json("Not Authenticated!");
     JsonWebTokenError.verify(token, "s3cr3t", async (err, userInfo) => {

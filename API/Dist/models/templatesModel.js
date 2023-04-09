@@ -8,7 +8,7 @@ export const questionTemplatesSchema = new mongoose.Schema({
             categoryName: { type: String, required: true },
             questions: [{
                     questionId: { type: String, required: true },
-                    question: { type: String, required: true }, // hold an array of questions
+                    question: { type: String, required: true },
                 }],
         },
     ],

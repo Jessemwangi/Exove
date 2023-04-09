@@ -1,6 +1,5 @@
 import { Roles, Users, WorksReports } from "../dbcontext/dbContext.js";
 const getUser = async (req, res) => {
-    // retrieve all users and their roles
     Users.find({})
         .populate({
         path: 'workId',

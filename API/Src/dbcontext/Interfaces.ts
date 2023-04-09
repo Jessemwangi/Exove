@@ -87,6 +87,7 @@ export interface IQuestionCats {
   createdOn: Date;
   createdBy: String;
   categoryStatus: Boolean;
+  questions:IQuestions[],
 }
 
 export interface IQuestions {

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-// log application that require approval and await approvals, during fetching we will join this schema with applicationiD the check approval status, and join with entitymodel to check approved by who
 export const approvalsSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     createdOn: Date,
@@ -11,5 +10,4 @@ export const approvalsSchema = new mongoose.Schema({
     ApprovedOn: Date,
     sendNotification: Boolean,
 });
-// tyhis entity has one pending approval or completion
 //# sourceMappingURL=approvalsModels.js.map

@@ -28,7 +28,7 @@ export const feedBacksSchema = new mongoose.Schema({
             questions: [{
                     questionId: { type: String, required: true },
                     question: { type: String, required: true },
-                    questionsAnswer: { type: String, required: true }, // hold an array of questions
+                    questionsAnswer: { type: String, required: true },
                 }],
         },
     ],

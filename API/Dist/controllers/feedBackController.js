@@ -6,10 +6,9 @@ import { addApprovals, checkUserRoles } from "../utilities/functions.js";
 export const getFeeds = (req, res) => {
     res.status(200).json("Hi, see you want feedback");
 };
-// will be executed by the hr
 export const requestPicks = async (req, res) => {
     const requestHttpData = req.body;
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjgwOTYzMjQ5fQ.LKF3KPknCu-YKDeuCIgpT7LuclYusn9E0UN-SMqgT2c"; // req.cookies.access_token;
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjgwOTYzMjQ5fQ.LKF3KPknCu-YKDeuCIgpT7LuclYusn9E0UN-SMqgT2c";
     if (!token)
         return res.status(401).json("Not Authenticated!");
     jwt.verify(token, "s3cr3t", async (err, userInfo) => {
@@ -58,7 +57,6 @@ export const requestPicks = async (req, res) => {
     });
 };
 export const submitRequestPicks = async (req, res) => {
-    // check if user is authenticated and also we will check if current user is the same as requestedTo
     const requestHttpData = req.body;
     try {
         if (!requestHttpData) {

@@ -13,7 +13,6 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 const apiRouter = express.Router();
-// Mount existing routers as sub-routers
 apiRouter.use('/questions', questionRoute);
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/feeds', feedsRoutes);
@@ -23,7 +22,6 @@ apiRouter.use('/approvals', feedsRoutes);
 apiRouter.use('/roles', rolesRoutes);
 apiRouter.use('/', defaultRoutes);
 apiRouter.use('/jesse', jesseRoutes);
-// Mount the apiRouter as a middleware
 app.use('/api', apiRouter);
 app.get('/', (req, res) => res.send('Hello World!'));
 app.listen(serverConfig.port, serverConfig.host, () => console.log(`Collegue feedback Server app listening on port ${serverConfig.port}! and host ${serverConfig.host}!`));

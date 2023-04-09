@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+//interface IQuestionCats
+
 export const questionCategorySchema = new mongoose.Schema({
   _id: { type: Number, required: true },
   name: { type: Number, required: true },

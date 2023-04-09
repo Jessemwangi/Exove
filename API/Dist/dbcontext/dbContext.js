@@ -14,8 +14,8 @@ import { questionTemplatesSchema } from "../models/templatesModel.js";
 export const Approvals = mongoose.model('Approvals', approvalsSchema);
 export const FeedBacks = mongoose.model('feedBacks', feedBacksSchema);
 export const Logs = mongoose.model('Logs', logsSchema);
-export const NotificationSetting = mongoose.model('Notificationsetting', notisettingSchema); // setting to receive notification
-export const Notifer = mongoose.model('Notifer', notifierSchema); // sent notification
+export const NotificationSetting = mongoose.model('Notificationsetting', notisettingSchema);
+export const Notifer = mongoose.model('Notifer', notifierSchema);
 export const QuestionCats = mongoose.model('QuestionCats', questionCategorySchema);
 export const Questions = mongoose.model('Questions', questionsSchema);
 export const RequestPicks = mongoose.model('RequestPicks', requestpicksSchema);
@@ -24,5 +24,5 @@ export const Templates = mongoose.model('Templates', questionTemplatesSchema);
 export const UserRoles = mongoose.model('UserRoles', userRolesSchema);
 export const Users = mongoose.model('Users', usersSchema);
 export const WorksReports = mongoose.model('WorksReports', worksReportSchema);
-export const JesseM = mongoose.model('Jesse', jesseSchema); // for personal testing
+export const JesseM = mongoose.model('Jesse', jesseSchema);
 //# sourceMappingURL=dbContext.js.map

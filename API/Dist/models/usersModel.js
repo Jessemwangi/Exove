@@ -14,8 +14,6 @@ export const usersSchema = new mongoose.Schema({
         },
     },
     displayName: String,
-    //   personal:  { type: String, required: true },
-    //   about: [{ type: mongoose.Schema.Types.ObjectId, ref: "About" }],
     rolesId: [{ type: mongoose.Schema.Types.ObjectId, ref: "Roles" }],
     workId: [
         {
@@ -30,7 +28,6 @@ export const usersSchema = new mongoose.Schema({
     phone: String,
     userStatus: Boolean,
 });
-//  worker report to who, this schema has all the reporting channel and allow reporting channel to be active or inactive
 export const worksReportSchema = new mongoose.Schema({
     _id: { type: Number, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId },
