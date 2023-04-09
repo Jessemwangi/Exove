@@ -1,6 +1,6 @@
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { IRoles } from "../dbcontext/Interfaces.js";
-import { Roles } from "../dbcontext/dbContext.js";
+import { IApprovals, IRoles } from "../dbcontext/Interfaces.js";
+import { Approvals, Roles } from "../dbcontext/dbContext.js";
 
 export const checkUserRoles = async (userId: String): Promise<Number | String> => {
   try {
@@ -16,3 +16,7 @@ export const checkUserRoles = async (userId: String): Promise<Number | String> =
     return "server responded with an error";
   }
 };
+
+export const addApprovals = async (approval:IApprovals) => {
+    await new Approvals(approval).save()     
+}

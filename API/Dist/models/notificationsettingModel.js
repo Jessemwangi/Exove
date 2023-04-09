@@ -17,7 +17,11 @@ export const notifierSchema = new mongoose.Schema({
     from: { type: mongoose.Schema.Types.ObjectId },
     to: [{ type: mongoose.Schema.Types.ObjectId }],
     notifierstatus: Boolean,
-    createdOn: Date,
+    transacteOn: {
+        type: Date,
+        default: Date.now,
+        required: true,
+    },
 });
 //during insert the system will check if the users involve in the transaction should recieve notificationSchema, hence if yes then insert into notifier
 //# sourceMappingURL=notificationsettingModel.js.map

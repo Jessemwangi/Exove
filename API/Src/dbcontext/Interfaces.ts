@@ -15,7 +15,7 @@ export interface IApprovals {
   entityname: String; // this will come from entitynamemodel, so as to identify what activity this approval belong to
   ApprovalStatus: Boolean;
   approvedBy: String;
-  ApprovedOn: Date;
+  ApprovedOn: Date | null;
   sendNotification: Boolean;
 }
 

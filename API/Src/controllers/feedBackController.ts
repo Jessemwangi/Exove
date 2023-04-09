@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { IRequestPicks } from "../dbcontext/Interfaces.js";
+import { IApprovals, IRequestPicks } from "../dbcontext/Interfaces.js";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
-import { RequestPicks } from "../dbcontext/dbContext.js";
+import { Approvals, RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { checkUserRoles } from "../utilities/functions.js";
+import { addApprovals, checkUserRoles } from "../utilities/functions.js";
 
 export const getFeeds = (req: Request, res: Response) => {
   res.status(200).json("Hi, see you want feedback");
@@ -26,16 +26,16 @@ export const requestPicks = async (req: Request, res: Response) => {
       if (err) return res.status(403).json("Authentication token Not Valid");
 
       try {
-          if (requestHttpData) {
-              const rolelevel = await checkUserRoles(requestHttpData.requestedBy)
-              if (typeof rolelevel === 'string') {
-                  res.status(200).json(rolelevel);
-                  return;
-              }
-              if (typeof rolelevel === "number" && rolelevel < 3) {
-                res.status(200).json('Not authorised');
-                return;
-              }
+        if (requestHttpData) {
+          const rolelevel = await checkUserRoles(requestHttpData.requestedBy);
+          if (typeof rolelevel === "string") {
+            res.status(200).json(rolelevel);
+            return;
+          }
+          if (typeof rolelevel === "number" && rolelevel < 3) {
+            res.status(200).json("Not authorised");
+            return;
+          }
           const requestData: IRequestPicks = {
             _id: uuidv4(),
             requestedTo: requestHttpData.requestedTo,
@@ -50,7 +50,7 @@ export const requestPicks = async (req: Request, res: Response) => {
           const validationError = requestInstance.validateSync();
 
           if (validationError) {
-            res.status(400).json({ message: validationError.message });
+            res.status(400).json(validationError.message);
             return;
           }
           await dbconnect();
@@ -68,6 +68,41 @@ export const requestPicks = async (req: Request, res: Response) => {
   );
 };
 
-const submitRequestPicks =async (req:Request,res:Response) => {
-    
-}
+export const submitRequestPicks = async (req: Request, res: Response) => {
+  // check if user is authenticated and also we will check if current user is the same as requestedTo
+  const requestHttpData = req.body;
+
+  try {
+    if (!requestHttpData) {
+      res.status(404).json("Post data not found or empty");
+      return;
+    }
+
+    const requestInstance = new RequestPicks(requestHttpData);
+    const validationError = requestInstance.validateSync();
+
+    if (validationError) {
+      res.status(400).json(validationError.message);
+      return;
+    }
+    const approvalData: IApprovals = {
+      _id: "",
+      createdBy: "",
+      applicationId: "",
+      entityname: "",
+      ApprovalStatus: false,
+      approvedBy: "",
+      ApprovedOn: null,
+      sendNotification: true,
+      createdOn: new Date(),
+    };
+    await dbconnect();
+    await requestInstance.save();
+    await addApprovals(approvalData);
+    await dbclose();
+    res.status(200).json("Data saved successfully!");
+  } catch (error) {
+      res.status(500).json("server responded with an error");
+      console.log(error)
+  }
+};

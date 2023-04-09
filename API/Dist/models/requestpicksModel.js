@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 export const requestpicksSchema = new mongoose.Schema({
-    _id: String,
+    _id: { type: Number, required: true },
     requestedTo: { type: mongoose.Schema.Types.ObjectId },
     requestedBy: { type: mongoose.Schema.Types.ObjectId },
     requestedOn: Date,
