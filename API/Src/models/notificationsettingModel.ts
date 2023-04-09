@@ -20,7 +20,11 @@ export const notifierSchema = new mongoose.Schema({
     from: { type: mongoose.Schema.Types.ObjectId }, // from 
     to: [{ type: mongoose.Schema.Types.ObjectId }], // notification will be send to user, and this user must have enabled notification in 'notisetting'
     notifierstatus: Boolean,
-    createdOn: Date,
+    transacteOn: {
+        type: Date,
+        default: Date.now,
+        required: true,
+    },
     
 })
 

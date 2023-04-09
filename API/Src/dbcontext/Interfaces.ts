@@ -26,6 +26,7 @@ export interface IEntityName {
   name: String; // the name here represent the model name, eg for Uses, Roles etc
   description: String; // describes  the entity, eg selected five person to get feed, approve selected feedback, report generated, etc
   approverRole: String;
+  transacteOn:Date,
 }
 
 //EntityName interface ends ...
@@ -106,7 +107,7 @@ export interface IRequestPicks {
   requestedOn: Date;
   SelectedList: ISelectedList[]; // an array of user select to give feedback, Hr can increase this number endless,
   submitted: Boolean;
-  submittedOn: Date;
+  submittedOn: Date | null;
 }
 
 export interface ISelectedList {
@@ -133,6 +134,7 @@ export interface ITemplates {
   templateTitle: String;
   questionSections: IQSchema[];
   templateStatus: Boolean;
+  transacteOn:Date,
 }
 
 // templates inteface ends ..
@@ -171,5 +173,5 @@ export interface IWorksReport {
   reportsTo: String;
   workReportStatus: Boolean;
   createdOn: Date;
-  deactivatedOn: Date;
+  deactivatedOn: Date | null;
 }

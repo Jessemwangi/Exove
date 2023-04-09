@@ -13,6 +13,11 @@ export const questionTemplatesSchema = new mongoose.Schema({
         },
     }],
     templateStatus: Boolean,
+    transacteOn: {
+        type: Date,
+        default: Date.now,
+        required: true,
+    },
 });
       
 

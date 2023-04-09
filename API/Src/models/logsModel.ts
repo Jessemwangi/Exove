@@ -8,6 +8,10 @@ export const logsSchema = new mongoose.Schema({
         required: true,
       },
     activity: String,
-    transacteOn:Date,
+    transacteOn:{
+      type: Date,
+      default: Date.now,
+      required: true,
+  },
 })
   
