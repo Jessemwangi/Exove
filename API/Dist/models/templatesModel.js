@@ -19,4 +19,4 @@ export const questionTemplatesSchema = new mongoose.Schema({
         required: true,
     },
 });
-//# sourceMappingURL=templates.js.map
+//# sourceMappingURL=templatesModel.js.map

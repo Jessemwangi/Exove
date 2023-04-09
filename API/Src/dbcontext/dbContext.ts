@@ -10,7 +10,7 @@ import { notifierSchema, notisettingSchema } from "../models/notificationsetting
 import { questionCategorySchema } from "../models/questionCategoryModel.js";
 import { questionsSchema } from "../models/questionsModel.js";
 import { requestpicksSchema } from "../models/requestpicksModel.js";
-import { questionTemplatesSchema } from "../models/templates.js";
+import { questionTemplatesSchema } from "../models/templatesModel.js";
 
 
 export const Approvals = mongoose.model('Approvals',approvalsSchema)

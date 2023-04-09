@@ -40,8 +40,7 @@ export interface IFeedBacks {
   createdOn: String;
   responseByDate: String;
   progress: String;
-
-  responseDateLog: Date[]; // any time and update is made the date will be logged here
+ responseDateLog: Date[]; // any time and update is made the date will be logged here
   questionSections: IQSchema[];
   submitted: Boolean;
   submittedOn: Date;
