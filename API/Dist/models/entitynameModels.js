@@ -4,7 +4,7 @@ export const entitySchema = new mongoose.Schema({
     _id: String,
     name: String,
     description: String,
-    approverRole: { type: mongoose.Schema.Types.ObjectId, ref: "Roles" }, // set the level that can approve if approval is required
+    approverRole: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Roles' }], // set the level that can approve if approval is required
 });
 /// during insert we will be checking if the post falls within the approval entity then insert into
 //eg 1, meeting, there will be a meeting on ...., '',

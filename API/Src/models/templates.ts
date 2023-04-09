@@ -1,14 +1,14 @@
 import mongoose from "mongoose"
 
 export const questionTemplatesSchema = new mongoose.Schema({
-    _id: { type: String, required: true, unique: true },
+    _id: { type: String, required: true },
     templateTitle: String,
     questionSections:[
     {
         category:
         {
-            categoryId: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
-            questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Questions" }], // hold an array of questions
+            categoryId: { type: mongoose.Schema.Types.ObjectId},
+            questions: [{ type: mongoose.Schema.Types.ObjectId }], // hold an array of questions
                
         },
     }],

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 // user enables a list of notification that he can receive, this notification should be availble base on the user level
 export const notisettingSchema = new mongoose.Schema({
-    _id: { type: String, unique: true, required: true },
+    _id: { type: String, required: true },
     userid: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
     entityname: [{ type: String, required: true }],
     notisettingstatus: Boolean,
@@ -9,7 +9,7 @@ export const notisettingSchema = new mongoose.Schema({
     enableReminder: Boolean, // if set to true automatic reminder will be send
 });
 export const notifierSchema = new mongoose.Schema({
-    _id: { type: String, unique: true, required: true },
+    _id: { type: String, required: true },
     applicationid: { type: String, unique: true, required: true },
     entityname: String,
     message: String,

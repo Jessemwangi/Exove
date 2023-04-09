@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
 export const rolesSchema = new mongoose.Schema({
-    _id: { type: String, unique: true, required: true },
-    roleName: String,
-    roleLevel: Number,
+    _id: { type: String, required: true},
+    roleName: { type: String, required: true},
+    roleLevel: { type: Number, required: true},
     roleStatus: Boolean,
-    createBy: { type: mongoose.Schema.Types.ObjectId },
+    createBy: { type: String, required: true},
     createdOn:Date,
 })

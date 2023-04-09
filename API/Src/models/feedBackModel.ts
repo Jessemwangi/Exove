@@ -1,9 +1,9 @@
 import mongoose from "mongoose"
 
 export const feedBacksSchema = new mongoose.Schema({
-    _id: { type: Number, required: true, unique: true },
+    _id: { type: Number, required: true, },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true }, // session logged in user
-    templateId: { type: String, required: true, ref: "Templates" },
+    templateId: { type: String, required: true, ref: 'Templates' },
     requestpicksId: { type: String, required: true, ref: "Templates" },
     feedbackTo:  { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true }, // feedback to from the dashboard
     createdOn: String,
@@ -15,8 +15,8 @@ export const feedBacksSchema = new mongoose.Schema({
     {
         category:
         {
-            categoryId: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
-            questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Questions" }], // hold an array of questions
+            categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'QuestionCats' },
+            questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Questions' }], // hold an array of questions
                
         },
     }],

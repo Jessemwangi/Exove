@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 export const approvalsSchema = new mongoose.Schema({
     _id: String,
     createdOn: Date,
-    createdBy: { type: mongoose.Schema.Types.ObjectId },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Users' },
     applicationId: { type: mongoose.Schema.Types.ObjectId },
     entityname: { type: mongoose.Schema.Types.ObjectId },
     ApprovalStatus: Boolean,

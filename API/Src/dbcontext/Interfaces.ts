@@ -1,11 +1,11 @@
 export interface IQSchema {
-    category: IFeedCategory;
-  }
-  
-  export interface IFeedCategory {
-    categoryId: String[];
-    questions: String[]; // hold an array of questions
-  }
+  category: IFeedCategory;
+}
+
+export interface IFeedCategory {
+  categoryId: String[];
+  questions: String[]; // hold an array of questions
+}
 
 export interface IApprovals {
   _id: String;
@@ -49,129 +49,127 @@ export interface IFeedBacks {
 // fed back interface ends ...
 
 export interface ILogs {
-    _id: String,
-    userId: String,
-    activity: String,
-    transacteOn:Date,
+  _id: String;
+  userId: String;
+  activity: String;
+  transacteOn: Date;
 }
 
 //Logs interface ends
 
 //Notification interface start
 export interface INotificationsSetting {
-    _id: String,
-    userid: String,
-    entityname:String[], // this will get model name eg, question, category etc so that to enable or disable notification from this entinty
-    notisettingstatus: Boolean, //enable or disable notification from this entity
-    email: String, // this will be used as alternative email if the found
-    enableReminder: Boolean, // if set to true automatic reminder will be send
+  _id: String;
+  userid: String;
+  entityname: String[]; // this will get model name eg, question, category etc so that to enable or disable notification from this entinty
+  notisettingstatus: Boolean; //enable or disable notification from this entity
+  email: String; // this will be used as alternative email if the found
+  enableReminder: Boolean; // if set to true automatic reminder will be send
 }
 
 export interface INotifier {
-    _id: String,
-    applicationid:String, // primary key from the model
-    entityname: String,  // this will get model name eg, question, category etc and from it get the notification message and activity namee
-    message: String,
-    link:String,
-    from: String, // from 
-    to: String[], // notification will be send to user, and this user must have enabled notification in 'notisetting'
-    notifierstatus: Boolean,
-    createdOn: Date,
+  _id: String;
+  applicationid: String; // primary key from the model
+  entityname: String; // this will get model name eg, question, category etc and from it get the notification message and activity namee
+  message: String;
+  link: String;
+  from: String; // from
+  to: String[]; // notification will be send to user, and this user must have enabled notification in 'notisetting'
+  notifierstatus: Boolean;
+  createdOn: Date;
 }
 
 // Notification interface ends ..
 
-
-
 export interface IQuestionCats {
-    _id: String,
-    name: String,
-    createdOn: Date,
-    createdBy: String,
-    categoryStatus:Boolean,
+  _id: String;
+  name: String;
+  createdOn: Date;
+  createdBy: String;
+  categoryStatus: Boolean;
 }
 
 export interface IQuestions {
-    _id: String,
-    question: String,
-    questionType: String,
-    questionStatus: Boolean,
-    createdBy: String,
-    createdOn:Date
+  _id: String;
+  question: String;
+  questionType: String;
+  questionStatus: Boolean;
+  createdBy: String;
+  createdOn: Date;
 }
 
 // RequestPicks interface  start
 export interface IRequestPicks {
-    _id: String,
-    requestedTo:String, // the person who will recieve and select five individual to give  him /her feedback.
-    requestedBy: String, // user in the role of Hr or higher level
-    requestedOn: Date,
-    SelectedList:ISelectedList[],// an array of user select to give feedback, Hr can increase this number endless,
-      submitted: Boolean,
-    submittedOn:Date,
+  _id: String;
+  requestedTo: String; // the person who will recieve and select five individual to give  him /her feedback.
+  requestedBy: String; // user in the role of Hr or higher level
+  requestedOn: Date;
+  SelectedList: ISelectedList[]; // an array of user select to give feedback, Hr can increase this number endless,
+  submitted: Boolean;
+  submittedOn: Date;
 }
 
-export interface ISelectedList{
-    userId: String,
-    selectionStatus: Boolean, // allow the HR to approve or disapprove,
-    selectedBy: String,
+export interface ISelectedList {
+  userId: String;
+  selectionStatus: Boolean; // allow the HR to approve or disapprove,
+  selectedBy: String;
 }
 
 // RequestPicks interface ends
 
 export interface IRoles {
-    _id: String,
-roleName: String,
-roleLevel: Number,
-roleStatus: Boolean,
-createBy: String,
-    createdOn: Date,
+  _id: String;
+  roleName: String;
+  roleLevel: Number;
+  roleStatus: Boolean;
+  createBy: String;
+  createdOn: Date;
 }
 
 // roles interface ends ..
 
 export interface ITemplates {
-    _id: String,
-    templateTitle: String,
-    questionSections:IQSchema[],
-    templateStatus: Boolean,
+  _id: String;
+  templateTitle: String;
+  questionSections: IQSchema[];
+  templateStatus: Boolean;
 }
 
 // templates inteface ends ..
 
 export interface IUserRoles {
-    _id: String,
-userId: String,
-    roleId: String,
+  _id: String;
+  userId: String;
+  roleId: String;
 }
 
 // userroles interface ends ..
 
 export interface IUser {
-    _id: { type: String, required: true, unique: true },
-    firstName: { type: String, required: true },
-    surname: { type: String, required: true },
-    email: {
-      type: String,
-      required: true,
-    },
-    displayName: String,
+  _id: { type: String; required: true; unique: true };
+  firstName: { type: String; required: true };
+  surname: { type: String; required: true };
+  email: {
+    type: String;
+    required: true;
+  };
+  displayName: String;
   //   personal:  { type: String, required: true },
   //   about: [{ type: mongoose.Schema.Types.ObjectId, ref: "About" }],
-    workId: String[],
-    title: String,
-    department: String,
-    site: String,
-    startDate: Date,
-    phone: String,
-    userStatus: Boolean,
+  workId: String[];
+  title: String;
+  department: String;
+  site: String;
+  startDate: Date;
+  phone: String;
+  userStatus: Boolean;
 }
 
-export interface IWorksReport{
-    _id: { type: Number, required: true, unique: true },
-    userId: String,
-    reportsTo: String,
-    workReportStatus: Boolean,
-    createdOn: Date,
-    deactivatedOn: Date,
+export interface IWorksReport {
+  _id: { type: Number; required: true; unique: true };
+  userId: String;
+  reportsTo: String;
+  workReportStatus: Boolean;
+  createdOn: Date;
+  deactivatedOn: Date;
 }
