@@ -8,14 +8,14 @@ import { Roles } from "../dbcontext/dbContext.js";
 export const getRoles = async (req: Request, res: Response) => {
   try {
     await dbconnect();
-    const roleData: IRoles = await Roles.find({}).lean();
+    const roleData: IRoles[] = await Roles.find({}).lean().sort({createdOn:1}).exec();
+   
     await dbclose();
     res.status(200).json(roleData);
   } catch (error) {
     res.status(500).json("server responded with an error");
   }
 };
-
 
 
 export const createRole = async (req:Request, res:Response) => {

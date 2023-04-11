@@ -5,6 +5,7 @@ export const approvalsSchema = new mongoose.Schema({
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Users' },
     applicationId: { type: mongoose.Schema.Types.ObjectId, required: true },
     entityname: { type: mongoose.Schema.Types.ObjectId, required: true },
+    approverLevel: Number,
     ApprovalStatus: Boolean,
     approvedBy: { type: mongoose.Schema.Types.ObjectId },
     ApprovedOn: Date,

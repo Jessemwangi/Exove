@@ -8,7 +8,7 @@ export const requestpicksSchema = new mongoose.Schema({
         {
             userId: mongoose.Schema.Types.ObjectId,
             selectionStatus: Boolean,
-            selectedBy: { userId: mongoose.Schema.Types.ObjectId },
+            selectedBy: { type: mongoose.Schema.Types.ObjectId },
         },
     ],
     submitted: Boolean,

@@ -7,6 +7,7 @@ export const approvalsSchema = new mongoose.Schema({
   createdBy: { type: mongoose.Schema.Types.ObjectId,ref:'Users' }, // from which user, automatically selects current user
   applicationId: { type: mongoose.Schema.Types.ObjectId, required:true}, // will get the primary key of the activity awaiting approval
   entityname: { type: mongoose.Schema.Types.ObjectId, required:true}, // this will come from entitynamemodel, so as to identify what activity this approval belong to and who can approved it
+  approverLevel: Number,
   ApprovalStatus: Boolean,
   approvedBy: { type: mongoose.Schema.Types.ObjectId },
   ApprovedOn: Date,

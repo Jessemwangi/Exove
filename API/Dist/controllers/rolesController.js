@@ -5,7 +5,7 @@ import { Roles } from "../dbcontext/dbContext.js";
 export const getRoles = async (req, res) => {
     try {
         await dbconnect();
-        const roleData = await Roles.find({}).lean();
+        const roleData = await Roles.find({}).lean().sort({ createdOn: 1 }).exec();
         await dbclose();
         res.status(200).json(roleData);
     }

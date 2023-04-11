@@ -10,6 +10,7 @@ import { defaultRoutes } from './routes/defaultRoute.js';
 import dotenv from 'dotenv';
 import { jesseRoutes } from './routes/jesseRoute.js';
 import { rolesRoutes } from './routes/rolesRoute.js';
+import { reqPicksRoutes } from './routes/picksRoute.js';
 
 const app = express()
 app.use(express.json())
@@ -18,15 +19,17 @@ app.use(cookieParser())
 const apiRouter = express.Router();
 
 // Mount existing routers as sub-routers
-apiRouter.use('/questions', questionRoute);
 apiRouter.use('/auth', authRoutes);
+apiRouter.use('/', defaultRoutes);
+apiRouter.use('/questions', questionRoute);
 apiRouter.use('/feeds', feedsRoutes);
+apiRouter.use('/picks', reqPicksRoutes);
 apiRouter.use('/reports', reportRoutes);
 apiRouter.use('/employee', employeeRoutes);
 apiRouter.use('/approvals', feedsRoutes);
 apiRouter.use('/roles', rolesRoutes);
-apiRouter.use('/', defaultRoutes);
 apiRouter.use('/jesse', jesseRoutes);
+
 // Mount the apiRouter as a middleware
 app.use('/api', apiRouter);
 

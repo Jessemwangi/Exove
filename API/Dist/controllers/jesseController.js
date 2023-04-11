@@ -4,7 +4,7 @@ import { dbclose, dbconnect } from '../Configs/dbConnect.js';
 export const jesseGet = async (req, res) => {
     try {
         await dbconnect();
-        const jesseData = await JesseM.find();
+        const jesseData = await JesseM.find().sort({ createOn: 1, name: 1 }).limit(10).exec();
         await dbclose();
         res.status(200).json({ data: jesseData });
     }

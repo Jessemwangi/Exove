@@ -3,7 +3,7 @@ import { dbclose, dbconnect } from '../Configs/dbConnect.js';
 export const getTemplates = async (req, res) => {
     try {
         await dbconnect();
-        const templates = await Templates.findasync({});
+        const templates = await Templates.find({});
         await dbclose();
         res.status(200).json(templates);
     }

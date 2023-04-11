@@ -14,12 +14,13 @@ export const notifierSchema = new mongoose.Schema({
     message: String,
     link: String,
     from: { type: mongoose.Schema.Types.ObjectId },
-    to: [{ type: mongoose.Schema.Types.ObjectId }],
+    to: { type: [mongoose.Schema.Types.ObjectId], required: true },
     notifierstatus: Boolean,
     transacteOn: {
         type: Date,
         default: Date.now,
         required: true,
     },
+    sendOn: Date,
 });
 //# sourceMappingURL=notificationsettingModel.js.map

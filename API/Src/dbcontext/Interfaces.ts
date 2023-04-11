@@ -11,15 +11,16 @@ export interface IQuestionsInCategory {
 }
 
 export interface IApprovals {
-  _id: String;
-  createdOn: Date;
-  createdBy: String; // from which user, automatically selects current user
-  applicationId: String; // will get the primary key of the activity awaiting approval
-  entityname: String; // this will come from entitynamemodel, so as to identify what activity this approval belong to
-  ApprovalStatus: Boolean;
-  approvedBy: String;
-  ApprovedOn: Date | null;
-  sendNotification: Boolean;
+  _id: String,
+  createdOn: Date,
+  createdBy: String, // from which user, automatically selects current user
+  applicationId: String, // will get the primary key of the activity awaiting approval
+  entityname: String, // this will come from entitynamemodel, so as to identify what activity this approval belong to
+  approverLevel:Number,
+  ApprovalStatus: Boolean,
+  approvedBy: String,
+  ApprovedOn: Date | null,
+  sendNotification: Boolean,
 }
 
 // Approval interfance ends ...
@@ -77,9 +78,10 @@ export interface INotifier {
   message: String;
   link: String;
   from: String; // from
-  to: String[]; // notification will be send to user, and this user must have enabled notification in 'notisetting'
-  notifierstatus: Boolean;
-  createdOn: Date;
+  to: String[], // notification will be send to user, and this user must have enabled notification in 'notisetting'
+  notifierstatus: Boolean,
+  sendOn:Date | null,
+  transacteOn: Date;
 }
 
 // Notification interface ends ..
@@ -104,13 +106,13 @@ export interface IQuestions {
 
 // RequestPicks interface  start
 export interface IRequestPicks {
-  _id: String;
-  requestedTo: String; // the person who will recieve and select five individual to give  him /her feedback.
-  requestedBy: String; // user in the role of Hr or higher level
-  requestedOn: Date;
-  SelectedList: ISelectedList[]; // an array of user select to give feedback, Hr can increase this number endless,
-  submitted: Boolean;
-  submittedOn: Date | null;
+  _id: String,
+  requestedTo: String, // the person who will recieve and select five individual to give  him /her feedback.
+  requestedBy: String, // user in the role of Hr or higher level
+  requestedOn: Date,
+  SelectedList: ISelectedList[], // an array of user select to give feedback, Hr can increase this number endless,
+  submitted: Boolean,
+  submittedOn: Date | null,
 }
 
 export interface ISelectedList {

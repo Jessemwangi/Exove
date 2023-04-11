@@ -13,8 +13,8 @@ export const jesseGet = async (req: Request, res: Response) => {
     try {
         await dbconnect()
         
-        const jesseData:Ijesse = await JesseM.find()
-        
+        const jesseData:Ijesse = await JesseM.find().sort({ createOn:1, name: 1 }).limit(10).exec();
+    
         await dbclose()
 
         res.status(200).json({ data: jesseData })

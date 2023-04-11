@@ -1,5 +1,5 @@
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { Approvals, Roles } from "../dbcontext/dbContext.js";
+import { Approvals, Notifer, NotificationSetting, Roles } from "../dbcontext/dbContext.js";
 export const checkUserRoles = async (userId) => {
     try {
         await dbconnect();
@@ -19,6 +19,22 @@ export const checkUserRoles = async (userId) => {
 export const addApprovals = async (approval) => {
     await new Approvals(approval).save();
 };
-export const addToNotfication = async (params) => {
+export const addToNotfication = async (newNotification) => {
+    if (newNotification) {
+        const promises = newNotification.to.map(async (userId) => {
+            const notificationStatus = await userEnabledNotification(userId, newNotification.entityname);
+            if (notificationStatus) {
+                await Notifer.updateOne({ _id: newNotification._id }, { notifierstatus: true });
+            }
+        });
+        await Promise.all(promises);
+    }
+};
+export const userEnabledNotification = async (userId, entityName) => {
+    const notiSettingsData = await NotificationSetting.find({ userId, notisettingstatus: true }).lean();
+    if (notiSettingsData) {
+        return notiSettingsData.entityname.includes(entityName);
+    }
+    return false;
 };
 //# sourceMappingURL=functions.js.map

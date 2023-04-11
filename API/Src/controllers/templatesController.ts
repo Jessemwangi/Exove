@@ -6,7 +6,7 @@ import { ITemplates } from '../dbcontext/Interfaces.js';
 export const getTemplates = async (req:Request, res:Response) => {
     try {
         await dbconnect()
-        const templates: ITemplates = await Templates.findasync({})
+        const templates: ITemplates = await Templates.find({})
         await dbclose()
         res.status(200).json(templates)
     } catch (error) {
