@@ -20,3 +20,7 @@ export const checkUserRoles = async (userId: String): Promise<Number | String> =
 export const addApprovals = async (approval:IApprovals) => {
     await new Approvals(approval).save()     
 }
+
+export const addToNotfication =async (params:IApprovals) => {
+  
+}

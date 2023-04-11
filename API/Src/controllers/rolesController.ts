@@ -43,7 +43,7 @@ export const createRole = async (req:Request, res:Response) => {
             const validationError = rolesInstance.validateSync();
 
             if (validationError) {
-              res.status(400).json({ message: validationError.message });
+              res.status(400).json(validationError.message );
               return;
             }
               await dbconnect()

@@ -1,10 +1,13 @@
-export interface IQSchema {
-  category: IFeedCategory;
+export interface IQCategory {
+  categoryId: String,
+  categoryName:String
+  questions: IQuestionsInCategory;
 }
 
-export interface IFeedCategory {
-  categoryId: String[];
-  questions: String[]; // hold an array of questions
+export interface IQuestionsInCategory {
+  questionId: String;
+  questions: String; // hold an array of questions
+  questionsAnswer?:String
 }
 
 export interface IApprovals {
@@ -41,7 +44,7 @@ export interface IFeedBacks {
   responseByDate: String;
   progress: String;
  responseDateLog: Date[]; // any time and update is made the date will be logged here
-  questionSections: IQSchema[];
+  questionSections: IQCategory[];
   submitted: Boolean;
   submittedOn: Date;
 }
@@ -96,7 +99,7 @@ export interface IQuestions {
   questionType: String;
   questionStatus: Boolean;
   createdBy: String;
-  createdOn: Date;
+  qCreatedOn: Date;
 }
 
 // RequestPicks interface  start
@@ -132,7 +135,7 @@ export interface IRoles {
 export interface ITemplates {
   _id: String;
   templateTitle: String;
-  questionSections: IQSchema[];
+  questionSections: IQCategory[];
   templateStatus: Boolean;
   transacteOn:Date,
 }

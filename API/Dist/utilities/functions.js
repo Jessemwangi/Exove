@@ -19,4 +19,6 @@ export const checkUserRoles = async (userId) => {
 export const addApprovals = async (approval) => {
     await new Approvals(approval).save();
 };
+export const addToNotfication = async (params) => {
+};
 //# sourceMappingURL=functions.js.map

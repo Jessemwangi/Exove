@@ -6,20 +6,12 @@ import { ITemplates } from '../dbcontext/Interfaces.js';
 export const getTemplates = async (req:Request, res:Response) => {
     try {
         await dbconnect()
-        const templates: ITemplates = await Templates.findasync({}).populate(
-            {
-            path: 'categoryId',
-            model: QuestionCats,
-            populate: [{
-              path: 'questions',
-              model: Questions,              
-              }]
-            }
-          )
+        const templates: ITemplates = await Templates.findasync({})
         await dbclose()
         res.status(200).json(templates)
     } catch (error) {
         console.log(error)
+        res.status(500).json("server responded with an error");
     }
     
 
