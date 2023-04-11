@@ -3,9 +3,9 @@ import { createRequestPicks, getAllRequestPicks, getUserRequestPick, hrApprovesP
 export const reqPicksRoutes = express.Router();
 reqPicksRoutes.get('/', getAllRequestPicks);
 reqPicksRoutes.get('/:id', getUserRequestPick);
-reqPicksRoutes.post('/createreqpick', createRequestPicks);
-reqPicksRoutes.patch('/sendreqpick', submitRequestPicks);
-reqPicksRoutes.patch('/approve-pick', hrApprovesPicks);
+reqPicksRoutes.post('/', createRequestPicks);
+reqPicksRoutes.patch('/:id', submitRequestPicks);
+reqPicksRoutes.patch('/approve-pick/:id', hrApprovesPicks);
 reqPicksRoutes.patch('/approve-picks', hrMassApprovesPicks);
 reqPicksRoutes.delete('/:id');
 //# sourceMappingURL=picksRoute.js.map

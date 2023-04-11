@@ -19,8 +19,8 @@ export const checkUserRoles = async (userId) => {
 export const addApprovals = async (approval) => {
     await new Approvals(approval).save();
 };
-export const addToNotfication = async (newNotification) => {
-    if (newNotification) {
+export const addToNotification = async (newNotification) => {
+    if (newNotification.to.length > 0 && newNotification.entityname !== '') {
         const promises = newNotification.to.map(async (userId) => {
             const notificationStatus = await userEnabledNotification(userId, newNotification.entityname);
             if (notificationStatus) {
@@ -32,6 +32,7 @@ export const addToNotfication = async (newNotification) => {
 };
 export const userEnabledNotification = async (userId, entityName) => {
     const notiSettingsData = await NotificationSetting.find({ userId, notisettingstatus: true }).lean();
+    console.log(notiSettingsData);
     if (notiSettingsData) {
         return notiSettingsData.entityname.includes(entityName);
     }

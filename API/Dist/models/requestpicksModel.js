@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 export const requestpicksSchema = new mongoose.Schema({
-    _id: { type: Number, required: true },
-    requestedTo: { type: mongoose.Schema.Types.ObjectId },
-    requestedBy: { type: mongoose.Schema.Types.ObjectId },
+    _id: { type: String, required: true },
+    requestedTo: String,
+    requestedBy: String,
     requestedOn: Date,
     SelectedList: [
         {
-            userId: mongoose.Schema.Types.ObjectId,
+            userId: String,
             selectionStatus: Boolean,
-            selectedBy: { type: mongoose.Schema.Types.ObjectId },
+            selectedBy: String,
         },
     ],
     submitted: Boolean,

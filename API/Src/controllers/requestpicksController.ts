@@ -11,7 +11,7 @@ import {
   import { dbclose, dbconnect } from "../Configs/dbConnect.js";
   import {
     addApprovals,
-    addToNotfication,
+    addToNotification,
     checkUserRoles,
 } from "../utilities/functions.js";
   
@@ -106,13 +106,14 @@ export const createRequestPicks = async (req: Request, res: Response) => {
               applicationid: primaryKey,
               entityname: "",
               link: "",
-              from: "", // from
-              to: [""], // notification will be send to user, and this user must have enabled notification in 'notisetting'
+              from: requestHttpData.requestedBy, // from
+              to: [requestHttpData.requestedTo], // notification will be send to user, and this user must have enabled notification in 'notisetting'
               notifierstatus: false, // false not send
               sendOn: null,
               transacteOn: new Date(),
             };
-            await addToNotfication(newNotification);
+            console.log(newNotification)
+            await addToNotification(newNotification);
             res.status(200).json("Data saved successfully!");
             await dbclose();
           } else {
@@ -130,7 +131,9 @@ export const createRequestPicks = async (req: Request, res: Response) => {
   
 export const submitRequestPicks = async (req: Request, res: Response) => {
     // check if user is authenticated and also we will check if current user is the same as requestedTo or in the role of hr
-    const requestHttpData: IRequestPicks = req.body;
+  const requestHttpData: ISelectedList = req.body;
+  const id = req.params.id;
+  console.log('requestHttpData', requestHttpData , 'ID NUMEBER ' , id)
   
     try {
       if (!requestHttpData) {
@@ -151,14 +154,14 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
       };
       await dbconnect();
       const result = await RequestPicks.updateOne(
-        { _id: requestHttpData._id },
-        { $push: { SelectedList: requestHttpData.SelectedList } }
+        { _id: id },
+        { $push: { SelectedList: requestHttpData } }
       );
       if (result.nModified === 0) {
         res.status(404).json("No document was updated");
         return;
       }
-      await addApprovals(approvalData);
+      // await addApprovals(approvalData);
       await dbclose();
       res.status(200).json("Data saved successfully!");
     } catch (error) {
@@ -170,17 +173,21 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
   
   export const hrApprovesPicks = async (req: Request, res: Response) => {
     try {
-      if (!req.body) {
+      if (!req.body && !req.params.id) {
         res.status(404).json("Post data not found or empty");
         return;
       }
-      const requestPicksId: number = req.body.requestPicksId;
-      const userId: string = req.body.userId;
-      const selectionStatus: boolean = req.body.selectionStatus;
+      const requestPicksId: String = req.params.id;
+      const userId: String = req.body.userId;
+      const selectionStatus: Boolean = req.body.selectionStatus;
+      const selectedBy: String = req.body.selectedBy;
+
+      console.log(req.body,req.params.id);
+      
       await dbconnect();
       const result = await RequestPicks.updateOne(
         { _id: requestPicksId, 'SelectedList.userId': userId },
-        { $set: { 'SelectedList.$.selectionStatus': selectionStatus } },
+        { $set: { 'SelectedList.$.selectionStatus': selectionStatus, 'SelectedList.$.selectedBy': selectedBy} },
       );
       if (result.nModified === 0) {
         res.status(404).json("No document was updated");

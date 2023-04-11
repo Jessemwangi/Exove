@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { addApprovals, addToNotfication, checkUserRoles, } from "../utilities/functions.js";
+import { addToNotification, checkUserRoles, } from "../utilities/functions.js";
 export const getAllRequestPicks = async (req, res) => {
     try {
         await dbconnect();
@@ -74,13 +74,14 @@ export const createRequestPicks = async (req, res) => {
                     applicationid: primaryKey,
                     entityname: "",
                     link: "",
-                    from: "",
-                    to: [""],
+                    from: requestHttpData.requestedBy,
+                    to: [requestHttpData.requestedTo],
                     notifierstatus: false,
                     sendOn: null,
                     transacteOn: new Date(),
                 };
-                await addToNotfication(newNotification);
+                console.log(newNotification);
+                await addToNotification(newNotification);
                 res.status(200).json("Data saved successfully!");
                 await dbclose();
             }
@@ -97,6 +98,8 @@ export const createRequestPicks = async (req, res) => {
 };
 export const submitRequestPicks = async (req, res) => {
     const requestHttpData = req.body;
+    const id = req.params.id;
+    console.log('requestHttpData', requestHttpData, 'ID NUMEBER ', id);
     try {
         if (!requestHttpData) {
             res.status(404).json("Post data not found or empty");
@@ -115,12 +118,11 @@ export const submitRequestPicks = async (req, res) => {
             createdOn: new Date(),
         };
         await dbconnect();
-        const result = await RequestPicks.updateOne({ _id: requestHttpData._id }, { $push: { SelectedList: requestHttpData.SelectedList } });
+        const result = await RequestPicks.updateOne({ _id: id }, { $push: { SelectedList: requestHttpData } });
         if (result.nModified === 0) {
             res.status(404).json("No document was updated");
             return;
         }
-        await addApprovals(approvalData);
         await dbclose();
         res.status(200).json("Data saved successfully!");
     }
@@ -131,15 +133,17 @@ export const submitRequestPicks = async (req, res) => {
 };
 export const hrApprovesPicks = async (req, res) => {
     try {
-        if (!req.body) {
+        if (!req.body && !req.params.id) {
             res.status(404).json("Post data not found or empty");
             return;
         }
-        const requestPicksId = req.body.requestPicksId;
+        const requestPicksId = req.params.id;
         const userId = req.body.userId;
         const selectionStatus = req.body.selectionStatus;
+        const selectedBy = req.body.selectedBy;
+        console.log(req.body, req.params.id);
         await dbconnect();
-        const result = await RequestPicks.updateOne({ _id: requestPicksId, 'SelectedList.userId': userId }, { $set: { 'SelectedList.$.selectionStatus': selectionStatus } });
+        const result = await RequestPicks.updateOne({ _id: requestPicksId, 'SelectedList.userId': userId }, { $set: { 'SelectedList.$.selectionStatus': selectionStatus, 'SelectedList.$.selectedBy': selectedBy } });
         if (result.nModified === 0) {
             res.status(404).json("No document was updated");
             return;
