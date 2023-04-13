@@ -6,10 +6,13 @@ export interface IQCategory {
 
 export interface IQuestionsInCategory {
   questionId: String;
-  questions: String; // hold an array of questions
+  language: IQuestionLang; // hold an array of questions
   questionsAnswer?:String
 }
-
+interface IQuestionLang{
+  name: String,
+  question:String,
+}
 export interface IApprovals {
   _id: String,
   createdOn: Date,

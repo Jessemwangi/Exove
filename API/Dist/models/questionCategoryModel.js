@@ -1,11 +1,17 @@
 import mongoose from "mongoose";
+import { QuestionCats } from "../dbcontext/dbContext.js";
 export const questionCategorySchema = new mongoose.Schema({
     _id: { type: Number, required: true },
     name: { type: Number, required: true },
     questions: [
         {
             questionId: { type: Number, required: true },
-            question: { type: Number, required: true },
+            language: [
+                {
+                    name: { type: String, required: true },
+                    question: String,
+                }
+            ],
             questionType: String,
             questionStatus: Boolean,
             createdBy: {
@@ -20,4 +26,7 @@ export const questionCategorySchema = new mongoose.Schema({
     createdBy: { type: mongoose.Schema.Types.ObjectId, required: true },
     categoryStatus: Boolean,
 });
+QuestionCats.path('language').validate(function (value) {
+    return value && value.length >= 1;
+}, 'At least one language entry is required.');
 //# sourceMappingURL=questionCategoryModel.js.map

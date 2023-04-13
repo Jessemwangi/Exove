@@ -9,6 +9,6 @@ reqPicksRoutes.get('/:id',getUserRequestPick); // get individual requestpicks af
 reqPicksRoutes.post('/', createRequestPicks);   //Hr create a requestpicks Path : /picks/createreqpick
 reqPicksRoutes.patch('/:id', submitRequestPicks);   //Hr create a requestpicks Path : /picks/{id}  
 reqPicksRoutes.patch('/approve-pick/:id', hrApprovesPicks);   // approve or disapprove a single request pick /picks/approve-pickload >> {}
-reqPicksRoutes.patch('/approve-picks', hrMassApprovesPicks);   // approve or disapprove a multiple request picks /picks/approve-picks  load: >> "SelectedList": [{}]
+reqPicksRoutes.patch('/approve-picks/:id', hrMassApprovesPicks);   // approve or disapprove a multiple request picks /picks/approve-picks  load: >> "SelectedList": [{}]
 reqPicksRoutes.delete('/:id',);
 

@@ -6,6 +6,6 @@ reqPicksRoutes.get('/:id', getUserRequestPick);
 reqPicksRoutes.post('/', createRequestPicks);
 reqPicksRoutes.patch('/:id', submitRequestPicks);
 reqPicksRoutes.patch('/approve-pick/:id', hrApprovesPicks);
-reqPicksRoutes.patch('/approve-picks', hrMassApprovesPicks);
+reqPicksRoutes.patch('/approve-picks/:id', hrMassApprovesPicks);
 reqPicksRoutes.delete('/:id');
 //# sourceMappingURL=picksRoute.js.map

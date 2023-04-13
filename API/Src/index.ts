@@ -3,14 +3,13 @@ import { serverConfig } from './Configs/serverConfig.js';
 import cookieParser from 'cookie-parser';
 import  {questionRoute}  from "./routes/questionRoute.js";
 import { authRoutes } from './routes/authRoutes.js';
-import { reportRoutes } from './routes/reportRoutes.js';
 import { feedsRoutes } from './routes/feedBackRoute.js';
-import { employeeRoutes } from './routes/employeeeRoute.js';
 import { defaultRoutes } from './routes/defaultRoute.js';
-import dotenv from 'dotenv';
 import { jesseRoutes } from './routes/jesseRoute.js';
 import { rolesRoutes } from './routes/rolesRoute.js';
 import { reqPicksRoutes } from './routes/picksRoute.js';
+import { reportsRoutes } from './routes/reportsRoute.js';
+import { approvalsRoutes } from './routes/approvalsRoute.js';
 
 const app = express()
 app.use(express.json())
@@ -24,11 +23,10 @@ apiRouter.use('/', defaultRoutes);
 apiRouter.use('/questions', questionRoute);
 apiRouter.use('/feeds', feedsRoutes);
 apiRouter.use('/picks', reqPicksRoutes);
-apiRouter.use('/reports', reportRoutes);
-apiRouter.use('/employee', employeeRoutes);
-apiRouter.use('/approvals', feedsRoutes);
+apiRouter.use('/reports', reportsRoutes);
 apiRouter.use('/roles', rolesRoutes);
 apiRouter.use('/jesse', jesseRoutes);
+apiRouter.use('/approvals',approvalsRoutes)
 
 // Mount the apiRouter as a middleware
 app.use('/api', apiRouter);

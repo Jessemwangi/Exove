@@ -1,5 +1,5 @@
 import express from 'express';
-import { getReports } from '../controllers/reportController.js';
+import { getReports } from '../controllers/reportsController.js';
 export const reportRoutes = express.Router();
 reportRoutes.get('/', getReports);
 reportRoutes.get('/:id');
