@@ -1,22 +1,15 @@
 import mongoose from "mongoose";
 
-export const questionTemplatesSchema = new mongoose.Schema({
-  _id: { type: String, required: true },
-  templateTitle: String,
-  questionSections: [
-    {
-      categoryId: { type: String, required: true },
-      categoryName: { type: String, required: true },
-      questions:[ {
-        questionId: { type: String, required: true },
-        question: { type: String, required: true }, // hold an array of questions
-      }],
-    },
-  ],
-  templateStatus: Boolean,
-  transacteOn: {
-    type: Date,
-    default: Date.now,
-    required: true,
-  },
+export const templateSchema = new mongoose.Schema({
+  _id: { type: String, required: true }, 
+  templateTitle: { type: String, required: true },
+  createdOn: { type: Date, default: Date.now },
+  createdBy: String,
+  categories: [{
+    category: { type: String, ref: 'Category_c' },
+    questions: [{ type: String, ref: 'Question_c' }],
+  }],
+  active: Boolean,
 });
+
+

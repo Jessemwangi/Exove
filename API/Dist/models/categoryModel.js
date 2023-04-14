@@ -1,8 +1,11 @@
 import mongoose from "mongoose";
-export const categorySchema = new mongoose.Schema({
-    _id: { type: Number, required: true, unique: true },
-    name: String,
+export const CategorySchema = new mongoose.Schema({
+    _id: { type: String, required: true },
+    name: { type: String, required: true },
+    description: { type: String },
+    questions: { type: [mongoose.Schema.Types.String], ref: "Question" },
     createdOn: Date,
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Users" }
+    createdBy: { type: mongoose.Schema.Types.String, required: true },
+    categoryStatus: Boolean,
 });
 //# sourceMappingURL=categoryModel.js.map

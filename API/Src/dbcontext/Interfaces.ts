@@ -1,17 +1,19 @@
 export interface IQCategory {
   categoryId: String,
   categoryName:String
-  questions: IQuestionsInCategory;
+  questions: IQuestionsInCategory[];
 }
 
 export interface IQuestionsInCategory {
   questionId: String;
-  language: IQuestionLang; // hold an array of questions
-  questionsAnswer?:String
+  questions: IQuestionLang[]; // hold an array of questions
+ 
 }
+
 interface IQuestionLang{
-  name: String,
-  question:String,
+  lang: String,
+  question: String,
+  questionsAnswer?:String
 }
 export interface IApprovals {
   _id: String,
@@ -116,6 +118,7 @@ export interface IRequestPicks {
   SelectedList: ISelectedList[], // an array of user select to give feedback, Hr can increase this number endless,
   submitted: Boolean,
   submittedOn: Date | null,
+  feedBackSubmitted?:Boolean,
 }
 
 export interface ISelectedList {

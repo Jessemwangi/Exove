@@ -1,37 +1,26 @@
 import mongoose from "mongoose";
-export const feedBacksSchema = new mongoose.Schema({
-    _id: { type: Number, required: true },
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Users",
-        required: true,
-    },
-    templateId: { type: String, required: true, ref: "Templates" },
-    requestpicksId: { type: String, required: true, ref: "Templates" },
+export const feedbackSchema = new mongoose.Schema({
+    _id: { type: String, required: true },
+    template: { type: String, ref: 'Template', required: true },
+    userId: { type: String, required: true },
+    requestpicksId: { type: String, required: true, ref: "RequestPicks" },
     feedbackTo: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Users",
         required: true,
     },
-    createdOn: {
-        type: Date,
-        default: Date.now,
-        required: true,
-    },
-    responseByDate: Date,
     progress: String,
+    responseByDate: Date,
     responseDateLog: [Date],
-    questionSections: [
-        {
-            categoryId: { type: String, required: true },
-            categoryName: { type: String, required: true },
+    categories: [{
+            category: { type: String, ref: 'Category' },
             questions: [{
-                    questionId: { type: String, required: true },
-                    question: { type: String, required: true },
-                    questionsAnswer: { type: String, required: true },
+                    _id: { type: String, ref: 'Question', required: true },
+                    lang: String,
+                    answer: { type: String, required: true },
+                    CreatedOn: { type: Date, default: Date.now },
                 }],
-        },
-    ],
+        }],
     submitted: Boolean,
     submittedOn: Date,
 });

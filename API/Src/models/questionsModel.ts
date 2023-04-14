@@ -1,12 +1,22 @@
 import mongoose from "mongoose";
 
-// Store all question allows CRUD
 export const questionsSchema = new mongoose.Schema({
-  _id: { type: Number, required: true },
-  question_en: { type: Number, required: true },
-  question_fi:  { type: Number, required: true },
-  questionType: String,
-  questionStatus: Boolean,
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
-  createdOn:Date
+  _id: { type: String, required: true }, // your custom ID field
+  category: { type: String, ref: 'Category', required: true },
+  createdBy: {
+    type: String,
+    ref: "Users",
+    required: true,
+    CreatedOn: Date,
+    questionStatus: Boolean,
+  },
+  question: [
+    {
+    lang: { type: String, required: true }, //can be eng,fin,swd language
+    text:String, // question string eg how old are you
+      active: Boolean,
+    },
+  ]
 });
+
+
