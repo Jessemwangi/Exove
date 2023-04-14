@@ -19,7 +19,7 @@ export const getTemplate = async (req:Request, res:Response) => {
     try {
       // Find the active template
       await dbconnect();
-      const template = await Template.find({ active: true })
+      const template:ITemplates = await Template.find({ active: true })
       .populate({
         path: 'categories.category',
         select: '-__v',
@@ -47,14 +47,15 @@ export const addTemplate = async (req: Request, res: Response) => {
         return;
     }
 
-    const newTemplate = {
+    const newTemplate:ITemplates = {
         _id: primaryKey,
-        ...httpData,
-        createdOn:  new Date,
+        templateTitle:httpData.templateTitle,
+        createdOn: new Date,
+        categories:httpData.categories,
         createdBy: "Hr Jesse",
         active:true,
     }
-    console.log("template data .......", newTemplate)
+  
     try {
         // Find the active template
         await dbconnect()

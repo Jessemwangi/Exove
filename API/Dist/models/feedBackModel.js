@@ -5,7 +5,7 @@ export const feedbackSchema = new mongoose.Schema({
     userId: { type: String, required: true },
     requestpicksId: { type: String, required: true, ref: "RequestPicks" },
     feedbackTo: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.String,
         ref: "Users",
         required: true,
     },
@@ -13,14 +13,16 @@ export const feedbackSchema = new mongoose.Schema({
     responseByDate: Date,
     responseDateLog: [Date],
     categories: [{
-            category: { type: String, ref: 'Category' },
+            category: { type: String, ref: 'Category', required: true },
             questions: [{
                     _id: { type: String, ref: 'Question', required: true },
                     lang: String,
+                    question: String,
                     answer: { type: String, required: true },
-                    CreatedOn: { type: Date, default: Date.now },
+                    answeredOn: { type: Date, default: Date.now },
                 }],
         }],
+    createdOn: Date,
     submitted: Boolean,
     submittedOn: Date,
 });

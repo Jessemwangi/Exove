@@ -4,10 +4,9 @@ import { Category, Question } from '../dbcontext/dbContext.js';
 export const getQuestion = async (req, res) => {
     try {
         await dbconnect();
-        const q = await Question.find({}).select('-__v').lean();
-        console.log(q);
+        const qusetions = await Question.find({}).select('-__v').lean();
         await dbclose();
-        res.status(200).json(q);
+        res.status(200).json(qusetions);
     }
     catch (error) {
         res.status(500).json('error');
@@ -23,6 +22,9 @@ export const addQuestion = async (req, res) => {
             category: httpData.category,
             question: httpData.question,
             createdBy: httpData.createdBy,
+            type: httpData.type,
+            active: true,
+            createdOn: new Date,
         };
         await dbconnect();
         const q = await new Question(data).save();

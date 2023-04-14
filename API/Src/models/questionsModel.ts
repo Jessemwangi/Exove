@@ -7,16 +7,16 @@ export const questionsSchema = new mongoose.Schema({
     type: String,
     ref: "Users",
     required: true,
-    CreatedOn: Date,
-    questionStatus: Boolean,
   },
+  createdOn: Date,
+  active: Boolean,
+  type:String,
   question: [
     {
     lang: { type: String, required: true }, //can be eng,fin,swd language
-    text:String, // question string eg how old are you
-      active: Boolean,
-    },
-  ]
+    question:{ type: String, required: true }, // question string eg how old are you
+  },
+]
 });
 
 

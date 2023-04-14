@@ -1,7 +1,6 @@
 import express from 'express';
 import { addTemplate, getTemplate } from '../controllers/templatesController.js';
-const templateRoute = express.Router()
+export const templateRoute = express.Router()
 
-templateRoute.get('/',)
-templateRoute.get('/tmpt', getTemplate);
-templateRoute.post('/tmpt', addTemplate);
+templateRoute.get('/', getTemplate);
+templateRoute.post('/', addTemplate);

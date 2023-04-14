@@ -6,14 +6,14 @@ export const questionsSchema = new mongoose.Schema({
         type: String,
         ref: "Users",
         required: true,
-        CreatedOn: Date,
-        questionStatus: Boolean,
     },
+    createdOn: Date,
+    active: Boolean,
+    type: String,
     question: [
         {
             lang: { type: String, required: true },
-            text: String,
-            active: Boolean,
+            question: { type: String, required: true },
         },
     ]
 });

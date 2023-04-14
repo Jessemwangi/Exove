@@ -1,22 +1,22 @@
 import mongoose from "mongoose";
 
-export const CategorySchema = new mongoose.Schema({
-  _id: { type: String, required: true }, // your custom ID field
-  name: { type: String, required: true },
-  description: { type: String },
-  questions: { type: [mongoose.Schema.Types.String] ,ref:"Question_c" },
-});
+// export const CategorySchema = new mongoose.Schema({
+//   _id: { type: String, required: true }, // your custom ID field
+//   name: { type: String, required: true },
+//   description: { type: String },
+//   questions: { type: [mongoose.Schema.Types.String] ,ref:"Question_c" },
+// });
 
-export const Category_c = mongoose.model('Category_c', CategorySchema);
+// export const Category_c = mongoose.model('Category_c', CategorySchema);
 
-const questionSchema = new mongoose.Schema({
-    _id: { type: String, required: true }, // your custom ID field
-    category: { type: String, ref: 'Category_c', required: true },
-    text: { type: String, required: true },
-    language: { type: String, required: true },
-  });
+// const questionSchema = new mongoose.Schema({
+//     _id: { type: String, required: true }, // your custom ID field
+//     category: { type: String, ref: 'Category_c', required: true },
+//     text: { type: String, required: true },
+//     language: { type: String, required: true },
+//   });
   
-  export const Question_c = mongoose.model('Question_c', questionSchema);
+//   export const Question_c = mongoose.model('Question_c', questionSchema);
   
 
   export const templateSchema = new mongoose.Schema({

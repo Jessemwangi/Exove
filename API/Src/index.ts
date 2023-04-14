@@ -11,6 +11,7 @@ import { reqPicksRoutes } from './routes/picksRoute.js';
 import { reportsRoutes } from './routes/reportsRoute.js';
 import { approvalsRoutes } from './routes/approvalsRoute.js';
 import { categoryRoute } from './routes/categoryRoute.js';
+import { templateRoute } from './routes/templateRoute.js';
 
 const app = express()
 app.use(express.json())
@@ -23,6 +24,7 @@ apiRouter.use('/auth', authRoutes);
 apiRouter.use('/', defaultRoutes);
 apiRouter.use('/question', questionRoute);
 apiRouter.use('/feeds', feedsRoutes);
+apiRouter.use('/template',templateRoute)
 apiRouter.use('/category',categoryRoute)
 apiRouter.use('/picks', reqPicksRoutes);
 apiRouter.use('/report', reportsRoutes);

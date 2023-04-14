@@ -1,18 +1,4 @@
 import mongoose from "mongoose";
-export const CategorySchema = new mongoose.Schema({
-    _id: { type: String, required: true },
-    name: { type: String, required: true },
-    description: { type: String },
-    questions: { type: [mongoose.Schema.Types.String], ref: "Question_c" },
-});
-export const Category_c = mongoose.model('Category_c', CategorySchema);
-const questionSchema = new mongoose.Schema({
-    _id: { type: String, required: true },
-    category: { type: String, ref: 'Category_c', required: true },
-    text: { type: String, required: true },
-    language: { type: String, required: true },
-});
-export const Question_c = mongoose.model('Question_c', questionSchema);
 export const templateSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     title: { type: String, required: true },

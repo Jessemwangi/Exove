@@ -43,12 +43,12 @@ export const addTemplate = async (req, res) => {
     }
     const newTemplate = {
         _id: primaryKey,
-        ...httpData,
+        templateTitle: httpData.templateTitle,
         createdOn: new Date,
+        categories: httpData.categories,
         createdBy: "Hr Jesse",
         active: true,
     };
-    console.log("template data .......", newTemplate);
     try {
         await dbconnect();
         const template = await new Template(newTemplate).save();

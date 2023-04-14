@@ -1,20 +1,33 @@
 export interface IQCategory {
-  categoryId: String,
-  categoryName:String
-  questions: IQuestionsInCategory[];
+  _id: String,
+  categoryName: String,
+  description?:String,
+  questions?: String[];
+  createdOn: Date,
+  createdBy: String,
+  categoryStatus:Boolean,
 }
 
-export interface IQuestionsInCategory {
-  questionId: String;
-  questions: IQuestionLang[]; // hold an array of questions
- 
+export interface IQuestion {
+  _id: String;
+  category: String,
+  createdBy: String,
+  createdOn: Date;
+  active: Boolean,
+  type: String,
+  question: IQuestionLang[];// hold an array of questions
 }
 
 interface IQuestionLang{
+  _id:String,
   lang: String,
-  question: String,
-  questionsAnswer?:String
+  question?: String,
+  answer?: String
+  answeredOn?:Date,
 }
+
+// questions ends 
+
 export interface IApprovals {
   _id: String,
   createdOn: Date,
@@ -43,16 +56,22 @@ export interface IEntityName {
 // feedback interface
 export interface IFeedBacks {
   _id: String;
-  userId: String; // session logged in user
   templateId: String;
+  userId: String; // session logged in user
   requestpicksId: String; // feedback to from the dashboard
-  createdOn: String;
-  responseByDate: String;
+  feedbackTo:String,
   progress: String;
- responseDateLog: Date[]; // any time and update is made the date will be logged here
-  questionSections: IQCategory[];
+  responseByDate: String;
+  responseDateLog: Date[]; // any time and update is made the date will be logged here
+  categories: IFCategory[];
+  createdOn: String;
   submitted: Boolean;
   submittedOn: Date;
+}
+export interface IFCategory{
+  category: String;
+  questions:IQuestionLang,
+
 }
 
 // fed back interface ends ...
@@ -91,23 +110,6 @@ export interface INotifier {
 
 // Notification interface ends ..
 
-export interface IQuestionCats {
-  _id: String;
-  name: String;
-  createdOn: Date;
-  createdBy: String;
-  categoryStatus: Boolean;
-  questions:IQuestions[],
-}
-
-export interface IQuestions {
-  _id: String;
-  question: String;
-  questionType: String;
-  questionStatus: Boolean;
-  createdBy: String;
-  qCreatedOn: Date;
-}
 
 // RequestPicks interface  start
 export interface IRequestPicks {
@@ -143,11 +145,16 @@ export interface IRoles {
 export interface ITemplates {
   _id: String;
   templateTitle: String;
-  questionSections: IQCategory[];
-  templateStatus: Boolean;
-  transacteOn:Date,
+  createdOn: Date,
+  createdBy:String
+  categories: ICat_Quest[];
+  active: Boolean;
 }
 
+export interface ICat_Quest{
+  category: String,
+  questions:String[],
+}
 // templates inteface ends ..
 
 export interface IUserRoles {
