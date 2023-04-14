@@ -1,12 +1,12 @@
 import express from 'express';
-import { getQuestions } from '../controllers/questionController.js';
+import { addQuestion, getQuestion } from '../controllers/questionController.js';
 
 export const questionRoute = express.Router()
 
 
-questionRoute.get('/',getQuestions);
+questionRoute.post('/', addQuestion);
+questionRoute.get('/', getQuestion);
 questionRoute.get('/:id',);
-questionRoute.post('/',);
 questionRoute.delete('/:id',);
 questionRoute.put('/',);
 questionRoute.patch('/',);

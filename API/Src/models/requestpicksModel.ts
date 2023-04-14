@@ -10,6 +10,7 @@ export const requestpicksSchema= new mongoose.Schema({
       userId: String,
       selectionStatus: Boolean, // allow the HR to approve or disapprove,
       selectedBy: String,
+      feedBackSubmitted:Boolean, // when the feedback is submmitted we update to true
     },
     ], // an array of user select to give feedback, Hr can increase this number endless,
     submitted: Boolean,

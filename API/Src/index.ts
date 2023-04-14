@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import { serverConfig } from './Configs/serverConfig.js';
 import cookieParser from 'cookie-parser';
 import  {questionRoute}  from "./routes/questionRoute.js";
@@ -10,6 +10,8 @@ import { rolesRoutes } from './routes/rolesRoute.js';
 import { reqPicksRoutes } from './routes/picksRoute.js';
 import { reportsRoutes } from './routes/reportsRoute.js';
 import { approvalsRoutes } from './routes/approvalsRoute.js';
+import { categoryRoute } from './routes/categoryRoute.js';
+import { templateRoute } from './routes/templateRoute.js';
 
 const app = express()
 app.use(express.json())
@@ -20,13 +22,15 @@ const apiRouter = express.Router();
 // Mount existing routers as sub-routers
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/', defaultRoutes);
-apiRouter.use('/questions', questionRoute);
+apiRouter.use('/question', questionRoute);
 apiRouter.use('/feeds', feedsRoutes);
+apiRouter.use('/template',templateRoute)
+apiRouter.use('/category',categoryRoute)
 apiRouter.use('/picks', reqPicksRoutes);
-apiRouter.use('/reports', reportsRoutes);
+apiRouter.use('/report', reportsRoutes);
 apiRouter.use('/roles', rolesRoutes);
 apiRouter.use('/jesse', jesseRoutes);
-apiRouter.use('/approvals',approvalsRoutes)
+apiRouter.use('/approval',approvalsRoutes)
 
 // Mount the apiRouter as a middleware
 app.use('/api', apiRouter);

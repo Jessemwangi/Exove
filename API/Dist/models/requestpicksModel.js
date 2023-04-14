@@ -9,6 +9,7 @@ export const requestpicksSchema = new mongoose.Schema({
             userId: String,
             selectionStatus: Boolean,
             selectedBy: String,
+            feedBackSubmitted: Boolean,
         },
     ],
     submitted: Boolean,
