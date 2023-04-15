@@ -15,14 +15,30 @@ export const getAllRequestPicks = async (req, res) => {
     }
 };
 export const getUserRequestPick = async (req, res) => {
-    const httpData = req.body;
-    if (!httpData) {
+    const userId = req.params.id;
+    if (!userId) {
         res.status(404).json("Post data not found or empty");
         return;
     }
     try {
         await dbconnect();
-        const userRequestPicks = await RequestPicks.find({ 'requestedTo': httpData }).lean().sort({ 'requestedOn': 1 }).exec();
+        const userRequestPicks = await RequestPicks.find({ 'requestedTo': userId }).lean().sort({ 'requestedOn': 1 }).exec();
+        await dbclose();
+        res.status(200).json(userRequestPicks);
+    }
+    catch (error) {
+        res.status(500).json("Internal server error");
+    }
+};
+export const getIdRequestPick = async (req, res) => {
+    const userId = req.params.id;
+    if (!userId) {
+        res.status(404).json("Post data not found or empty");
+        return;
+    }
+    try {
+        await dbconnect();
+        const userRequestPicks = await RequestPicks.find({ '_id': userId }).lean().sort({ 'requestedOn': 1 }).exec();
         await dbclose();
         res.status(200).json(userRequestPicks);
     }

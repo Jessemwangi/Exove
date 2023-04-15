@@ -1,10 +1,11 @@
 import express from 'express';
-import { createRequestPicks, getAllRequestPicks, getUserRequestPick, hrApprovesPicks, hrMassApprovesPicks, submitRequestPicks } from "../controllers/requestpicksController.js";
+import { createRequestPicks, getAllRequestPicks, getIdRequestPick, getUserRequestPick, hrApprovesPicks, hrMassApprovesPicks, submitRequestPicks } from "../controllers/requestpicksController.js";
 export const reqPicksRoutes = express.Router()
 
 
 
 reqPicksRoutes.get('/', getAllRequestPicks); // get all request picks  path :  /picks/
+reqPicksRoutes.get('/pick-id/:id', getIdRequestPick);
 reqPicksRoutes.get('/:id',getUserRequestPick); // get individual requestpicks after an hr has created it /picks/{userId}
 reqPicksRoutes.post('/', createRequestPicks);   //Hr create a requestpicks Path : /picks/createreqpick
 reqPicksRoutes.patch('/:id', submitRequestPicks);   //Hr create a requestpicks Path : /picks/{id}  
