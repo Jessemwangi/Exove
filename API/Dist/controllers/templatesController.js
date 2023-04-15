@@ -1,10 +1,17 @@
-import { Template } from '../dbcontext/dbContext.js';
-import { dbclose, dbconnect } from '../Configs/dbConnect.js';
+import { Template } from "../dbcontext/dbContext.js";
+import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
 export const getTemplates = async (req, res) => {
     try {
         await dbconnect();
-        const templates = await Template.find({});
+        const templates = await Template.find({})
+            .populate({
+            path: "categories",
+            populate: {
+                path: "questions",
+            },
+        })
+            .exec();
         await dbclose();
         res.status(200).json(templates);
     }
@@ -16,14 +23,12 @@ export const getTemplates = async (req, res) => {
 export const getTemplate = async (req, res) => {
     try {
         await dbconnect();
-        const template = await Template.find({ active: true })
+        const template = await Template.findOne({ active: true }).select("-__v")
             .populate({
-            path: 'categories.category',
-            select: '-__v',
-        })
-            .populate({
-            path: 'categories.questions',
-            select: '-__v',
+            path: "categories",
+            populate: {
+                path: "questions",
+            },
         })
             .exec();
         await dbclose();
@@ -31,7 +36,7 @@ export const getTemplate = async (req, res) => {
     }
     catch (err) {
         console.error(err);
-        res.status(500).send('Server error');
+        res.status(500).send("Server error");
     }
 };
 export const addTemplate = async (req, res) => {
@@ -44,7 +49,7 @@ export const addTemplate = async (req, res) => {
     const newTemplate = {
         _id: primaryKey,
         templateTitle: httpData.templateTitle,
-        createdOn: new Date,
+        createdOn: new Date(),
         categories: httpData.categories,
         createdBy: "Hr Jesse",
         active: true,
@@ -52,17 +57,49 @@ export const addTemplate = async (req, res) => {
     try {
         await dbconnect();
         const template = await new Template(newTemplate).save();
-        await dbclose();
         if (template) {
-            res.status(200).json('saved');
+            const setDefault = await Template.updateMany({ _id: { $ne: primaryKey } }, { active: false });
+            if (setDefault.nModified === 0) {
+                res.status(403).json("failed to set template as default");
+            }
+            else {
+                res.status(200).json("saved");
+            }
         }
         else {
-            res.status(501).send('saving failed');
+            res.status(501).send("saving failed");
+        }
+        await dbclose();
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).send("Server error");
+    }
+};
+export const setDefaultTemplate = async (req, res) => {
+    const httpData = req.params.id;
+    console.log(httpData);
+    if (!httpData) {
+        res.status(404).json("Post data not found or empty");
+        return;
+    }
+    try {
+        await dbconnect();
+        const template = await Template.updateOne({ _id: httpData }, { active: true });
+        if (template.nModified !== 0) {
+            const result = await Template.updateMany({ _id: { $ne: httpData } }, { active: false });
+            await dbclose();
+            if (result.nModified === 0) {
+                res.status(403).json("failed to remove other template as default");
+            }
+            else {
+                res.status(200).json("template set as default");
+            }
         }
     }
     catch (err) {
         console.error(err);
-        res.status(500).send('Server error');
+        res.status(500).send("Server error");
     }
 };
 //# sourceMappingURL=templatesController.js.map

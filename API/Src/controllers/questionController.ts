@@ -18,6 +18,20 @@ export const getQuestion =async (req:Request, res:Response) => {
  
 }
 
+export const getQuestionId = async (req: Request, res: Response) => {
+  const {id} = req.params
+  try {
+     
+      await dbconnect()
+      const qusetions:IQuestion = await Question.findOne({"_id":id}).select('-__v').lean();
+      await dbclose()
+      res.status(200).json(qusetions)
+  } catch (error) {
+      res.status(500).json('error')
+      console.log(error)
+  }
+ 
+}
 
 export const addQuestion =async (req:Request, res:Response) => {
   try {
@@ -53,3 +67,4 @@ export const addQuestion =async (req:Request, res:Response) => {
   }
  
 }
+

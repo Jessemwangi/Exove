@@ -13,6 +13,19 @@ export const getQuestion = async (req, res) => {
         console.log(error);
     }
 };
+export const getQuestionId = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await dbconnect();
+        const qusetions = await Question.findOne({ "_id": id }).select('-__v').lean();
+        await dbclose();
+        res.status(200).json(qusetions);
+    }
+    catch (error) {
+        res.status(500).json('error');
+        console.log(error);
+    }
+};
 export const addQuestion = async (req, res) => {
     try {
         const httpData = req.body;
