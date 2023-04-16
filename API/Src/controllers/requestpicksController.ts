@@ -23,7 +23,7 @@ export const getAllRequestPicks =async (req:Request,res:Response) => {
     // will be used to retrieve request
     try {
         await dbconnect();
-        const requestPicks: IRequestPicks[] = await RequestPicks.find({}).sort({ requestedOn: 1 }).exec();
+        const requestPicks: IRequestPicks[] = await RequestPicks.find({}).select('-__v').sort({ requestedOn: 1 }).exec();
         await dbclose()
         res.status(200).json(requestPicks);
       } catch (error) {
@@ -152,8 +152,8 @@ export const createRequestPicks = async (req: Request, res: Response) => {
 export const submitRequestPicks = async (req: Request, res: Response) => {
     // check if user is authenticated and also we will check if current user is the same as requestedTo or in the role of hr
   const requestHttpData: ISelectedList = req.body;
+ 
   const id = req.params.id;
-  console.log('requestHttpData', requestHttpData , 'ID NUMEBER ' , id)
   
     try {
       if (!requestHttpData) {
@@ -174,16 +174,19 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
       };
       await dbconnect();
       const result = await RequestPicks.updateOne(
-        { _id: id },
+        { "_id": id },
         { $push: { SelectedList: requestHttpData } }
       );
-      if (result.nModified === 0) {
+      console.log('update result ...', result)
+      if (result.modifiedCount === 0) {
         res.status(404).json("No document was updated");
         return;
       }
+      else {
+        res.status(200).json("Data saved successfully!");
+      }
       // await addApprovals(approvalData);
       await dbclose();
-      res.status(200).json("Data saved successfully!");
     } catch (error) {
       res.status(500).json("server responded with an error");
       console.log(error);
@@ -209,7 +212,7 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
         { _id: requestPicksId, 'SelectedList.userId': userId },
         { $set: { 'SelectedList.$.selectionStatus': selectionStatus, 'SelectedList.$.selectedBy': selectedBy} },
       );
-      if (result.nModified === 0) {
+      if (result.modifiedCount === 0) {
         res.status(404).json("No document was updated");
         return;
       }

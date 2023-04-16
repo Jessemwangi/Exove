@@ -62,7 +62,7 @@ export const submitFeedBack = async (req, res) => {
 };
 const updateRequestPicks = async (requestpicksId, userId) => {
     const result = await RequestPicks.updateOne({ _id: requestpicksId, 'SelectedList.userId': userId, }, { $set: { 'SelectedList.$.feedBackSubmitted': true } });
-    return result.nModified;
+    return result.modifiedCount;
 };
 export const addFeedBack = async (req, res) => {
     const httpData = req.body;

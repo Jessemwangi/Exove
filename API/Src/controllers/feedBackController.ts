@@ -89,7 +89,7 @@ const updateRequestPicks = async (requestpicksId:String,userId:String ):Promise<
     { _id: requestpicksId, 'SelectedList.userId': userId, },
     { $set: { 'SelectedList.$.feedBackSubmitted': true} },
   );
-  return result.nModified;
+  return result.modifiedCount;
 }
 
 export const addFeedBack = async (req: Request, res: Response) => {

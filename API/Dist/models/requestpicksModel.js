@@ -6,8 +6,8 @@ export const requestpicksSchema = new mongoose.Schema({
     requestedOn: { type: Boolean, default: new Date, required: true },
     SelectedList: [
         {
-            userId: String,
-            selectionStatus: Boolean,
+            userId: { type: String, required: true },
+            selectionStatus: { type: Boolean, required: true },
             selectedBy: { type: String, required: true },
             feedBackSubmitted: { type: Boolean, default: false, required: true },
         },

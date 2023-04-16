@@ -76,7 +76,7 @@ export const addTemplate = async (req: Request, res: Response) => {
         { active: false }
       );
 
-      if (setDefault.nModified === 0) {
+      if (setDefault.modifiedCount === 0) {
         res.status(403).json("failed to set template as default");
       } else {
         res.status(200).json("saved");
@@ -109,11 +109,11 @@ export const setDefaultTemplate = async (req: Request, res: Response) => {
       { _id: httpData },
       { active: true }
     );
-    if (template.nModified !== 0) {
+    if (template.modifiedCount !== 0) {
       const result = await Template.updateMany({ _id: { $ne: httpData } }, { active: false });
     
       await dbclose();
-      if (result.nModified === 0) {
+      if (result.modifiedCount === 0) {
         res.status(403).json("failed to remove other template as default");
       } else {
         res.status(200).json("template set as default");

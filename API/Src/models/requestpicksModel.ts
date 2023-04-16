@@ -7,8 +7,8 @@ export const requestpicksSchema= new mongoose.Schema({
   requestedOn: { type: Boolean, default: new Date, required: true },
   SelectedList: [
     {
-      userId: String,
-      selectionStatus: Boolean, // allow the HR to approve or disapprove,
+      userId: { type: String, required: true },
+      selectionStatus: { type: Boolean, required: true }, // allow the HR to approve or disapprove,
       selectedBy: { type: String, required: true },
       feedBackSubmitted:{ type: Boolean, default:false, required: true }, // when the feedback is submmitted we update to true
     },

@@ -120,7 +120,6 @@ export interface IRequestPicks {
   SelectedList: ISelectedList[], // an array of user select to give feedback, Hr can increase this number endless,
   submitted: Boolean,
   submittedOn: Date | null,
-  feedBackSubmitted?:Boolean,
 }
 
 export interface ISelectedList {

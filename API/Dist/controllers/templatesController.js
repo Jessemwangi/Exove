@@ -64,7 +64,7 @@ export const addTemplate = async (req, res) => {
         const template = await new Template(newTemplate).save();
         if (template) {
             const setDefault = await Template.updateMany({ _id: { $ne: primaryKey } }, { active: false });
-            if (setDefault.nModified === 0) {
+            if (setDefault.modifiedCount === 0) {
                 res.status(403).json("failed to set template as default");
             }
             else {
@@ -91,10 +91,10 @@ export const setDefaultTemplate = async (req, res) => {
     try {
         await dbconnect();
         const template = await Template.updateOne({ _id: httpData }, { active: true });
-        if (template.nModified !== 0) {
+        if (template.modifiedCount !== 0) {
             const result = await Template.updateMany({ _id: { $ne: httpData } }, { active: false });
             await dbclose();
-            if (result.nModified === 0) {
+            if (result.modifiedCount === 0) {
                 res.status(403).json("failed to remove other template as default");
             }
             else {
