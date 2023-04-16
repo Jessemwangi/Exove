@@ -22,7 +22,7 @@ export const getUserRequestPick = async (req, res) => {
     }
     try {
         await dbconnect();
-        const userRequestPicks = await RequestPicks.find({ 'requestedTo': userId }).lean().sort({ 'requestedOn': 1 }).exec();
+        const userRequestPicks = await RequestPicks.find({ 'requestedTo': userId }).lean().sort({ requestedOn: 1 }).exec();
         await dbclose();
         res.status(200).json(userRequestPicks);
     }
@@ -31,14 +31,14 @@ export const getUserRequestPick = async (req, res) => {
     }
 };
 export const getIdRequestPick = async (req, res) => {
-    const userId = req.params.id;
-    if (!userId) {
+    const id = req.params.id;
+    if (!id) {
         res.status(404).json("Post data not found or empty");
         return;
     }
     try {
         await dbconnect();
-        const userRequestPicks = await RequestPicks.find({ '_id': userId }).lean().sort({ 'requestedOn': 1 }).exec();
+        const userRequestPicks = await RequestPicks.findOne({ '_id': id }).lean().sort({ 'requestedOn': 1 }).exec();
         await dbclose();
         res.status(200).json(userRequestPicks);
     }

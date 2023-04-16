@@ -10,8 +10,10 @@ export const getTemplates = async (req: Request, res: Response) => {
     const templates: ITemplates[] = await Template.find({})
     .populate({
       path: "categories",
+      select:'-__v -_id',
       populate: {
         path: "questions",
+        select:'-__v',
       },
     })
       .exec();
@@ -30,8 +32,11 @@ export const getTemplate = async (req: Request, res: Response) => {
     const template: ITemplates = await Template.findOne({ active: true }). select("-__v")
     .populate({
       path: "categories",
+      select:'-__v -_id',
       populate: {
         path: "questions",
+        select:'-__v',
+         match: {"question.active":true },
       },
     })
       .exec();

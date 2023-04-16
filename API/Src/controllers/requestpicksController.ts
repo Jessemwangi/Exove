@@ -43,7 +43,7 @@ export const getUserRequestPick = async  (req:Request,  res:Response) => {
     try {
         await dbconnect();
     const userRequestPicks: IRequestPicks[] =
-    await RequestPicks.find({ 'requestedTo': userId}).lean().sort({ 'requestedOn': 1}).exec();
+    await RequestPicks.find({ 'requestedTo': userId}).lean().sort({ requestedOn: 1}).exec();
         await dbclose();
         res.status(200).json(userRequestPicks)
 } catch (error) {
@@ -53,8 +53,8 @@ export const getUserRequestPick = async  (req:Request,  res:Response) => {
 }
 
 export const getIdRequestPick = async  (req:Request,  res:Response) => {
-  const userId = req.params.id;
-  if (!userId) {
+  const id = req.params.id;
+  if (!id) {
       res.status(404).json("Post data not found or empty");
       return;
   }
@@ -63,8 +63,8 @@ export const getIdRequestPick = async  (req:Request,  res:Response) => {
   //     await RequestPicks.find({ 'SelectedList.userId': httpData, 'SelectedList.selectionStatus': true }, { 'SelectedList.$': 1 }).lean().exec();
   try {
       await dbconnect();
-  const userRequestPicks: IRequestPicks[] =
-  await RequestPicks.find({ '_id': userId}).lean().sort({ 'requestedOn': 1}).exec();
+  const userRequestPicks: IRequestPicks =
+  await RequestPicks.findOne({ '_id': id}).lean().sort({ 'requestedOn': 1}).exec();
       await dbclose();
       res.status(200).json(userRequestPicks)
 } catch (error) {

@@ -1,10 +1,10 @@
 import express from 'express';
-import { getFeeds } from '../controllers/feedBackController.js';
+import { addFeedBack, getFeeds, submitFeedBack } from '../controllers/feedBackController.js';
 export const feedsRoutes = express.Router();
 feedsRoutes.get('/', getFeeds);
 feedsRoutes.get('/:id');
-feedsRoutes.post('/');
+feedsRoutes.post('/', addFeedBack);
 feedsRoutes.delete('/:id');
 feedsRoutes.put('/');
-feedsRoutes.patch('/');
+feedsRoutes.patch('/submit/:id', submitFeedBack);
 //# sourceMappingURL=feedBackRoute.js.map
