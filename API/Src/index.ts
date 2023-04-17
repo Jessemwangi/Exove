@@ -23,7 +23,7 @@ const apiRouter = express.Router();
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/', defaultRoutes);
 apiRouter.use('/question', questionRoute);
-apiRouter.use('/feeds', feedsRoutes);
+apiRouter.use('/feedback', feedsRoutes);
 apiRouter.use('/template',templateRoute)
 apiRouter.use('/category',categoryRoute)
 apiRouter.use('/picks', reqPicksRoutes);

@@ -12,16 +12,20 @@ export const feedbackSchema = new mongoose.Schema({
     progress: String,
     responseByDate: Date,
     responseDateLog: [Date],
-    categories: [{
+    categories: [
+        {
             category: { type: String, ref: 'Category', required: true },
-            questions: [{
+            questions: [
+                {
                     _id: { type: String, ref: 'Question', required: true },
                     lang: String,
                     question: String,
                     answer: { type: String, required: true },
                     answeredOn: { type: Date, default: Date.now },
-                }],
-        }],
+                }
+            ],
+        }
+    ],
     createdOn: Date,
     submitted: Boolean,
     submittedOn: Date,

@@ -56,17 +56,17 @@ export interface IEntityName {
 // feedback interface
 export interface IFeedBacks {
   _id: String;
-  templateId: String;
+  template: String;
   userId: String; // session logged in user
   requestpicksId: String; // feedback to from the dashboard
   feedbackTo:String,
   progress: String;
-  responseByDate: String;
+  responseByDate?: String;
   responseDateLog: Date[]; // any time and update is made the date will be logged here
   categories: IFCategory[];
-  createdOn: String;
+  createdOn: Date;
   submitted: Boolean;
-  submittedOn: Date;
+  submittedOn?: Date;
 }
 export interface IFCategory{
   category: String;
@@ -120,13 +120,13 @@ export interface IRequestPicks {
   SelectedList: ISelectedList[], // an array of user select to give feedback, Hr can increase this number endless,
   submitted: Boolean,
   submittedOn: Date | null,
-  feedBackSubmitted?:Boolean,
 }
 
 export interface ISelectedList {
   userId: String;
   selectionStatus: Boolean; // allow the HR to approve or disapprove,
   selectedBy: String;
+  feedBackSubmitted:Boolean,
 }
 
 // RequestPicks interface ends
@@ -145,6 +145,7 @@ export interface IRoles {
 export interface ITemplates {
   _id: String;
   templateTitle: String;
+  instructions:String,
   createdOn: Date,
   createdBy:String
   categories: ICat_Quest[];

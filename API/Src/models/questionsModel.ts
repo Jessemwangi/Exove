@@ -10,7 +10,7 @@ export const questionsSchema = new mongoose.Schema({
   },
   createdOn: Date,
   active: Boolean,
-  type:String,
+  type: { type: String, required: true, default:"String"},
   question: [
     {
     lang: { type: String, required: true }, //can be eng,fin,swd language
