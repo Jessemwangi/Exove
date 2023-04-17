@@ -4,7 +4,7 @@ export const requestpicksSchema= new mongoose.Schema({
   _id:  { type: String, required: true },
   requestedTo: { type: String, required: true }, // the person who will recieve and select five individual to give  him /her feedback.
   requestedBy: { type: String, required: true }, // user in the role of Hr or higher level
-  requestedOn: { type: Boolean, default: new Date, required: true },
+  requestedOn: { type: Date, default: new Date, required: true },
   SelectedList: [
     {
       userId: { type: String, required: true },

@@ -62,7 +62,7 @@ export const addTemplate = async (req: Request, res: Response) => {
     templateTitle: httpData.templateTitle,
     createdOn: new Date(),
     categories: httpData.categories,
-    createdBy: "Hr Jesse",
+    createdBy:httpData.createBy,
     active: true,
   };
 

@@ -3,7 +3,7 @@ export const requestpicksSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     requestedTo: { type: String, required: true },
     requestedBy: { type: String, required: true },
-    requestedOn: { type: Boolean, default: new Date, required: true },
+    requestedOn: { type: Date, default: new Date, required: true },
     SelectedList: [
         {
             userId: { type: String, required: true },
