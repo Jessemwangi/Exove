@@ -145,6 +145,7 @@ export interface IRoles {
 export interface ITemplates {
   _id: String;
   templateTitle: String;
+  instructions:String,
   createdOn: Date,
   createdBy:String
   categories: ICat_Quest[];

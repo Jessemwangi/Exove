@@ -41,7 +41,7 @@ const verifiyFeedbackFrom  = async (requestpicksId: String,feedbackTo:String, us
       requestedTo: feedbackTo,
       'SelectedList.userId': userId,
       'SelectedList.selectionStatus': true,
-      // 'SelectedList.feedBackSubmitted':false,
+       'SelectedList.feedBackSubmitted':false,
     }
   ).lean().sort({ 'requestedOn': 1 }).exec();
 
@@ -56,11 +56,11 @@ const verifiyFeedbackFrom  = async (requestpicksId: String,feedbackTo:String, us
 
 export const submitFeedBack = async (req: Request, res: Response) => {
   const { id } = req.params
-  const { feedbackTo, userId,requestpicksId } = req.body
+  const { feedbackTo, userId } = req.body
   console.log(feedbackTo, userId )
-  if (feedbackTo && userId && requestpicksId && id) {
+  if (feedbackTo && userId && id) {
     await dbconnect();
-    const feedback = await verifiyFeedbackFrom( requestpicksId,feedbackTo,  userId)
+    const feedback = await verifiyFeedbackFrom( id,feedbackTo,  userId)
        
     if (!feedback) {
       res.status(405).json("Not authorized to Modify this feedback");

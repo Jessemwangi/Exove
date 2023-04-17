@@ -32,7 +32,6 @@ export const getTemplate = async (req, res) => {
             populate: {
                 path: "questions",
                 select: '-__v',
-                match: { "question.active": true },
             },
         })
             .exec();
@@ -54,6 +53,7 @@ export const addTemplate = async (req, res) => {
     const newTemplate = {
         _id: primaryKey,
         templateTitle: httpData.templateTitle,
+        instructions: httpData.instructions,
         createdOn: new Date(),
         categories: httpData.categories,
         createdBy: httpData.createBy,
