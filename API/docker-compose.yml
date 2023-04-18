@@ -16,7 +16,9 @@ services:
       - LDAP_DOMAIN=exovecf.com
       - LDAP_ADMIN_USERNAME=admin
       - LDAP_ADMIN_PASSWORD=admin_pass
+
       - LDAP_CONFIG_PASSWORD=admin_config
+
       - "LDAP_BASE_DN=dc=exovecf,dc=com"
       - LDAP_TLS_CRT_FILENAME=server.crt
       - LDAP_TLS_KEY_FILENAME=server.key
