@@ -6,7 +6,7 @@ import { addToNotification, checkUserRoles, } from "../utilities/functions.js";
 export const getAllRequestPicks = async (req, res) => {
     try {
         await dbconnect();
-        const requestPicks = await RequestPicks.find({}).sort({ requestedOn: 1 }).exec();
+        const requestPicks = await RequestPicks.find({}).select('-__v').sort({ requestedOn: 1 }).exec();
         await dbclose();
         res.status(200).json(requestPicks);
     }
@@ -15,14 +15,30 @@ export const getAllRequestPicks = async (req, res) => {
     }
 };
 export const getUserRequestPick = async (req, res) => {
-    const httpData = req.body;
-    if (!httpData) {
+    const userId = req.params.id;
+    if (!userId) {
         res.status(404).json("Post data not found or empty");
         return;
     }
     try {
         await dbconnect();
-        const userRequestPicks = await RequestPicks.find({ 'requestedTo': httpData }).lean().sort({ 'requestedOn': 1 }).exec();
+        const userRequestPicks = await RequestPicks.find({ 'requestedTo': userId }).lean().sort({ requestedOn: 1 }).exec();
+        await dbclose();
+        res.status(200).json(userRequestPicks);
+    }
+    catch (error) {
+        res.status(500).json("Internal server error");
+    }
+};
+export const getIdRequestPick = async (req, res) => {
+    const id = req.params.id;
+    if (!id) {
+        res.status(404).json("Post data not found or empty");
+        return;
+    }
+    try {
+        await dbconnect();
+        const userRequestPicks = await RequestPicks.findOne({ '_id': id }).lean().sort({ 'requestedOn': 1 }).exec();
         await dbclose();
         res.status(200).json(userRequestPicks);
     }
@@ -99,7 +115,6 @@ export const createRequestPicks = async (req, res) => {
 export const submitRequestPicks = async (req, res) => {
     const requestHttpData = req.body;
     const id = req.params.id;
-    console.log('requestHttpData', requestHttpData, 'ID NUMEBER ', id);
     try {
         if (!requestHttpData) {
             res.status(404).json("Post data not found or empty");
@@ -118,13 +133,16 @@ export const submitRequestPicks = async (req, res) => {
             createdOn: new Date(),
         };
         await dbconnect();
-        const result = await RequestPicks.updateOne({ _id: id }, { $push: { SelectedList: requestHttpData } });
-        if (result.nModified === 0) {
+        const result = await RequestPicks.updateOne({ "_id": id }, { $push: { SelectedList: requestHttpData } });
+        console.log('update result ...', result);
+        if (result.modifiedCount === 0) {
             res.status(404).json("No document was updated");
             return;
         }
+        else {
+            res.status(200).json("Data saved successfully!");
+        }
         await dbclose();
-        res.status(200).json("Data saved successfully!");
     }
     catch (error) {
         res.status(500).json("server responded with an error");
@@ -144,7 +162,7 @@ export const hrApprovesPicks = async (req, res) => {
         console.log(req.body, req.params.id);
         await dbconnect();
         const result = await RequestPicks.updateOne({ _id: requestPicksId, 'SelectedList.userId': userId }, { $set: { 'SelectedList.$.selectionStatus': selectionStatus, 'SelectedList.$.selectedBy': selectedBy } });
-        if (result.nModified === 0) {
+        if (result.modifiedCount === 0) {
             res.status(404).json("No document was updated");
             return;
         }

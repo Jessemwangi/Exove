@@ -1,38 +1,38 @@
 import mongoose from "mongoose";
 
-export const feedBacksSchema = new mongoose.Schema({
-  _id: { type: Number, required: true },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Users",
-    required: true,
-  }, // session logged in user
-  templateId: { type: String, required: true, ref: "Templates" },
-  requestpicksId: { type: String, required: true, ref: "Templates" },
+export const feedbackSchema = new mongoose.Schema({
+  _id: { type: String, required: true }, // your custom ID field
+  template: { type: String, ref: 'Template', required: true },
+  userId: { type: String,  required: true },  // session logged in user
+  requestpicksId: { type: String, required: true, ref: "RequestPicks" }, // get user giving feedback in this pic, during complete update the user as submmitted
   feedbackTo: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.String,
     ref: "Users",
     required: true,
-  }, // feedback to from the dashboard
-  createdOn: {
-    type: Date,
-    default: Date.now,
-    required: true,
-  },
-  responseByDate: Date,
+  }, // feedback to from the dashboard 
   progress: String,
-  responseDateLog: [Date], // any time and update is made the date will be logged here
-  questionSections: [
+  responseByDate: Date,
+  responseDateLog: [Date], 
+  categories: [
     {
-      categoryId: { type: String, required: true },
-      categoryName: { type: String, required: true },
-      questions:[ {
-        questionId: { type: String, required: true },
-        question: { type: String, required: true },
-        questionsAnswer: { type: String, required: true }, // hold an array of questions
-      }],
-    },
+    category: { type: String, ref: 'Category' , required: true},
+    questions: [
+      {
+      _id: { type: String, ref: 'Question', required: true },
+      lang: String,
+      question:String,
+      answer: { type: String, required: true },
+      answeredOn:{ type: Date, default: Date.now },
+      }
+    ],
+  }
   ],
+  createdOn:Date,
   submitted: Boolean,
   submittedOn: Date,
 });
+
+///  once feedback is submitted this will happen
+
+ // 1. get info of the person giving feedback, and the person receiving feedback from RequestPicks and update feedBackSubmitted to true.
+ // set progress to Complete

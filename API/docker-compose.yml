@@ -16,7 +16,9 @@ services:
       - LDAP_DOMAIN=exovecf.com
       - LDAP_ADMIN_USERNAME=admin
       - LDAP_ADMIN_PASSWORD=admin_pass
-      - LDAP_CONFIG_PASSWORD=config_pass
+
+      - LDAP_CONFIG_PASSWORD=admin_config
+
       - "LDAP_BASE_DN=dc=exovecf,dc=com"
       - LDAP_TLS_CRT_FILENAME=server.crt
       - LDAP_TLS_KEY_FILENAME=server.key
@@ -25,7 +27,7 @@ services:
       - LDAP_READONLY_USER_USERNAME=user-ro
       - LDAP_READONLY_USER_PASSWORD=ro_pass
     networks:
-      - openldap
+      - openldap2
   
   phpldapadmin:
     image: osixia/phpldapadmin:latest
@@ -39,7 +41,7 @@ services:
     depends_on:
       - openldap
     networks:
-      - openldap
+      - openldap2
 
 networks:
   openldap:
