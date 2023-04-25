@@ -1,6 +1,13 @@
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { IApprovals, INotificationsSetting, INotifier, IRoles } from "../dbcontext/Interfaces.js";
-import { Approvals, Notifer, NotificationSetting, Roles } from "../dbcontext/dbContext.js";
+import { run } from "../Ldap/ldapTest.js";
+import jwt from 'jsonwebtoken';
+import { IApprovals, ILdapAuth, INotificationsSetting, INotifier, IRoles, ITemplates } from "../dbcontext/Interfaces.js";
+import { Approvals, Notifer, NotificationSetting, Roles, Template } from "../dbcontext/dbContext.js";
+import { Request, Response, NextFunction } from "express";
+
+interface RequestWithUser extends Request {
+  user?: ILdapAuth;
+}
 
 export const checkUserRoles = async (userId: String): Promise<Number | String> => {
   try {
@@ -46,4 +53,47 @@ export const userEnabledNotification = async (userId: String, entityName:String)
   return false;
 }
 
+
+export const searchTemplate = async (template: string): Promise<number> => {
+  const data = await Template.find({}).lean();
+  console.log(data)
+  return data.length
+}
+
+
+export const ldapAuthMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+  try {
+  const token = req.cookies.access_token;
+  if (token)
+  {
+    jwt.verify(token, "s3cr3t", (err:any, userInfo:any) => {
+      if (err){
+    console.log(err)
+      return res.status(403).json("Authentication token Not Valid");
+      }
+      const user: ILdapAuth = userInfo; 
+      req.body = {
+        ...req.body,user
+      }
+    });
+    return next();
+  }  
+ 
+    const username: string = req.body.username
+    const password: string = req.body.password
+ 
+    const user = await run(username, password);
+    console.log(user)
+    const settoken = jwt.sign({user},"s3cr3t");
+
+    console.log(user)
+
+   return res.cookie("access_token",settoken,{
+      httpOnly:true,
+      secure:true, 
+  }).status(200).json(user)
+  } catch (error) {
+   return res.status(401).send({ error: 'Invalid username or password' });
+  }
+};
 

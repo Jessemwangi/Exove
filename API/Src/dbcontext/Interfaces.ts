@@ -140,6 +140,7 @@ export interface IRoles {
   createdOn: Date;
 }
 
+
 // roles interface ends ..
 
 export interface ITemplates {
@@ -194,3 +195,16 @@ export interface IWorksReport {
   createdOn: Date;
   deactivatedOn: Date | null;
 }
+
+export interface ILdapAuth {
+
+  dn: string,
+  uid: string,
+  sn:string,
+  controls: string[],
+  objectClass:string[],
+  mail:string,
+  cn: string,
+  
+}
+

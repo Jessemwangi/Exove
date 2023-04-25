@@ -5,11 +5,9 @@ const dbuser = process.env.DBUSERNAME;
 const dbpass = process.env.DBPASSWORD;
 const uri = `mongodb+srv://${dbuser}:${dbpass}@cluster0.hounq81.mongodb.net/?retryWrites=true&w=majority`;
 const options = { useNewUrlParser: true, useUnifiedTopology: true, };
-console.log('Connected to MongoDB', dbuser, dbpass);
 export const dbconnect = async () => {
     try {
         await mongoose.connect(uri, options);
-        console.log('Connected to MongoDB', dbuser, dbpass);
         return 'Connected to MongoDB';
     }
     catch (err) {

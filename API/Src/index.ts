@@ -12,13 +12,14 @@ import { reportsRoutes } from './routes/reportsRoute.js';
 import { approvalsRoutes } from './routes/approvalsRoute.js';
 import { categoryRoute } from './routes/categoryRoute.js';
 import { templateRoute } from './routes/templateRoute.js';
+import { ldapAuthMiddleware } from './utilities/functions.js';
 
 const app = express()
 app.use(express.json())
 app.use(cookieParser())
 
 const apiRouter = express.Router();
-
+app.use(ldapAuthMiddleware);
 // Mount existing routers as sub-routers
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/', defaultRoutes);

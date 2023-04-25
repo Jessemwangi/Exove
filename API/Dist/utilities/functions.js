@@ -1,5 +1,7 @@
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { Approvals, Notifer, NotificationSetting, Roles } from "../dbcontext/dbContext.js";
+import { run } from "../Ldap/ldapTest.js";
+import jwt from 'jsonwebtoken';
+import { Approvals, Notifer, NotificationSetting, Roles, Template } from "../dbcontext/dbContext.js";
 export const checkUserRoles = async (userId) => {
     try {
         await dbconnect();
@@ -37,5 +39,41 @@ export const userEnabledNotification = async (userId, entityName) => {
         return notiSettingsData.entityname.includes(entityName);
     }
     return false;
+};
+export const searchTemplate = async (template) => {
+    const data = await Template.find({}).lean();
+    console.log(data);
+    return data.length;
+};
+export const ldapAuthMiddleware = async (req, res, next) => {
+    try {
+        const token = req.cookies.access_token;
+        if (token) {
+            jwt.verify(token, "s3cr3t", (err, userInfo) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(403).json("Authentication token Not Valid");
+                }
+                const user = userInfo;
+                req.body = {
+                    ...req.body, user
+                };
+            });
+            return next();
+        }
+        const username = req.body.username;
+        const password = req.body.password;
+        const user = await run(username, password);
+        console.log(user);
+        const settoken = jwt.sign({ user }, "s3cr3t");
+        console.log(user);
+        return res.cookie("access_token", settoken, {
+            httpOnly: true,
+            secure: true,
+        }).status(200).json(user);
+    }
+    catch (error) {
+        return res.status(401).send({ error: 'Invalid username or password' });
+    }
 };
 //# sourceMappingURL=functions.js.map

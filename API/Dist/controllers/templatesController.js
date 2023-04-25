@@ -1,6 +1,7 @@
 import { Template } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
+import { searchTemplate } from "../utilities/functions.js";
 export const getTemplates = async (req, res) => {
     try {
         await dbconnect();
@@ -23,6 +24,8 @@ export const getTemplates = async (req, res) => {
     }
 };
 export const getTemplate = async (req, res) => {
+    const user = req.body.user;
+    console.log(user);
     try {
         await dbconnect();
         const template = await Template.findOne({ active: true }).select("-__v")
@@ -63,12 +66,13 @@ export const addTemplate = async (req, res) => {
         await dbconnect();
         const template = await new Template(newTemplate).save();
         if (template) {
-            const setDefault = await Template.updateMany({ _id: { $ne: primaryKey } }, { active: false });
-            if (setDefault.modifiedCount === 0) {
-                res.status(403).json("failed to set template as default");
-            }
-            else {
-                res.status(200).json("saved");
+            const needDefault = await searchTemplate(primaryKey) >= 1;
+            if (needDefault) {
+                const setDefault = await Template.updateMany({ _id: { $ne: primaryKey } }, { active: false });
+                if (setDefault.modifiedCount === 0) {
+                    return res.status(403).json("failed to set template as default");
+                }
+                return res.status(200).json("saved and set as default");
             }
         }
         else {
