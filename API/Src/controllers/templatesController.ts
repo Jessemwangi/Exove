@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { Template } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { ITemplates } from "../dbcontext/Interfaces.js";
+import { ILdapAuth, ITemplates } from "../dbcontext/Interfaces.js";
 import { v4 as uuidv4 } from "uuid";
+import { searchTemplate } from "../utilities/functions.js";
 
 export const getTemplates = async (req: Request, res: Response) => {
   try {
@@ -26,6 +27,7 @@ export const getTemplates = async (req: Request, res: Response) => {
 };
 
 export const getTemplate = async (req: Request, res: Response) => {
+
   try {
     // Find the active template
     await dbconnect();
@@ -50,6 +52,9 @@ export const getTemplate = async (req: Request, res: Response) => {
 };
 
 export const addTemplate = async (req: Request, res: Response) => {
+  const user:ILdapAuth =req.body.user
+  const userId: string = user.uid;
+  
   const httpData = req.body;
   const primaryKey = uuidv4();
   if (!httpData) {
@@ -72,16 +77,19 @@ export const addTemplate = async (req: Request, res: Response) => {
     await dbconnect();
     const template = await new Template(newTemplate).save();
     if (template) {
-      const setDefault = await Template.updateMany(
-        { _id: { $ne: primaryKey } },
-        { active: false }
-      );
-
-      if (setDefault.modifiedCount === 0) {
-        res.status(403).json("failed to set template as default");
-      } else {
-        res.status(200).json("saved");
-      }
+      const needDefault = await searchTemplate(primaryKey) >= 1;
+      if (needDefault) {
+  
+        const setDefault = await Template.updateMany(
+          { _id: { $ne: primaryKey } },
+          { active: false }
+        );
+        if (setDefault.modifiedCount === 0) {
+          return res.status(403).json("failed to set template as default");
+        } 
+        return  res.status(200).json("saved and set as default");
+        
+}
     } else {
       res.status(501).send("saving failed");
     }

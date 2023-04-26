@@ -21,7 +21,6 @@ export const jesseInsert = async (req, res) => {
         createOn: new Date(),
         age: 30,
     };
-    console.log(jzee);
     const jesseInstance = new JesseM(jzee);
     try {
         await dbconnect();

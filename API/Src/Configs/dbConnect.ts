@@ -5,7 +5,8 @@ const dbuser = process.env.DBUSERNAME;
 const dbpass = process.env.DBPASSWORD;
 
 
-const uri = `mongodb+srv://${dbuser}:${dbpass}@cluster0.hounq81.mongodb.net/?retryWrites=true&w=majority`;
+ //const uri = `mongodb+srv://${dbuser}:${dbpass}@cluster0.hounq81.mongodb.net/?retryWrites=true&w=majority`;
+const uri = 'mongodb://localhost:27017/feedback'; // replace with your database name
  const options =  { useNewUrlParser: true, useUnifiedTopology: true, } as ConnectOptions;
 
  // cloud connection
@@ -32,7 +33,7 @@ export const dbclose = async () =>{
 //Local mongo db connection
 // export const dbconnect = async () => {
 //     try {
-//       const uri = 'mongodb://localhost:27017/feedback'; // replace with your database name
+//       
 //       await mongoose.connect(uri, options);
 //       console.log('Connected to MongoDB');
 //       return 'Connected to MongoDB';

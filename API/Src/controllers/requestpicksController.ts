@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import {
     IApprovals,
+    ILdapAuth,
     INotifier,
     IRequestPicks,
     ISelectedList,
@@ -14,6 +15,7 @@ import {
     addToNotification,
     checkUserRoles,
 } from "../utilities/functions.js";
+import { UpdateWriteOpResult } from 'mongoose';
   
 // get Request Picks
 
@@ -75,41 +77,27 @@ export const getIdRequestPick = async  (req:Request,  res:Response) => {
 
 // will be executed by the hr
 export const createRequestPicks = async (req: Request, res: Response) => {
-    const requestHttpData: IRequestPicks = req.body;
-    const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjgwOTYzMjQ5fQ.LKF3KPknCu-YKDeuCIgpT7LuclYusn9E0UN-SMqgT2c"; // req.cookies.access_token;
-    if (!token) return res.status(401).json("Not Authenticated!");
-    jwt.verify(
-      token,
-      "s3cr3t",
-      async (
-        err: jwt.VerifyErrors | null,
-        userInfo: string | jwt.JwtPayload | undefined
-      ) => {
-        if (err) return res.status(403).json("Authentication token Not Valid");
-  
-        try {
+  try {
+      const requestHttpData: IRequestPicks = req.body;
+      const user:ILdapAuth =req.body.user
+      const userId: string = user.uid;
+          const rolelevel = await checkUserRoles(userId,2);
+          if (!rolelevel) {
+            res.status(200).json("Not authorized to peform this transaction");
+            return;
+          }
           if (requestHttpData) {
-            const rolelevel = await checkUserRoles(requestHttpData.requestedBy);
-            if (typeof rolelevel === "string") {
-              res.status(200).json(rolelevel);
-              return;
-            }
-            if (typeof rolelevel === "number" && rolelevel < 3) {
-              res.status(200).json("Not authorised");
-              return;
-            }
             const primaryKey = uuidv4();
             const requestData: IRequestPicks = {
               _id: primaryKey,
               requestedTo: requestHttpData.requestedTo,
-              requestedBy: requestHttpData.requestedBy, // will will get this info from token when we encrypt
+              requestedBy: userId, // will will get this info from token when we encrypt
               requestedOn: new Date(),
               SelectedList: [],
               submitted: false,
               submittedOn: null,
             };
-            console.log(requestData);
+            
             const requestInstance = new RequestPicks(requestData);
             const validationError = requestInstance.validateSync();
   
@@ -144,8 +132,7 @@ export const createRequestPicks = async (req: Request, res: Response) => {
           res.status(500).json("server responded with an error");
           console.log(error);
         }
-      }
-    );
+
 };
 
   
@@ -208,7 +195,7 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
       console.log(req.body,req.params.id);
       
       await dbconnect();
-      const result = await RequestPicks.updateOne(
+      const result:UpdateWriteOpResult = await RequestPicks.updateOne(
         { _id: requestPicksId, 'SelectedList.userId': userId },
         { $set: { 'SelectedList.$.selectionStatus': selectionStatus, 'SelectedList.$.selectedBy': selectedBy} },
       );
@@ -240,14 +227,15 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
         )
       );
       const results = await Promise.all(updatePromises);
-      const nModified = results.reduce((total, { nModified }) => total + nModified, 0);
+      const nModified = results.reduce((acc:number, result:UpdateWriteOpResult) => acc + result.modifiedCount, 0);
+      await dbclose();
       if (nModified === 0) {
         res.status(404).json("No document was updated");
         return;
       }
-      await dbclose();
       res.status(200).json("Data updated successfully!");
     } catch (error:any) {
+      await dbclose();
       res.status(500).json("server responded with an error");
     }
   };

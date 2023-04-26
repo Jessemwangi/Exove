@@ -21,7 +21,7 @@ interface welcomeType {
     
   }
 
-const run = () => new Promise((resolve, reject) => {
+export const run = (username:string, password:string) => new Promise((resolve, reject) => {
   client.authenticate(username, password, (error, user) => {
     if (error) {
       return reject(error)
@@ -49,6 +49,6 @@ Search filter: ${options.searchFilter}
 Authenticating user "${username}" against "${options.url}"...
 `)
 
-run()
-.then((r:any) => (welcome(r), process.exit(0)))
-.catch((e) => (console.error('Caught', e), process.exit(1)))
+// run()
+// .then((r:any) => (welcome(r), process.exit(0)))
+// .catch((e) => (console.error('Caught', e), process.exit(1)))
