@@ -24,8 +24,6 @@ export const getTemplates = async (req, res) => {
     }
 };
 export const getTemplate = async (req, res) => {
-    const user = req.body.user;
-    console.log(user);
     try {
         await dbconnect();
         const template = await Template.findOne({ active: true }).select("-__v")
@@ -47,6 +45,8 @@ export const getTemplate = async (req, res) => {
     }
 };
 export const addTemplate = async (req, res) => {
+    const user = req.body.user;
+    const userId = user.uid;
     const httpData = req.body;
     const primaryKey = uuidv4();
     if (!httpData) {

@@ -9,19 +9,16 @@ interface RequestWithUser extends Request {
   user?: ILdapAuth;
 }
 
-export const checkUserRoles = async (userId: String): Promise<Number | String> => {
-  try {
+export const checkUserRoles = async (userId: String,roleLevel:Number): Promise<Boolean> => {
+
     await dbconnect();
-    const roleData: IRoles = await Roles.find({ userId, roleStatus: true  }).lean();
+    const roleData: IRoles = await Roles.findOne({ userId, roleStatus: true  }).lean();
     await dbclose();
-    if (roleData) {
-      return roleData.roleLevel;
-    } else {
-      return `Active role for this user is not defined`;
-    }
-  } catch (error) {
-    return "server responded with an error";
-  }
+      if (roleData && roleData.roleLevel >= roleLevel){
+      return true;
+      }
+      return false;
+      
 };
 
 export const addApprovals = async (approval:IApprovals) => {
@@ -72,6 +69,7 @@ export const ldapAuthMiddleware = async (req: RequestWithUser, res: Response, ne
       return res.status(403).json("Authentication token Not Valid");
       }
       const user: ILdapAuth = userInfo; 
+      console.log(user)
       req.body = {
         ...req.body,user
       }

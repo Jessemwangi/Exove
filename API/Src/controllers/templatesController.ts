@@ -27,8 +27,7 @@ export const getTemplates = async (req: Request, res: Response) => {
 };
 
 export const getTemplate = async (req: Request, res: Response) => {
- const user:ILdapAuth =req.body.user
-  console.log(user)
+
   try {
     // Find the active template
     await dbconnect();
@@ -53,6 +52,9 @@ export const getTemplate = async (req: Request, res: Response) => {
 };
 
 export const addTemplate = async (req: Request, res: Response) => {
+  const user:ILdapAuth =req.body.user
+  const userId: string = user.uid;
+  
   const httpData = req.body;
   const primaryKey = uuidv4();
   if (!httpData) {

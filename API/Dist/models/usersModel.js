@@ -14,11 +14,14 @@ export const usersSchema = new mongoose.Schema({
         },
     },
     displayName: String,
-    rolesId: [{ type: mongoose.Schema.Types.ObjectId, ref: "Roles" }],
+    imageUrl: String,
+    rolesId: Number,
     workId: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'WorksReports',
+            reportsTo: { type: mongoose.Schema.Types.String },
+            workReportStatus: Boolean,
+            createdOn: Date,
+            deactivatedOn: Date,
         },
     ],
     title: String,
@@ -30,8 +33,8 @@ export const usersSchema = new mongoose.Schema({
 });
 export const worksReportSchema = new mongoose.Schema({
     _id: { type: Number, required: true },
-    userId: { type: mongoose.Schema.Types.ObjectId },
-    reportsTo: { type: mongoose.Schema.Types.ObjectId },
+    userId: { type: mongoose.Schema.Types.String },
+    reportsTo: { type: mongoose.Schema.Types.String },
     workReportStatus: Boolean,
     createdOn: Date,
     deactivatedOn: Date,

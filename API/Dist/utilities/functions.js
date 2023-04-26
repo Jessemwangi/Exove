@@ -2,21 +2,14 @@ import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { run } from "../Ldap/ldapTest.js";
 import jwt from 'jsonwebtoken';
 import { Approvals, Notifer, NotificationSetting, Roles, Template } from "../dbcontext/dbContext.js";
-export const checkUserRoles = async (userId) => {
-    try {
-        await dbconnect();
-        const roleData = await Roles.find({ userId, roleStatus: true }).lean();
-        await dbclose();
-        if (roleData) {
-            return roleData.roleLevel;
-        }
-        else {
-            return `Active role for this user is not defined`;
-        }
+export const checkUserRoles = async (userId, roleLevel) => {
+    await dbconnect();
+    const roleData = await Roles.findOne({ userId, roleStatus: true }).lean();
+    await dbclose();
+    if (roleData && roleData.roleLevel >= roleLevel) {
+        return true;
     }
-    catch (error) {
-        return "server responded with an error";
-    }
+    return false;
 };
 export const addApprovals = async (approval) => {
     await new Approvals(approval).save();
@@ -55,6 +48,7 @@ export const ldapAuthMiddleware = async (req, res, next) => {
                     return res.status(403).json("Authentication token Not Valid");
                 }
                 const user = userInfo;
+                console.log(user);
                 req.body = {
                     ...req.body, user
                 };

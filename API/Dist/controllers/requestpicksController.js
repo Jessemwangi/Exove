@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
@@ -47,70 +46,60 @@ export const getIdRequestPick = async (req, res) => {
     }
 };
 export const createRequestPicks = async (req, res) => {
-    const requestHttpData = req.body;
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjgwOTYzMjQ5fQ.LKF3KPknCu-YKDeuCIgpT7LuclYusn9E0UN-SMqgT2c";
-    if (!token)
-        return res.status(401).json("Not Authenticated!");
-    jwt.verify(token, "s3cr3t", async (err, userInfo) => {
-        if (err)
-            return res.status(403).json("Authentication token Not Valid");
-        try {
-            if (requestHttpData) {
-                const rolelevel = await checkUserRoles(requestHttpData.requestedBy);
-                if (typeof rolelevel === "string") {
-                    res.status(200).json(rolelevel);
-                    return;
-                }
-                if (typeof rolelevel === "number" && rolelevel < 3) {
-                    res.status(200).json("Not authorised");
-                    return;
-                }
-                const primaryKey = uuidv4();
-                const requestData = {
-                    _id: primaryKey,
-                    requestedTo: requestHttpData.requestedTo,
-                    requestedBy: requestHttpData.requestedBy,
-                    requestedOn: new Date(),
-                    SelectedList: [],
-                    submitted: false,
-                    submittedOn: null,
-                };
-                console.log(requestData);
-                const requestInstance = new RequestPicks(requestData);
-                const validationError = requestInstance.validateSync();
-                if (validationError) {
-                    res.status(400).json(validationError.message);
-                    return;
-                }
-                await dbconnect();
-                await requestInstance.save();
-                const newNotification = {
-                    _id: uuidv4(),
-                    message: "",
-                    applicationid: primaryKey,
-                    entityname: "",
-                    link: "",
-                    from: requestHttpData.requestedBy,
-                    to: [requestHttpData.requestedTo],
-                    notifierstatus: false,
-                    sendOn: null,
-                    transacteOn: new Date(),
-                };
-                console.log(newNotification);
-                await addToNotification(newNotification);
-                res.status(200).json("Data saved successfully!");
-                await dbclose();
-            }
-            else {
-                res.status(404).json("Post data not found or empty");
+    try {
+        const requestHttpData = req.body;
+        const user = req.body.user;
+        const userId = user.uid;
+        const rolelevel = await checkUserRoles(userId, 2);
+        if (!rolelevel) {
+            res.status(200).json("Not authorized to peform this transaction");
+            return;
+        }
+        if (requestHttpData) {
+            const primaryKey = uuidv4();
+            const requestData = {
+                _id: primaryKey,
+                requestedTo: requestHttpData.requestedTo,
+                requestedBy: userId,
+                requestedOn: new Date(),
+                SelectedList: [],
+                submitted: false,
+                submittedOn: null,
+            };
+            const requestInstance = new RequestPicks(requestData);
+            const validationError = requestInstance.validateSync();
+            if (validationError) {
+                res.status(400).json(validationError.message);
                 return;
             }
+            await dbconnect();
+            await requestInstance.save();
+            const newNotification = {
+                _id: uuidv4(),
+                message: "",
+                applicationid: primaryKey,
+                entityname: "",
+                link: "",
+                from: requestHttpData.requestedBy,
+                to: [requestHttpData.requestedTo],
+                notifierstatus: false,
+                sendOn: null,
+                transacteOn: new Date(),
+            };
+            console.log(newNotification);
+            await addToNotification(newNotification);
+            res.status(200).json("Data saved successfully!");
+            await dbclose();
         }
-        catch (error) {
-            res.status(500).json("server responded with an error");
-            console.log(error);
+        else {
+            res.status(404).json("Post data not found or empty");
+            return;
         }
-    });
+    }
+    catch (error) {
+        res.status(500).json("server responded with an error");
+        console.log(error);
+    }
 };
 export const submitRequestPicks = async (req, res) => {
     const requestHttpData = req.body;
@@ -184,15 +173,16 @@ export const hrMassApprovesPicks = async (req, res) => {
         await dbconnect();
         const updatePromises = selectedList.map(({ userId, selectionStatus }) => RequestPicks.updateOne({ _id: requestPicksId, 'SelectedList.userId': userId }, { $set: { 'SelectedList.$.selectionStatus': selectionStatus } }));
         const results = await Promise.all(updatePromises);
-        const nModified = results.reduce((total, { nModified }) => total + nModified, 0);
+        const nModified = results.reduce((acc, result) => acc + result.modifiedCount, 0);
+        await dbclose();
         if (nModified === 0) {
             res.status(404).json("No document was updated");
             return;
         }
-        await dbclose();
         res.status(200).json("Data updated successfully!");
     }
     catch (error) {
+        await dbclose();
         res.status(500).json("server responded with an error");
     }
 };
