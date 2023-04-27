@@ -13,13 +13,14 @@ import { approvalsRoutes } from './routes/approvalsRoute.js';
 import { categoryRoute } from './routes/categoryRoute.js';
 import { templateRoute } from './routes/templateRoute.js';
 import { ldapAuthMiddleware } from './utilities/functions.js';
+import { usersRoutes } from './routes/usersRoutes.js';
 
 const app = express()
 app.use(express.json())
 app.use(cookieParser())
 
 const apiRouter = express.Router();
-app.use(ldapAuthMiddleware);
+ app.use(ldapAuthMiddleware);
 // Mount existing routers as sub-routers
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/', defaultRoutes);
@@ -31,6 +32,7 @@ apiRouter.use('/picks', reqPicksRoutes);
 apiRouter.use('/report', reportsRoutes);
 apiRouter.use('/roles', rolesRoutes);
 apiRouter.use('/jesse', jesseRoutes);
+apiRouter.use('/users', usersRoutes);
 apiRouter.use('/approval',approvalsRoutes)
 
 // Mount the apiRouter as a middleware

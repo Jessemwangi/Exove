@@ -5,6 +5,7 @@ export const rolesSchema = new mongoose.Schema({
     roleName: { type: String, required: true},
     roleLevel: { type: Number, required: true},
     roleStatus: Boolean,
-    createBy: { type: String, required: true},
+    createBy: { type: String, required: true },
+    users:{ type: [mongoose.Schema.Types.String], ref: "Users" },
     createdOn:Date,
 })

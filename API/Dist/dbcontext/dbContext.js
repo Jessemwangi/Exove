@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { usersSchema, worksReportSchema } from "../models/usersModel.js";
+import { usersSchema } from "../models/usersModel.js";
 import { logsSchema } from "../models/logsModel.js";
 import { approvalsSchema } from "../models/approvalsModels.js";
 import { jesseSchema } from "../models/testingModel.js";
@@ -21,6 +21,5 @@ export const RequestPicks = mongoose.model('RequestPicks', requestpicksSchema);
 export const Roles = mongoose.model('Roles', rolesSchema);
 export const Template = mongoose.model('Template', templateSchema);
 export const Users = mongoose.model('Users', usersSchema);
-export const WorksReports = mongoose.model('WorksReports', worksReportSchema);
 export const JesseM = mongoose.model('Jesse', jesseSchema);
 //# sourceMappingURL=dbContext.js.map

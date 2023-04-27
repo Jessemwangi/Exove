@@ -1,15 +1,29 @@
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { run } from "../Ldap/ldapTest.js";
 import jwt from 'jsonwebtoken';
-import { Approvals, Notifer, NotificationSetting, Roles, Template } from "../dbcontext/dbContext.js";
+import { Approvals, Notifer, NotificationSetting, Roles, Template, Users } from "../dbcontext/dbContext.js";
 export const checkUserRoles = async (userId, roleLevel) => {
     await dbconnect();
     const roleData = await Roles.findOne({ userId, roleStatus: true }).lean();
     await dbclose();
-    if (roleData && roleData.roleLevel >= roleLevel) {
+    if (roleData && roleData.roleLevel <= roleLevel) {
         return true;
     }
     return false;
+};
+export const addUserToRole = async (userId, roleId) => {
+    const result = await Roles.updateOne({ _id: roleId }, { $push: { userId } }).exec();
+};
+export const getUserF = async ({ ldapUid, _id }) => {
+    await dbconnect();
+    const usersResult = await Users.findOne({ $or: [{ ldapUid: ldapUid }, { _id: _id }] })
+        .populate({
+        path: "rolesId",
+        model: Roles,
+    }).lean()
+        .exec();
+    await dbclose();
+    return usersResult;
 };
 export const addApprovals = async (approval) => {
     await new Approvals(approval).save();
@@ -48,19 +62,18 @@ export const ldapAuthMiddleware = async (req, res, next) => {
                     return res.status(403).json("Authentication token Not Valid");
                 }
                 const user = userInfo;
-                console.log(user);
                 req.body = {
-                    ...req.body, user
+                    ...req.body, ...user
                 };
             });
             return next();
         }
         const username = req.body.username;
         const password = req.body.password;
-        const user = await run(username, password);
-        console.log(user);
+        const Luser = await run(username, password);
+        const user = await getUserF({ ldapUid: Luser.uid });
         const settoken = jwt.sign({ user }, "s3cr3t");
-        console.log(user);
+        console.log('ldap user', Luser, "db user", user);
         return res.cookie("access_token", settoken, {
             httpOnly: true,
             secure: true,

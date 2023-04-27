@@ -1,5 +1,6 @@
 
 import LdapAuth from 'ldapauth-fork'
+import { ILdapAuth } from '../dbcontext/Interfaces.js'
 
 // https://www.forumsys.com/tutorials/integration-how-to/ldap/online-ldap-test-server/
 
@@ -21,8 +22,8 @@ interface welcomeType {
     
   }
 
-export const run = (username:string, password:string) => new Promise((resolve, reject) => {
-  client.authenticate(username, password, (error, user) => {
+export const run = (username:string, password:string) : Promise<ILdapAuth> => new Promise((resolve, reject) => {
+  client.authenticate(username, password, (error, user:ILdapAuth) => {
     if (error) {
       return reject(error)
      

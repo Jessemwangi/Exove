@@ -16,6 +16,7 @@ export const getRoles = async (req, res) => {
 export const createRole = async (req, res) => {
     try {
         const rolesHttpBody = req.body;
+        console.log(rolesHttpBody);
         const user = req.body.user;
         const userId = user.uid;
         const rolelevel = await checkUserRoles(userId, 2);
@@ -25,8 +26,9 @@ export const createRole = async (req, res) => {
         }
         if (!rolesHttpBody)
             return res.status(404).json("Roles not found or empty");
+        const primaryKey = uuidv4();
         const rolesPost = {
-            _id: uuidv4(),
+            _id: primaryKey,
             roleName: rolesHttpBody.roleName,
             roleLevel: rolesHttpBody.roleLevel,
             roleStatus: rolesHttpBody.roleStatus,
