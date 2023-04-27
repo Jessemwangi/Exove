@@ -5,11 +5,11 @@ export const getApps = async (req, res) => {
         await dbconnect();
         const approvals = await Approvals.find({}).lean().sort({ 'createdOn': 1 }).exec();
         await dbclose();
-        res.status(200).json(approvals);
+        return res.status(200).json(approvals);
     }
     catch (error) {
         console.log(error);
-        res.status(500).json('Server responded with an error');
+        return res.status(500).json('Server responded with an error');
     }
 };
 //# sourceMappingURL=approvalsController.js.map

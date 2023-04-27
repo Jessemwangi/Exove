@@ -3,6 +3,7 @@ export const usersSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     firstName: { type: String, required: true },
     surname: { type: String, required: true },
+    ldapUid: { type: String, required: true },
     email: {
         type: String,
         required: true,
@@ -15,7 +16,7 @@ export const usersSchema = new mongoose.Schema({
     },
     displayName: String,
     imageUrl: String,
-    rolesId: Number,
+    rolesId: { type: mongoose.Schema.Types.String, ref: "Roles", required: true },
     workId: [
         {
             reportsTo: { type: mongoose.Schema.Types.String },
@@ -30,13 +31,5 @@ export const usersSchema = new mongoose.Schema({
     startDate: Date,
     phone: String,
     userStatus: Boolean,
-});
-export const worksReportSchema = new mongoose.Schema({
-    _id: { type: Number, required: true },
-    userId: { type: mongoose.Schema.Types.String },
-    reportsTo: { type: mongoose.Schema.Types.String },
-    workReportStatus: Boolean,
-    createdOn: Date,
-    deactivatedOn: Date,
 });
 //# sourceMappingURL=usersModel.js.map

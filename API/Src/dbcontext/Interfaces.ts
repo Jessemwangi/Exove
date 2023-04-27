@@ -137,6 +137,7 @@ export interface IRoles {
   roleLevel: Number;
   roleStatus: Boolean;
   createBy: String;
+  users?:String[];
   createdOn: Date;
 }
 
@@ -168,31 +169,32 @@ export interface IUserRoles {
 // userroles interface ends ..
 
 export interface IUser {
-  _id: { type: String; required: true; unique: true };
+  _id: String;
   firstName: { type: String; required: true };
   surname: { type: String; required: true };
+  ldapUid: { type: String; required: true };
+  rolesId:String,
   email: {
     type: String;
     required: true;
   };
   displayName: String;
+    imageUrl?:String,
   //   personal:  { type: String, required: true },
   //   about: [{ type: mongoose.Schema.Types.ObjectId, ref: "About" }],
-  workId: String[];
-  title: String;
-  department: String;
-  site: String;
-  startDate: Date;
-  phone: String;
+  workId: IWorksReport[];
+  title?: String;
+  department?: String;
+  site?: String;
+  startDate?: Date | null;
+  phone?: String;
   userStatus: Boolean;
 }
 
 export interface IWorksReport {
-  _id: { type: Number; required: true; unique: true };
-  userId: String;
   reportsTo: String;
   workReportStatus: Boolean;
-  createdOn: Date;
+  createdOn: Date | null;
   deactivatedOn: Date | null;
 }
 
@@ -208,3 +210,7 @@ export interface ILdapAuth {
   
 }
 
+export interface userSearch{
+  _id?: String,
+  ldapUid?:string,
+}

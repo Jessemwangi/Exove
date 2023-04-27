@@ -3,7 +3,7 @@ import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { ILdapAuth, IRoles } from "../dbcontext/Interfaces.js";
 import { v4 as uuidv4 } from 'uuid'
 import { Roles } from "../dbcontext/dbContext.js";
-import { checkUserRoles } from "../utilities/functions.js";
+import {  checkUserRoles } from "../utilities/functions.js";
 
 export const getRoles = async (req: Request, res: Response) => {
   try {
@@ -22,6 +22,7 @@ export const createRole = async (req:Request, res:Response) => {
 
     try {
       const rolesHttpBody: IRoles = req.body;
+      console.log(rolesHttpBody)
       const user:ILdapAuth =req.body.user
       const userId: string = user.uid;
           const rolelevel = await checkUserRoles(userId,2);
@@ -30,9 +31,9 @@ export const createRole = async (req:Request, res:Response) => {
             return;
           }
           if (!rolesHttpBody) return res.status(404).json("Roles not found or empty")
-
+const primaryKey =uuidv4()
               const rolesPost: IRoles = {
-                  _id: uuidv4(),
+                  _id: primaryKey,
                   roleName: rolesHttpBody.roleName,
                   roleLevel: rolesHttpBody.roleLevel,
                   roleStatus: rolesHttpBody.roleStatus,
@@ -48,7 +49,7 @@ export const createRole = async (req:Request, res:Response) => {
               return;
             }
               await dbconnect()
-              await rolesInstance.save()
+      await rolesInstance.save()
               res.status(200).json('Data saved successfully!');
       await dbclose();
       return;      

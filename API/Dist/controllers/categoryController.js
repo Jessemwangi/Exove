@@ -6,11 +6,11 @@ export const getCategory = async (req, res) => {
         await dbconnect();
         const category = await Category.find({}).select('-__v').lean();
         await dbclose();
-        res.status(200).json(category);
+        return res.status(200).json(category);
     }
     catch (error) {
-        res.status(500).json('error');
         console.log(error);
+        return res.status(500).json('error');
     }
 };
 export const addCategory = async (req, res) => {
@@ -28,16 +28,16 @@ export const addCategory = async (req, res) => {
         await dbconnect();
         const q = await new Category(data).save();
         if (q) {
-            res.status(200).json('saved');
+            return res.status(200).json('saved');
         }
         else {
-            res.status(501).json('failed to save');
+            return res.status(501).json('failed to save');
         }
         await dbclose();
     }
     catch (error) {
-        res.status(500).json('error');
         console.log(error);
+        return res.status(500).json('error');
     }
 };
 //# sourceMappingURL=categoryController.js.map

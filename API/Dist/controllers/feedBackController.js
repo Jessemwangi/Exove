@@ -4,23 +4,23 @@ import { v4 as uuidv4 } from "uuid";
 export const getFeeds = async (req, res) => {
     await dbconnect();
     const feedBacks = await FeedBacks.find({}).sort({ "createdOn": 1 }).lean();
-    res.status(200).json(feedBacks);
+    return res.status(200).json(feedBacks);
     await dbclose();
 };
 export const getUserFeedReq = async (req, res) => {
     const httpData = req.body;
     if (!httpData) {
-        res.status(404).json("Post data not found or empty");
+        return res.status(404).json("Post data not found or empty");
         return;
     }
     try {
         await dbconnect();
         const userRequestPicks = await RequestPicks.find({ 'SelectedList.userId': httpData, 'SelectedList.selectionStatus': true }).lean().sort({ 'requestedOn': 1 }).exec();
         await dbclose();
-        res.status(200).json(userRequestPicks);
+        return res.status(200).json(userRequestPicks);
     }
     catch (error) {
-        res.status(500).json("Internal server error");
+        return res.status(500).json("Internal server error");
     }
 };
 const verifiyFeedbackFrom = async (requestpicksId, feedbackTo, userId) => {
@@ -49,17 +49,17 @@ export const submitFeedBack = async (req, res) => {
         }
         const result = await updateRequestPicks(id, userId);
         console.log('result for submitt update', result);
+        await dbclose();
         if (result !== 0) {
-            res.status(403).json('feedback submitted successful');
+            return res.status(200).json('feedback submitted successful');
         }
         else {
-            res.status(400).json('Failed to submit Feedback');
+            return res.status(200).json('Failed to submit Feedback');
         }
     }
     else {
-        res.status(404).json("Post data Incomplete post or not found or empty");
+        return res.status(404).json("Post data Incomplete post or not found or empty");
     }
-    await dbclose();
 };
 const updateRequestPicks = async (requestpicksId, userId) => {
     const result = await RequestPicks.updateOne({ _id: requestpicksId, 'SelectedList.userId': userId, }, { $set: { 'SelectedList.$.feedBackSubmitted': true } });
@@ -102,21 +102,21 @@ export const addFeedBack = async (req, res) => {
         if (newFeedback.submitted === true) {
             const result = await updateRequestPicks(newFeedback.requestpicksId, newFeedback.userId);
             console.log('result for submitt update', result);
+            await dbclose();
             if (result !== 0) {
-                res.status(403).json('feedback submitted successful');
+                return res.status(200).json('feedback submitted successful');
             }
             else {
-                res.status(400).json('Failed to submit Feedback');
+                return res.status(200).json('Failed to submit Feedback');
             }
         }
         else {
-            res.status(400).json('Feedback save, untill you submit the feedback it wont be valid');
+            return res.status(200).json('Feedback save, untill you submit the feedback it wont be valid');
         }
-        await dbclose();
     }
     catch (error) {
-        res.status(500).json("Internal server error");
         console.log(error);
+        return res.status(500).json("Internal server error");
     }
 };
 //# sourceMappingURL=feedBackController.js.map
