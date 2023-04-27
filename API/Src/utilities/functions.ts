@@ -3,7 +3,7 @@ import { run } from "../Ldap/ldapTest.js";
 import jwt from 'jsonwebtoken';
 import { IApprovals, ILdapAuth, INotificationsSetting, INotifier, IRoles, IUser, userSearch } from "../dbcontext/Interfaces.js";
 import { Approvals, Notifer, NotificationSetting, Roles, Template, Users } from "../dbcontext/dbContext.js";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
 
 interface RequestWithUser extends Request {
   user?: ILdapAuth;
@@ -83,23 +83,19 @@ export const searchTemplate = async (template: string): Promise<number> => {
 
 export const ldapAuthMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
-  const token = req.cookies.access_token;
-  if (token)
-  {
-    jwt.verify(token, "s3cr3t", (err:any, userInfo:any) => {
-      if (err){
-    console.log(err)
-      return res.status(403).json("Authentication token Not Valid");
-      }
-      const user: ILdapAuth = userInfo; 
-    
-      req.body = {
-        ...req.body,...user
-      }
-    });
-    return next();
-  }  
- 
+    // api/logout
+  if (req.path === '/api/logout') {
+    res.clearCookie("access_token",{
+      sameSite:"none",
+      secure:true,
+      httpOnly:true,
+  
+    }).status(200).json("user logout")
+    return;
+    };
+
+        // Api/login
+  if (req.path === '/api/login') { 
     const username: string = req.body.username
     const password: string = req.body.password
  
@@ -114,9 +110,43 @@ export const ldapAuthMiddleware = async (req: RequestWithUser, res: Response, ne
    return res.cookie("access_token",settoken,{
       httpOnly:true,
       secure:true, 
-  }).status(200).json(user)
+   }).status(200).json(user)
+    
+  }
+    
+  const token = req.cookies.access_token;
+    if (token) {
+      jwt.verify(token, "s3cr3t", (err: any, userInfo: any) => {
+        if (err) {
+          console.log(err)
+          return res.status(401).json("Authentication token Not Valid");
+        }
+        const user: ILdapAuth = userInfo;
+    
+        req.body = {
+          ...req.body, ...user
+        }
+        return next();
+      });
+    }
+    else {
+      return res.status(403).json('Not authenticated')
+    }
+
   } catch (error) {
    return res.status(401).send({ error: 'Invalid username or password' });
   }
 };
 
+export const errorMiddleware: ErrorRequestHandler = async (err, req:Request, res:Response, next) => {
+
+  console.error(err.message);
+  if (err.name === 'ValidationError') {
+    res.status(400);
+  } else {
+    res.status(500);
+  }
+
+  res.json( err.message,
+  );
+};

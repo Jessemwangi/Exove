@@ -54,33 +54,57 @@ export const searchTemplate = async (template) => {
 };
 export const ldapAuthMiddleware = async (req, res, next) => {
     try {
+        if (req.path === '/api/logout') {
+            res.clearCookie("access_token", {
+                sameSite: "none",
+                secure: true,
+                httpOnly: true,
+            }).status(200).json("user logout");
+            return;
+        }
+        ;
+        if (req.path === '/api/login') {
+            const username = req.body.username;
+            const password = req.body.password;
+            const Luser = await run(username, password);
+            const user = await getUserF({ ldapUid: Luser.uid });
+            const settoken = jwt.sign({ user }, "s3cr3t");
+            console.log('ldap user', Luser, "db user", user);
+            return res.cookie("access_token", settoken, {
+                httpOnly: true,
+                secure: true,
+            }).status(200).json(user);
+        }
         const token = req.cookies.access_token;
         if (token) {
             jwt.verify(token, "s3cr3t", (err, userInfo) => {
                 if (err) {
                     console.log(err);
-                    return res.status(403).json("Authentication token Not Valid");
+                    return res.status(401).json("Authentication token Not Valid");
                 }
                 const user = userInfo;
                 req.body = {
                     ...req.body, ...user
                 };
+                return next();
             });
-            return next();
         }
-        const username = req.body.username;
-        const password = req.body.password;
-        const Luser = await run(username, password);
-        const user = await getUserF({ ldapUid: Luser.uid });
-        const settoken = jwt.sign({ user }, "s3cr3t");
-        console.log('ldap user', Luser, "db user", user);
-        return res.cookie("access_token", settoken, {
-            httpOnly: true,
-            secure: true,
-        }).status(200).json(user);
+        else {
+            return res.status(403).json('Not authenticated');
+        }
     }
     catch (error) {
         return res.status(401).send({ error: 'Invalid username or password' });
     }
+};
+export const errorMiddleware = async (err, req, res, next) => {
+    console.error(err.message);
+    if (err.name === 'ValidationError') {
+        res.status(400);
+    }
+    else {
+        res.status(500);
+    }
+    res.json(err.message);
 };
 //# sourceMappingURL=functions.js.map

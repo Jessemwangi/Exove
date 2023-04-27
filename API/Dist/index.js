@@ -12,7 +12,7 @@ import { reportsRoutes } from './routes/reportsRoute.js';
 import { approvalsRoutes } from './routes/approvalsRoute.js';
 import { categoryRoute } from './routes/categoryRoute.js';
 import { templateRoute } from './routes/templateRoute.js';
-import { ldapAuthMiddleware } from './utilities/functions.js';
+import { errorMiddleware, ldapAuthMiddleware } from './utilities/functions.js';
 import { usersRoutes } from './routes/usersRoutes.js';
 const app = express();
 app.use(express.json());
@@ -32,6 +32,6 @@ apiRouter.use('/jesse', jesseRoutes);
 apiRouter.use('/users', usersRoutes);
 apiRouter.use('/approval', approvalsRoutes);
 app.use('/api', apiRouter);
-app.get('/', (req, res) => res.send('Hello World!'));
+app.use(errorMiddleware);
 app.listen(serverConfig.port, serverConfig.host, () => console.log(`Collegue feedback Server app listening on port ${serverConfig.port}! and host ${serverConfig.host}!`));
 //# sourceMappingURL=index.js.map
