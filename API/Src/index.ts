@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { application } from 'express';
 import { serverConfig } from './Configs/serverConfig.js';
 import cookieParser from 'cookie-parser';
 import  {questionRoute}  from "./routes/questionRoute.js";
@@ -40,5 +40,10 @@ apiRouter.use('/approval',approvalsRoutes)
 app.use('/api', apiRouter);
 //error handling 
 app.use(errorMiddleware)
+
+
+
+app.get('/', (req, res) => res.send('Hello World!'))
+
 
 app.listen(serverConfig.port, serverConfig.host, () => console.log(`Collegue feedback Server app listening on port ${serverConfig.port}! and host ${serverConfig.host}!`))
