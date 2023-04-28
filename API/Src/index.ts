@@ -43,8 +43,8 @@ app.use(ldapAuthMiddleware); // authentication
 //     })
 //   );
 app.use(cors({
-    origin: '*',
-    credentials: true
+    "origin": '*',
+    "credentials": true
   }));
 
 // routes
