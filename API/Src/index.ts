@@ -23,26 +23,29 @@ app.use(cookieParser())
 const apiRouter = express.Router();
 app.use(ldapAuthMiddleware); // authentication
 
-const allowedOrigins: string[] = [
-    "https://exove.vercel.app",
-    "http://localhost:3001",
-    "http://localhost:3000",
-    "http://localhost:3003",
-  ];
+// const allowedOrigins: string[] = [
+//     "https://exove.vercel.app",
+//     "http://localhost:3001",
+//     "http://localhost:3000",
+//     "http://localhost:3003",
+//   ];
   
-  app.use(
-    cors({
-      origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-        if (!origin ) {
-          callback(null, true);
-        } else {
-          callback(new Error("Not allowed by CORS"));
-        }
-      },
-      credentials: true,
-    })
-  );
-  
+//   app.use(
+//     cors({
+//       origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+//         if (!origin ) {
+//           callback(null, true);
+//         } else {
+//           callback(new Error("Not allowed by CORS"));
+//         }
+//       },
+//       credentials: true,
+//     })
+//   );
+app.use(cors({
+    origin: '*',
+    credentials: true
+  }));
 
 // routes
 apiRouter.use('/auth', authRoutes);
