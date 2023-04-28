@@ -19,30 +19,6 @@ import cors from 'cors';
 const app = express()
 app.use(express.json())
 app.use(cookieParser())
-
-const apiRouter = express.Router();
-app.use(ldapAuthMiddleware); // authentication
-
-// const allowedOrigins: string[] = [
-//     "https://exove.vercel.app",
-    // "http://localhost:3001",
-    // "http://localhost:3000",
-    // "http://localhost:3003",
-//   ];
-  
-//   app.use(
-//     cors({
-//       origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-//         if (!origin ) {
-//           callback(null, true);
-//         } else {
-//           callback(new Error("Not allowed by CORS"));
-//         }
-//       },
-//       credentials: true,
-//     })
-//   );
-  
 const allowedOrigins = [    "http://localhost:3001","https://exove.vercel.app",
 "http://localhost:3000",
 "http://localhost:3003",];
@@ -53,6 +29,12 @@ const options: cors.CorsOptions = {
 };
 
 app.use(cors(options));
+
+const apiRouter = express.Router();
+app.use(ldapAuthMiddleware); // authentication
+
+  
+
 
 
 // routes
