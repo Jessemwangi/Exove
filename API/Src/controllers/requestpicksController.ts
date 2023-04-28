@@ -139,7 +139,12 @@ export const createRequestPicks = async (req: Request, res: Response) => {
 export const submitRequestPicks = async (req: Request, res: Response) => {
     // check if user is authenticated and also we will check if current user is the same as requestedTo or in the role of hr
   const requestHttpData: ISelectedList = req.body;
- 
+  const user:ILdapAuth =req.body.user
+  const userId: string = user.uid;
+  const newPick: ISelectedList = {
+    ...requestHttpData, selectedBy: userId
+  }
+
   const id = req.params.id;
   
     try {
@@ -149,7 +154,7 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
       }
       const approvalData: IApprovals = {
         _id: "",
-        createdBy: "",
+        createdBy: userId,
         applicationId: "",
         entityname: "",
         approverLevel: 3,
@@ -162,7 +167,7 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
       await dbconnect();
       const result = await RequestPicks.updateOne(
         { "_id": id },
-        { $push: { SelectedList: requestHttpData } }
+        { $push: { SelectedList: newPick} }
       );
       console.log('update result ...', result)
       if (result.modifiedCount === 0) {
@@ -197,7 +202,12 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
       await dbconnect();
       const result:UpdateWriteOpResult = await RequestPicks.updateOne(
         { _id: requestPicksId, 'SelectedList.userId': userId },
-        { $set: { 'SelectedList.$.selectionStatus': selectionStatus, 'SelectedList.$.selectedBy': selectedBy} },
+        {
+          $set: {
+            'SelectedList.$.selectionStatus': selectionStatus,
+            'SelectedList.$.selectedBy': selectedBy
+          }
+        },
       );
       if (result.modifiedCount === 0) {
         res.status(404).json("No document was updated");

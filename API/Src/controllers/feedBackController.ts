@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { IFeedBacks, IRequestPicks } from "../dbcontext/Interfaces.js";
+import { IFeedBacks, ILdapAuth, IRequestPicks } from "../dbcontext/Interfaces.js";
 import { FeedBacks, RequestPicks } from "../dbcontext/dbContext.js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -94,7 +94,9 @@ const updateRequestPicks = async (requestpicksId:String,userId:String ):Promise<
 }
 
 export const addFeedBack = async (req: Request, res: Response) => {
-  
+  const user:ILdapAuth =req.body.user
+  const userId: string = user.uid;
+
   const httpData:IFeedBacks = req.body
     try {
       if (!httpData) {
@@ -104,8 +106,9 @@ export const addFeedBack = async (req: Request, res: Response) => {
       const newFeedback: IFeedBacks = {
         _id: uuidv4(),
         template: httpData.template,
-        userId: httpData.userId,
+        userId: userId,
         requestpicksId: httpData.requestpicksId,
+        roleLevel:httpData.roleLevel,
         feedbackTo: httpData.feedbackTo,
         progress: httpData.progress,
         responseDateLog: [new Date],

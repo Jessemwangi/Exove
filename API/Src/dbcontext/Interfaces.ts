@@ -59,6 +59,7 @@ export interface IFeedBacks {
   template: String;
   userId: String; // session logged in user
   requestpicksId: String; // feedback to from the dashboard
+  roleLevel:Number,
   feedbackTo:String,
   progress: String;
   responseByDate?: String;
@@ -124,6 +125,7 @@ export interface IRequestPicks {
 
 export interface ISelectedList {
   userId: String;
+  roleLevel:Number,
   selectionStatus: Boolean; // allow the HR to approve or disapprove,
   selectedBy: String;
   feedBackSubmitted:Boolean,

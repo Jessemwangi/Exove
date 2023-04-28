@@ -4,6 +4,7 @@ export const feedbackSchema = new mongoose.Schema({
     template: { type: String, ref: 'Template', required: true },
     userId: { type: String, required: true },
     requestpicksId: { type: String, required: true, ref: "RequestPicks" },
+    roleLevel: { type: Number, required: true },
     feedbackTo: {
         type: mongoose.Schema.Types.String,
         ref: "Users",
