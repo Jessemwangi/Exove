@@ -1,7 +1,7 @@
 import { Template } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
-import { searchTemplate } from "../utilities/functions.js";
+import { checkUserRoles, searchTemplate } from "../utilities/functions.js";
 export const getTemplates = async (req, res) => {
     try {
         await dbconnect();
@@ -45,9 +45,14 @@ export const getTemplate = async (req, res) => {
     }
 };
 export const addTemplate = async (req, res) => {
+    const httpData = req.body;
     const user = req.body.user;
     const userId = user.uid;
-    const httpData = req.body;
+    const rolelevel = await checkUserRoles(userId, 2);
+    if (!rolelevel) {
+        res.status(200).json("Not authorized to peform this transaction");
+        return;
+    }
     const primaryKey = uuidv4();
     if (!httpData) {
         res.status(404).json("Post data not found or empty");
@@ -59,7 +64,7 @@ export const addTemplate = async (req, res) => {
         instructions: httpData.instructions,
         createdOn: new Date(),
         categories: httpData.categories,
-        createdBy: httpData.createBy,
+        createdBy: userId,
         active: true,
     };
     try {
@@ -87,7 +92,13 @@ export const addTemplate = async (req, res) => {
 };
 export const setDefaultTemplate = async (req, res) => {
     const httpData = req.params.id;
-    console.log(httpData);
+    const user = req.body.user;
+    const userId = user.uid;
+    const rolelevel = await checkUserRoles(userId, 2);
+    if (!rolelevel) {
+        res.status(200).json("Not authorized to peform this transaction");
+        return;
+    }
     if (!httpData) {
         res.status(404).json("Post data not found or empty");
         return;

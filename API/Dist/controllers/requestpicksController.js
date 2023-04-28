@@ -103,6 +103,11 @@ export const createRequestPicks = async (req, res) => {
 };
 export const submitRequestPicks = async (req, res) => {
     const requestHttpData = req.body;
+    const user = req.body.user;
+    const userId = user.uid;
+    const newPick = {
+        ...requestHttpData, selectedBy: userId
+    };
     const id = req.params.id;
     try {
         if (!requestHttpData) {
@@ -111,7 +116,7 @@ export const submitRequestPicks = async (req, res) => {
         }
         const approvalData = {
             _id: "",
-            createdBy: "",
+            createdBy: userId,
             applicationId: "",
             entityname: "",
             approverLevel: 3,
@@ -122,7 +127,7 @@ export const submitRequestPicks = async (req, res) => {
             createdOn: new Date(),
         };
         await dbconnect();
-        const result = await RequestPicks.updateOne({ "_id": id }, { $push: { SelectedList: requestHttpData } });
+        const result = await RequestPicks.updateOne({ "_id": id }, { $push: { SelectedList: newPick } });
         console.log('update result ...', result);
         if (result.modifiedCount === 0) {
             res.status(404).json("No document was updated");
@@ -150,7 +155,12 @@ export const hrApprovesPicks = async (req, res) => {
         const selectedBy = req.body.selectedBy;
         console.log(req.body, req.params.id);
         await dbconnect();
-        const result = await RequestPicks.updateOne({ _id: requestPicksId, 'SelectedList.userId': userId }, { $set: { 'SelectedList.$.selectionStatus': selectionStatus, 'SelectedList.$.selectedBy': selectedBy } });
+        const result = await RequestPicks.updateOne({ _id: requestPicksId, 'SelectedList.userId': userId }, {
+            $set: {
+                'SelectedList.$.selectionStatus': selectionStatus,
+                'SelectedList.$.selectedBy': selectedBy
+            }
+        });
         if (result.modifiedCount === 0) {
             res.status(404).json("No document was updated");
             return;

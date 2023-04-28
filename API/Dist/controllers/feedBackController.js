@@ -66,6 +66,8 @@ const updateRequestPicks = async (requestpicksId, userId) => {
     return result.modifiedCount;
 };
 export const addFeedBack = async (req, res) => {
+    const user = req.body.user;
+    const userId = user.uid;
     const httpData = req.body;
     try {
         if (!httpData) {
@@ -75,8 +77,9 @@ export const addFeedBack = async (req, res) => {
         const newFeedback = {
             _id: uuidv4(),
             template: httpData.template,
-            userId: httpData.userId,
+            userId: userId,
             requestpicksId: httpData.requestpicksId,
+            roleLevel: httpData.roleLevel,
             feedbackTo: httpData.feedbackTo,
             progress: httpData.progress,
             responseDateLog: [new Date],
