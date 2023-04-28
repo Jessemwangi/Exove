@@ -89,6 +89,7 @@ export const ldapAuthMiddleware = async (req: RequestWithUser, res: Response, ne
       sameSite:"none",
       secure:true,
       httpOnly:true,
+      
   
     }).status(200).json("user logout")
     return;
@@ -108,7 +109,8 @@ export const ldapAuthMiddleware = async (req: RequestWithUser, res: Response, ne
     console.log('ldap user', Luser, "db user", user)
 
    return res.cookie("access_token",settoken,{
-      httpOnly:true,
+     httpOnly: true,
+     sameSite:"none",
       secure:true, 
    }).status(200).json(user)
     
