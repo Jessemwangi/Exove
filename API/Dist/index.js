@@ -33,5 +33,6 @@ apiRouter.use('/users', usersRoutes);
 apiRouter.use('/approval', approvalsRoutes);
 app.use('/api', apiRouter);
 app.use(errorMiddleware);
+app.get('/', (req, res) => res.send('Hello World!'));
 app.listen(serverConfig.port, serverConfig.host, () => console.log(`Collegue feedback Server app listening on port ${serverConfig.port}! and host ${serverConfig.host}!`));
 //# sourceMappingURL=index.js.map
