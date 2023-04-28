@@ -14,11 +14,29 @@ import { categoryRoute } from './routes/categoryRoute.js';
 import { templateRoute } from './routes/templateRoute.js';
 import { errorMiddleware, ldapAuthMiddleware } from './utilities/functions.js';
 import { usersRoutes } from './routes/usersRoutes.js';
+import cors from 'cors';
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 const apiRouter = express.Router();
 app.use(ldapAuthMiddleware);
+const allowedOrigins = [
+    "https://exove.vercel.app",
+    "http://localhost:3001",
+    "http://localhost:3000",
+    "http://localhost:3003",
+];
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true,
+}));
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/', defaultRoutes);
 apiRouter.use('/question', questionRoute);
