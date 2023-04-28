@@ -110,8 +110,7 @@ export const ldapAuthMiddleware = async (req: RequestWithUser, res: Response, ne
 
    return res.cookie("access_token",settoken,{
      httpOnly: true,
-     sameSite:"none",
-      secure:true, 
+     sameSite:"none"
    }).status(200).json(user)
     
   }
