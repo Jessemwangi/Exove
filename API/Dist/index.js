@@ -20,10 +20,14 @@ app.use(express.json());
 app.use(cookieParser());
 const apiRouter = express.Router();
 app.use(ldapAuthMiddleware);
-app.use(cors({
-    "origin": '*',
-    "credentials": true
-}));
+const allowedOrigins = ["http://localhost:3001", "https://exove.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3003",];
+const options = {
+    origin: allowedOrigins,
+    credentials: true,
+};
+app.use(cors(options));
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/', defaultRoutes);
 apiRouter.use('/question', questionRoute);

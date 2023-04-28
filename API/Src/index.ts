@@ -25,9 +25,9 @@ app.use(ldapAuthMiddleware); // authentication
 
 // const allowedOrigins: string[] = [
 //     "https://exove.vercel.app",
-//     "http://localhost:3001",
-//     "http://localhost:3000",
-//     "http://localhost:3003",
+    // "http://localhost:3001",
+    // "http://localhost:3000",
+    // "http://localhost:3003",
 //   ];
   
 //   app.use(
@@ -42,10 +42,18 @@ app.use(ldapAuthMiddleware); // authentication
 //       credentials: true,
 //     })
 //   );
-app.use(cors({
-    "origin": '*',
-    "credentials": true
-  }));
+  
+const allowedOrigins = [    "http://localhost:3001","https://exove.vercel.app",
+"http://localhost:3000",
+"http://localhost:3003",];
+
+const options: cors.CorsOptions = {
+    origin: allowedOrigins,
+       credentials: true,
+};
+
+app.use(cors(options));
+
 
 // routes
 apiRouter.use('/auth', authRoutes);
