@@ -57,8 +57,8 @@ export const ldapAuthMiddleware = async (req, res, next) => {
         if (req.path === '/api/logout') {
             res.clearCookie("access_token", {
                 // sameSite: "none",
-                secure: true,
-                // httpOnly: true,
+                // secure: true,
+                httpOnly: true,
             }).status(200).json("user logout");
             return;
         }
