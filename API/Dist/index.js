@@ -18,8 +18,6 @@ import cors from 'cors';
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-const apiRouter = express.Router();
-app.use(ldapAuthMiddleware);
 const allowedOrigins = ["http://localhost:3001", "https://exove.vercel.app",
     "http://localhost:3000",
     "http://localhost:3003",];
@@ -28,6 +26,8 @@ const options = {
     credentials: true,
 };
 app.use(cors(options));
+const apiRouter = express.Router();
+app.use(ldapAuthMiddleware);
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/', defaultRoutes);
 apiRouter.use('/question', questionRoute);
