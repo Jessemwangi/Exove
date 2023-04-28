@@ -9,7 +9,7 @@
     "build": "rimraf Dist && tsc",
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add Dist",
-    "start": "nodemon src/index.ts"
+    "start": "nodemon Src/index.ts"
   },
   "keywords": [],
   "author": "",
