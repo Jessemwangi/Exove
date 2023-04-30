@@ -6,8 +6,10 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "start": "node ./Dist/index.js"
+    "build": "rimraf Dist && tsc",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add Dist",
+    "start": "nodemon Src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -18,12 +20,15 @@
     "@types/mongoose": "^3.8.40",
     "@types/node": "^18.15.11",
     "@types/uuid": "^9.0.1",
+    "@vercel/node": "^2.13.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "ldap": "^0.7.1",
+    "ldapauth-fork": "^5.0.5",
     "moment": "^2.29.4",
     "mongoose": "^7.0.3",
     "url": "^0.11.0",
@@ -31,8 +36,16 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
+    "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/jsonwebtoken": "^9.0.1",
+    "pre-commit": "^1.2.2",
+    "rimraf": "^5.0.0",
     "typescript": "^5.0.3"
-  }
+  },
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ]
 }

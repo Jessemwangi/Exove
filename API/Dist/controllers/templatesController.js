@@ -1,6 +1,7 @@
 import { Template } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
+import { checkUserRoles, searchTemplate } from "../utilities/functions.js";
 export const getTemplates = async (req, res) => {
     try {
         await dbconnect();
@@ -45,6 +46,13 @@ export const getTemplate = async (req, res) => {
 };
 export const addTemplate = async (req, res) => {
     const httpData = req.body;
+    const user = req.body.user;
+    const userId = user.uid;
+    const rolelevel = await checkUserRoles(userId, 2);
+    if (!rolelevel) {
+        res.status(200).json("Not authorized to peform this transaction");
+        return;
+    }
     const primaryKey = uuidv4();
     if (!httpData) {
         res.status(404).json("Post data not found or empty");
@@ -56,19 +64,20 @@ export const addTemplate = async (req, res) => {
         instructions: httpData.instructions,
         createdOn: new Date(),
         categories: httpData.categories,
-        createdBy: httpData.createBy,
+        createdBy: userId,
         active: true,
     };
     try {
         await dbconnect();
         const template = await new Template(newTemplate).save();
         if (template) {
-            const setDefault = await Template.updateMany({ _id: { $ne: primaryKey } }, { active: false });
-            if (setDefault.modifiedCount === 0) {
-                res.status(403).json("failed to set template as default");
-            }
-            else {
-                res.status(200).json("saved");
+            const needDefault = await searchTemplate(primaryKey) >= 1;
+            if (needDefault) {
+                const setDefault = await Template.updateMany({ _id: { $ne: primaryKey } }, { active: false });
+                if (setDefault.modifiedCount === 0) {
+                    return res.status(403).json("failed to set template as default");
+                }
+                return res.status(200).json("saved and set as default");
             }
         }
         else {
@@ -83,7 +92,13 @@ export const addTemplate = async (req, res) => {
 };
 export const setDefaultTemplate = async (req, res) => {
     const httpData = req.params.id;
-    console.log(httpData);
+    const user = req.body.user;
+    const userId = user.uid;
+    const rolelevel = await checkUserRoles(userId, 2);
+    if (!rolelevel) {
+        res.status(200).json("Not authorized to peform this transaction");
+        return;
+    }
     if (!httpData) {
         res.status(404).json("Post data not found or empty");
         return;

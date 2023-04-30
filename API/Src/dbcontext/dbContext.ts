@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { usersSchema, worksReportSchema } from "../models/usersModel.js";
+import { usersSchema } from "../models/usersModel.js";
 import { logsSchema } from "../models/logsModel.js";
 import { approvalsSchema } from "../models/approvalsModels.js";
 import { jesseSchema } from "../models/testingModel.js";
 import { rolesSchema } from "../models/rolesModel.js";
-import { userRolesSchema } from "../models/userRoles.js";
+// import { userRolesSchema } from "../models/userRoles.js";
 import { notifierSchema, notisettingSchema } from "../models/notificationsettingModel.js";
 import { requestpicksSchema } from "../models/requestpicksModel.js";
 import { templateSchema } from "../models/templatesModel.js";
@@ -24,7 +24,6 @@ export const Question = mongoose.model('Question', questionsSchema);
 export const RequestPicks = mongoose.model('RequestPicks', requestpicksSchema);
 export const Roles = mongoose.model('Roles', rolesSchema);
 export const Template = mongoose.model<ITemplates>('Template', templateSchema);
-export const UserRoles = mongoose.model('UserRoles',userRolesSchema)
+// export const UserRoles = mongoose.model('UserRoles',userRolesSchema)
 export const Users = mongoose.model('Users', usersSchema);
-export const WorksReports = mongoose.model('WorksReports', worksReportSchema);
 export const JesseM = mongoose.model('Jesse', jesseSchema); // for personal testing

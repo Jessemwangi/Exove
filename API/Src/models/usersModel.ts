@@ -4,6 +4,7 @@ export const usersSchema = new mongoose.Schema({
   _id: { type: String, required: true},
   firstName: { type: String, required: true },
   surname: { type: String, required: true },
+  ldapUid: { type: String, required: true },
   email: {
     type: String,
     required: true,
@@ -16,13 +17,16 @@ export const usersSchema = new mongoose.Schema({
     },
   },
   displayName: String,
+  imageUrl:String,
 //   personal:  { type: String, required: true },
 //   about: [{ type: mongoose.Schema.Types.ObjectId, ref: "About" }],
-  rolesId:[{type: mongoose.Schema.Types.ObjectId, ref: "Roles" }],
+  rolesId:{ type: mongoose.Schema.Types.String, ref: "Roles", required:true },
   workId: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'WorksReports',
+      reportsTo: { type: mongoose.Schema.Types.String },
+      workReportStatus: Boolean,
+      createdOn: Date,
+      deactivatedOn: Date,
     },
   ],
   title: String,
@@ -31,14 +35,6 @@ export const usersSchema = new mongoose.Schema({
   startDate: Date,
   phone: String,
   userStatus: Boolean,
+
 });
 
-//  worker report to who, this schema has all the reporting channel and allow reporting channel to be active or inactive
-export const worksReportSchema = new mongoose.Schema({
-  _id: { type: Number, required: true},
-  userId: { type: mongoose.Schema.Types.ObjectId },
-  reportsTo: { type: mongoose.Schema.Types.ObjectId },
-  workReportStatus: Boolean,
-  createdOn: Date,
-  deactivatedOn: Date,
-});

@@ -10,12 +10,11 @@ export const getCategory = async (req: Request, res: Response) => {
        
         await dbconnect()
         const category:IQCategory = await Category.find({}).select('-__v').lean();
-        console.log(category)
         await dbclose()
-        res.status(200).json(category)
+       return res.status(200).json(category)
     } catch (error) {
-        res.status(500).json('error')
         console.log(error)
+       return res.status(500).json('error')
     }
    
 }
@@ -35,18 +34,17 @@ export const addCategory =async (req:Request, res:Response) => {
 
         await dbconnect()
         const q = await new Category(data).save()
-        console.log(q)
         if (q) {
-            res.status(200).json('saved')
+           return res.status(200).json('saved')
         }
         else {
-            res.status(501).json('failed to save')
+           return res.status(501).json('failed to save')
         }
         await dbclose()
        
     } catch (error) {
-        res.status(500).json('error')
         console.log(error)
+       return res.status(500).json('error')
     }
    
 }

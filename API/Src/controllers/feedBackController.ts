@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { IFeedBacks, IRequestPicks } from "../dbcontext/Interfaces.js";
+import { IFeedBacks, ILdapAuth, IRequestPicks } from "../dbcontext/Interfaces.js";
 import { FeedBacks, RequestPicks } from "../dbcontext/dbContext.js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 export const getFeeds = async (req: Request, res: Response) => {
   await dbconnect()
   const feedBacks:IFeedBacks[] = await FeedBacks.find({}).sort({"createdOn":1}).lean()
-  res.status(200).json(feedBacks);
+ return res.status(200).json(feedBacks);
   await dbclose()
 };
 
@@ -16,7 +16,7 @@ export const getUserFeedReq = async (req:Request, res:Response) => {
   const httpData: String = req.body
     
     if (!httpData) {
-        res.status(404).json("Post data not found or empty");
+      return  res.status(404).json("Post data not found or empty");
         return;
     }
     // get only the from the selectedlist
@@ -27,9 +27,9 @@ export const getUserFeedReq = async (req:Request, res:Response) => {
     const userRequestPicks: IRequestPicks[] =
     await RequestPicks.find({ 'SelectedList.userId': httpData, 'SelectedList.selectionStatus': true }).lean().sort({ 'requestedOn': 1 }).exec();
         await dbclose();
-        res.status(200).json(userRequestPicks)
+       return res.status(200).json(userRequestPicks)
 } catch (error) {
-    res.status(500).json("Internal server error" );
+    return res.status(500).json("Internal server error" );
 }
 }
 
@@ -69,18 +69,19 @@ export const submitFeedBack = async (req: Request, res: Response) => {
   }
     const result:Number = await updateRequestPicks(id, userId)
     console.log('result for submitt update', result)
+    await dbclose()
     if (result !== 0) {
-      res.status(403).json('feedback submitted successful')
+     return res.status(200).json('feedback submitted successful')
       // The update was successful
     } else {
-      res.status(400).json('Failed to submit Feedback')
+    return  res.status(200).json('Failed to submit Feedback')
     }
   }
   else {
-    res.status(404).json("Post data Incomplete post or not found or empty");
+ 
+   return res.status(404).json("Post data Incomplete post or not found or empty");
   }
-  await dbclose()
-  // code to check if feedback is submitted
+ 
 }
 
 const updateRequestPicks = async (requestpicksId:String,userId:String ):Promise<Number> => {
@@ -93,7 +94,9 @@ const updateRequestPicks = async (requestpicksId:String,userId:String ):Promise<
 }
 
 export const addFeedBack = async (req: Request, res: Response) => {
-  
+  const user:ILdapAuth =req.body.user
+  const userId: string = user.uid;
+
   const httpData:IFeedBacks = req.body
     try {
       if (!httpData) {
@@ -103,8 +106,9 @@ export const addFeedBack = async (req: Request, res: Response) => {
       const newFeedback: IFeedBacks = {
         _id: uuidv4(),
         template: httpData.template,
-        userId: httpData.userId,
+        userId: userId,
         requestpicksId: httpData.requestpicksId,
+        roleLevel:httpData.roleLevel,
         feedbackTo: httpData.feedbackTo,
         progress: httpData.progress,
         responseDateLog: [new Date],
@@ -133,20 +137,21 @@ export const addFeedBack = async (req: Request, res: Response) => {
     if ( newFeedback.submitted===true) {
       const result:Number = await updateRequestPicks(newFeedback.requestpicksId, newFeedback.userId)
       console.log('result for submitt update', result)
+      await dbclose();
       if (result !== 0) {
-        res.status(403).json('feedback submitted successful')
+       return res.status(200).json('feedback submitted successful')
         // The update was successful
       } else {
-        res.status(400).json('Failed to submit Feedback')
+       return res.status(200).json('Failed to submit Feedback')
       }
     }
     else {
-      res.status(400).json('Feedback save, untill you submit the feedback it wont be valid')
+     return res.status(200).json('Feedback save, untill you submit the feedback it wont be valid')
     }
-      await dbclose();
+      
     } catch (error) {
-      res.status(500).json("Internal server error");
       console.log(error)
+    return  res.status(500).json("Internal server error");
     }
 }
 
