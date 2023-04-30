@@ -31,7 +31,7 @@ const options: cors.CorsOptions = {
 app.use(cors(options));
 
 const apiRouter = express.Router();
-// app.use(ldapAuthMiddleware); // authentication
+ app.use(ldapAuthMiddleware); // authentication
 
   
 

@@ -12,7 +12,7 @@ import { reportsRoutes } from './routes/reportsRoute.js';
 import { approvalsRoutes } from './routes/approvalsRoute.js';
 import { categoryRoute } from './routes/categoryRoute.js';
 import { templateRoute } from './routes/templateRoute.js';
-import { errorMiddleware } from './utilities/functions.js';
+import { errorMiddleware, ldapAuthMiddleware } from './utilities/functions.js';
 import { usersRoutes } from './routes/usersRoutes.js';
 import cors from 'cors';
 const app = express();
@@ -27,6 +27,7 @@ const options = {
 };
 app.use(cors(options));
 const apiRouter = express.Router();
+app.use(ldapAuthMiddleware);
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/', defaultRoutes);
 apiRouter.use('/question', questionRoute);

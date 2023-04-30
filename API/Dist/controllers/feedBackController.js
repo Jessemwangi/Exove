@@ -61,21 +61,17 @@ export const submitFeedBack = async (req, res) => {
         return res.status(404).json("Post data Incomplete post or not found or empty");
     }
 };
-const updateRequestPicks = async (requestpicksId, userId) => {
-    const result = await RequestPicks.updateOne({ _id: requestpicksId, 'SelectedList.userId': userId, }, { $set: { 'SelectedList.$.feedBackSubmitted': true } });
-    return result.modifiedCount;
-};
 export const addFeedBack = async (req, res) => {
     const user = req.body.user;
     const userId = user.uid;
     const requestpicksId = req.params.id;
     const httpData = req.body;
     try {
-        if (!httpData) {
+        if (!requestpicksId || requestpicksId === '') {
             res.status(404).json("Post data not found or empty");
             return;
         }
-        const newFeedback = {
+        const newFeedbackInstance = {
             _id: uuidv4(),
             template: httpData.template,
             userId: userId,
@@ -88,11 +84,18 @@ export const addFeedBack = async (req, res) => {
             createdOn: new Date,
             submitted: false,
         };
+        const newFeedback = new FeedBacks(newFeedbackInstance);
+        const validationError = newFeedback.validateSync();
+        if (validationError) {
+            res.status(400).json(validationError.message);
+            return;
+        }
         await dbconnect();
-        const feedback = await verifiyFeedbackFrom(httpData.requestpicksId, httpData.feedbackTo, httpData.userId);
+        const feedback = await verifiyFeedbackFrom(requestpicksId, httpData.feedbackTo, userId);
         if (!feedback) {
             console.log('feebackfailed');
             res.status(405).json("Not authorized to give this feedback");
+            await dbclose();
             return;
         }
         const setFeedBack = await new FeedBacks(newFeedback).save();
@@ -115,12 +118,16 @@ export const addFeedBack = async (req, res) => {
             }
         }
         else {
-            return res.status(200).json('Feedback save, untill you submit the feedback it wont be valid');
+            return res.status(200).json('Feedback saved successfully');
         }
     }
     catch (error) {
         console.log(error);
         return res.status(500).json("Internal server error");
     }
+};
+const updateRequestPicks = async (requestpicksId, userId) => {
+    const result = await RequestPicks.updateOne({ _id: requestpicksId, 'SelectedList.userId': userId, }, { $set: { 'SelectedList.$.feedBackSubmitted': true } });
+    return result.modifiedCount;
 };
 //# sourceMappingURL=feedBackController.js.map
