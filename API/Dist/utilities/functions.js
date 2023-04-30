@@ -70,10 +70,10 @@ export const ldapAuthMiddleware = async (req, res, next) => {
             const user = await getUserF({ ldapUid: Luser.uid });
             const settoken = jwt.sign({ user }, securityKey);
             console.log('ldap user', Luser, "db user", user);
-            return res.cookie("access_token", settoken, 
-            {   httpOnly:true,
-                secure:true,
-                sameSite: 'none'
+            return res.cookie("access_token", settoken, {
+                httpOnly: true,
+                sameSite: "none",
+                secure: true,
             }).status(200).json(user);
         }
         const token = req.cookies.access_token;

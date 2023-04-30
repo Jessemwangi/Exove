@@ -21,7 +21,7 @@ app.use(express.json())
 app.use(cookieParser())
 const allowedOrigins = [    "http://localhost:3001","https://exove.vercel.app",
 "http://localhost:3000",
-"http://localhost:3003", "https://exove-colleaguefeedback-client.vercel.app/"];
+"http://localhost:3003", "https://exove-colleaguefeedback-client.vercel.app"];
 
 const options: cors.CorsOptions = {
     origin: allowedOrigins,
@@ -31,7 +31,7 @@ const options: cors.CorsOptions = {
 app.use(cors(options));
 
 const apiRouter = express.Router();
-app.use(ldapAuthMiddleware); // authentication
+// app.use(ldapAuthMiddleware); // authentication
 
   
 

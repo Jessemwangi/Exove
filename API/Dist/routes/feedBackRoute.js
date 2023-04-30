@@ -3,7 +3,7 @@ import { addFeedBack, getFeeds, submitFeedBack } from '../controllers/feedBackCo
 export const feedsRoutes = express.Router();
 feedsRoutes.get('/', getFeeds);
 feedsRoutes.get('/:id');
-feedsRoutes.post('/', addFeedBack);
+feedsRoutes.post('/:id', addFeedBack);
 feedsRoutes.delete('/:id');
 feedsRoutes.put('/');
 feedsRoutes.patch('/submit/:id', submitFeedBack);
