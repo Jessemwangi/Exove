@@ -193,15 +193,16 @@ export const hrMassApprovesPicks = async (req, res) => {
     }
     try {
         if (!req.body) {
-            res.status(404).json("Post data not found or empty");
+            res.status(404).json("Data not found or empty");
             return;
         }
         const requestPicksId = req.body.requestPicksId;
         const selectedList = req.body.SelectedList;
+        console.log('selectedList .....', selectedList);
         await dbconnect();
-        const updatePromises = selectedList.map(({ userId, selectionStatus }) => RequestPicks.updateOne({ _id: requestPicksId, 'SelectedList.userId': userId }, {
+        const updatePromises = selectedList.map(async (n) => await RequestPicks.updateOne({ _id: requestPicksId, 'SelectedList.userId': n.userId }, {
             $set: {
-                'SelectedList.$.selectionStatus': selectionStatus,
+                'SelectedList.$.selectionStatus': n.selectionStatus,
                 'SelectedList.$.selectedBy': selectedBy
             }
         }));
@@ -216,6 +217,7 @@ export const hrMassApprovesPicks = async (req, res) => {
     }
     catch (error) {
         await dbclose();
+        console.log(error);
         res.status(500).json("server responded with an error");
     }
 };

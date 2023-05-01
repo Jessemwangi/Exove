@@ -164,7 +164,7 @@ export const addFeedBack = async (req: Request, res: Response) => {
     }
 
     console.log("newFeedback.submitted....", newFeedback.submitted);
-    if (newFeedback.submitted === true) {
+   
       const result: Number = await updateRequestPicks(
         newFeedback.requestpicksId,
         newFeedback.userId
@@ -175,11 +175,8 @@ export const addFeedBack = async (req: Request, res: Response) => {
         return res.status(200).json("feedback submitted successful");
         // The update was successful
       } else {
-        return res.status(200).json("Failed to submit Feedback");
+        return res.status(200).json("Feedback saved successfully but not submitted");
       }
-    } else {
-      return res.status(200).json("Feedback saved successfully");
-    }
   } catch (error) {
     console.log(error);
     return res.status(500).json("Internal server error");

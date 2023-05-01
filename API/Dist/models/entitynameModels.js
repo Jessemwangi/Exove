@@ -10,4 +10,4 @@ export const entitySchema = new mongoose.Schema({
         required: true,
     },
 });
-//# sourceMappingURL=entityNameModels.js.map
+//# sourceMappingURL=entitynameModels.js.map

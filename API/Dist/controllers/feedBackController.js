@@ -130,19 +130,14 @@ export const addFeedBack = async (req, res) => {
             return;
         }
         console.log("newFeedback.submitted....", newFeedback.submitted);
-        if (newFeedback.submitted === true) {
-            const result = await updateRequestPicks(newFeedback.requestpicksId, newFeedback.userId);
-            console.log("result for submitt update", result);
-            await dbclose();
-            if (result !== 0) {
-                return res.status(200).json("feedback submitted successful");
-            }
-            else {
-                return res.status(200).json("Failed to submit Feedback");
-            }
+        const result = await updateRequestPicks(newFeedback.requestpicksId, newFeedback.userId);
+        console.log("result for submitt update", result);
+        await dbclose();
+        if (result !== 0) {
+            return res.status(200).json("feedback submitted successful");
         }
         else {
-            return res.status(200).json("Feedback saved successfully");
+            return res.status(200).json("Feedback saved successfully but not submitted");
         }
     }
     catch (error) {
