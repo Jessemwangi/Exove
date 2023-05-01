@@ -16,6 +16,15 @@ export const getUser = async (req: Request, res: Response) => {
   }
  }
 
+ export const getUserId = async (req: Request, res: Response) => {
+  if(!req.params) return res.status(404).json("user infomation not found")
+  try {
+    const user =await getUserF( {_id:req.params.id} as userSearch )
+    res.status(200).json(user)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+ }
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -74,4 +83,51 @@ export const postUser = async (req: Request, res: Response) => {
     res.status(500).json(error)
     console.log(error)
   }
+}
+
+
+export const putUser = async (req: Request, res: Response) => {
+  try {
+    const userhttpData: IUser = req.body
+    const workReport: IWorksReport[] = userhttpData.workId
+    const primaryKey = req.params.id
+
+    const newUser:any  = {
+      ldapUid:userhttpData.ldapUid,
+      firstName: userhttpData.firstName,
+      surname: userhttpData.surname,
+      email: userhttpData.email,
+      displayName: userhttpData.displayName,
+      workId: workReport,
+      title: userhttpData.title,
+      phone: userhttpData.phone,
+      userStatus: true,
+      rolesId: userhttpData.rolesId
+    }
+
+    await dbconnect()
+    // const q = await new Users(newUser).save()
+    const q = await Users.findByIdAndUpdate(primaryKey, newUser, { new: true }).exec();
+
+    if (q) {
+      await addUserToRole(primaryKey,newUser.rolesId)
+      res.status(200).json('User saved')
+      await dbclose()
+      return
+    }
+    else {
+      res.status(501).json('failed to save')
+      await dbclose()
+      return
+    }
+   
+  }
+  catch(error) {
+    res.status(500).json(error)
+    console.log(error)
+  }
+}
+
+const addWorkId = () => {
+  
 }

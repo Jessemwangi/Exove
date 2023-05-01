@@ -22,8 +22,7 @@ export const createRole = async (req:Request, res:Response) => {
 
     try {
       const rolesHttpBody: IRoles = req.body;
-      console.log(rolesHttpBody)
-      const user:ILdapAuth =req.body.user
+      const user: ILdapAuth = req.body.user
       const userId: string = user.uid;
           const rolelevel = await checkUserRoles(userId,2);
           if (!rolelevel) {
@@ -40,7 +39,7 @@ const primaryKey =uuidv4()
                   createdOn: new Date(),
                   createBy: userId,
               }
-              console.log(rolesPost)
+            
             const rolesInstance = new Roles(rolesPost);
             const validationError = rolesInstance.validateSync();
 

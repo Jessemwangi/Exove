@@ -4,7 +4,7 @@ dotenv.config();
 const dbuser = process.env.DBUSERNAME;
 const dbpass = process.env.DBPASSWORD;
 export const securityKey = process.env.API_KEY;
-const uri = `mongodb+srv://${dbuser}:${dbpass}@cluster0.hounq81.mongodb.net/?retryWrites=true&w=majority`;
+const uri = 'mongodb://localhost:27017/feedback';
 const options = { useNewUrlParser: true, useUnifiedTopology: true, };
 export const dbconnect = async () => {
     try {

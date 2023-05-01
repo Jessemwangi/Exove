@@ -2,7 +2,8 @@ import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from "uuid";
 import { Category } from "../dbcontext/dbContext.js";
-import { IQCategory } from "../dbcontext/Interfaces.js";
+import { ILdapAuth, IQCategory } from "../dbcontext/Interfaces.js";
+import { checkUserRoles } from "../utilities/functions.js";
 
 
 export const getCategory = async (req: Request, res: Response) => {
@@ -19,7 +20,14 @@ export const getCategory = async (req: Request, res: Response) => {
    
 }
 
-export const addCategory =async (req:Request, res:Response) => {
+export const addCategory = async (req: Request, res: Response) => {
+    const user: ILdapAuth = req.body.user
+    const userId: string = user.uid;
+        const rolelevel = await checkUserRoles(userId,2);
+        if (!rolelevel) {
+          res.status(200).json("Not authorized to peform this transaction");
+          return;
+        }
     try {
  const httpData = req.body
         const data:IQCategory = {
@@ -27,7 +35,7 @@ export const addCategory =async (req:Request, res:Response) => {
             categoryName: httpData.name,
             description: httpData.description,
             questions: httpData.questions,
-            createdBy: httpData.createdBy,
+            createdBy: userId,
             categoryStatus: true,
             createdOn:new Date
         }

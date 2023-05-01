@@ -214,5 +214,5 @@ export interface ILdapAuth {
 
 export interface userSearch{
   _id?: String,
-  ldapUid?:string,
+  ldapUid?:String,
 }

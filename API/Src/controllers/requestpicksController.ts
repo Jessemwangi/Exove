@@ -14,6 +14,7 @@ import {
     addApprovals,
     addToNotification,
     checkUserRoles,
+    isUserInRequestPick,
 } from "../utilities/functions.js";
 import { UpdateWriteOpResult } from 'mongoose';
   
@@ -141,6 +142,14 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
   const requestHttpData: ISelectedList = req.body;
   const user:ILdapAuth =req.body.user
   const userId: string = user.uid;
+  await dbconnect();
+  const rolelevel = await checkUserRoles(userId, 2);
+  const requestPickData = await isUserInRequestPick(userId);
+
+  if (!rolelevel && requestPickData === null) {
+      res.status(200).json("Not authorized to peform this transaction");
+      return;
+  }
   const newPick: ISelectedList = {
     ...requestHttpData, selectedBy: userId
   }
@@ -164,7 +173,7 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
         sendNotification: true,
         createdOn: new Date(),
       };
-      await dbconnect();
+    
       const result = await RequestPicks.updateOne(
         { "_id": id },
         { $push: { SelectedList: newPick} }
@@ -186,7 +195,14 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
   };
   
   
-  export const hrApprovesPicks = async (req: Request, res: Response) => {
+export const hrApprovesPicks = async (req: Request, res: Response) => {
+  const user:ILdapAuth =req.body.user
+  const selectedBy: string = user.uid;
+      const rolelevel = await checkUserRoles(selectedBy,2);
+      if (!rolelevel) {
+        res.status(200).json("Not authorized to peform this transaction");
+        return;
+      }
     try {
       if (!req.body && !req.params.id) {
         res.status(404).json("Post data not found or empty");
@@ -195,9 +211,6 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
       const requestPicksId: String = req.params.id;
       const userId: String = req.body.userId;
       const selectionStatus: Boolean = req.body.selectionStatus;
-      const selectedBy: String = req.body.selectedBy;
-
-      console.log(req.body,req.params.id);
       
       await dbconnect();
       const result:UpdateWriteOpResult = await RequestPicks.updateOne(
@@ -221,19 +234,30 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
   };
 
 
-  export const hrMassApprovesPicks = async (req: Request, res: Response) => {
+export const hrMassApprovesPicks = async (req: Request, res: Response) => {
+  const user:ILdapAuth =req.body.user
+  const selectedBy: String = user.uid;
+      const rolelevel = await checkUserRoles(selectedBy,2);
+      if (!rolelevel) {
+        res.status(200).json("Not authorized to peform this transaction");
+        return;
+      }
     try {
       if (!req.body) {
         res.status(404).json("Post data not found or empty");
         return;
       }
-      const requestPicksId: number = req.body.requestPicksId;
+      const requestPicksId: String = req.body.requestPicksId;
       const selectedList: ISelectedList[] = req.body.SelectedList;
       await dbconnect();
       const updatePromises = selectedList.map(({ userId, selectionStatus }) =>
         RequestPicks.updateOne(
           { _id: requestPicksId, 'SelectedList.userId': userId },
-          { $set: { 'SelectedList.$.selectionStatus': selectionStatus } },
+          {
+            $set: {
+              'SelectedList.$.selectionStatus': selectionStatus,
+              'SelectedList.$.selectedBy': selectedBy}
+          },
         )
       );
       const results = await Promise.all(updatePromises);

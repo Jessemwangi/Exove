@@ -1,8 +1,8 @@
 import { dbclose, dbconnect, securityKey } from "../Configs/dbConnect.js";
 import { run } from "../Ldap/ldapTest.js";
 import jwt from 'jsonwebtoken';
-import { IApprovals, ILdapAuth, INotificationsSetting, INotifier, IRoles, IUser, userSearch } from "../dbcontext/Interfaces.js";
-import { Approvals, Notifer, NotificationSetting, Roles, Template, Users } from "../dbcontext/dbContext.js";
+import { IApprovals, ILdapAuth, INotificationsSetting, INotifier, IRequestPicks, IRoles, IUser, userSearch } from "../dbcontext/Interfaces.js";
+import { Approvals, Notifer, NotificationSetting, RequestPicks, Roles, Template, Users } from "../dbcontext/dbContext.js";
 import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
 
 interface RequestWithUser extends Request {
@@ -13,9 +13,12 @@ interface RequestWithUser extends Request {
 
 export const checkUserRoles = async (userId: String,roleLevel:Number): Promise<Boolean> => {
 
+  const user: IUser = await getUserF({ ldapUid: userId })
+
     await dbconnect();
-    const roleData: IRoles = await Roles.findOne({ userId, roleStatus: true  }).lean();
-    await dbclose();
+  const roleData: IRoles = await Roles.findOne({ users:user._id, roleStatus: true }).lean();
+
+   
       if (roleData && roleData.roleLevel <= roleLevel){
       return true;
       }
@@ -24,9 +27,10 @@ export const checkUserRoles = async (userId: String,roleLevel:Number): Promise<B
 };
 
 export const addUserToRole = async (userId:String, roleId:String) => {
-  
-  const result = await Roles.updateOne(
-    { _id: roleId }, { $push :{userId}}).exec()
+   await Roles.updateOne(
+    { _id: roleId }, 
+    { $push: { users: userId } }
+  ).exec();
 
 }
 
@@ -73,10 +77,22 @@ export const userEnabledNotification = async (userId: String, entityName:String)
   return false;
 }
 
+export const isUserInRequestPick = async (requestedTo: string): Promise<IRequestPicks> => {
+
+  const data: IRequestPicks = await RequestPicks.findOne({
+    "requestedTo": requestedTo,
+    "submitted": false,
+  })
+    .lean()
+    .sort({ requestedOn: 1 })
+    .exec();
+
+  return data
+}
 
 export const searchTemplate = async (template: string): Promise<number> => {
   const data = await Template.find({}).lean();
-  console.log(data)
+ 
   return data.length
 }
 
@@ -100,29 +116,29 @@ export const ldapAuthMiddleware = async (req: RequestWithUser, res: Response, ne
     const username: string = req.body.username
     const password: string = req.body.password
  
-    const Luser: ILdapAuth = await run(username, password);
+    const user: ILdapAuth = await run(username, password);
     
-    const user = await getUserF({ ldapUid: Luser.uid } as userSearch)
+    const dbUser = await getUserF({ ldapUid: user.uid } as userSearch)
     
     const settoken = jwt.sign({user},securityKey);
-
-    console.log('ldap user', Luser, "db user", user)
 
    return res.cookie("access_token",settoken,{
      httpOnly: true,
      sameSite:"none",
       secure:true, 
-   }).status(200).json(user)
+   }).status(200).json({ ...user,...dbUser })
     
   }
     
-  const token = req.cookies.access_token;
+    const token = req.cookies.access_token;
+    
     if (token) {
       jwt.verify(token, securityKey, (err: any, userInfo: any) => {
         if (err) {
           console.log(err)
           return res.status(401).json("Authentication token Not Valid");
         }
+        
         const user: ILdapAuth = userInfo;
     
         req.body = {

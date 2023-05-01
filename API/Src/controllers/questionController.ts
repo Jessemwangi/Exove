@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import { v4 as uuidv4 } from "uuid";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { Category, Question } from '../dbcontext/dbContext.js';
-import { IQuestion } from '../dbcontext/Interfaces.js';
+import { ILdapAuth, IQuestion } from '../dbcontext/Interfaces.js';
+import { checkUserRoles } from '../utilities/functions.js';
 
 export const getQuestion =async (req:Request, res:Response) => {
   try {
@@ -33,7 +34,14 @@ export const getQuestionId = async (req: Request, res: Response) => {
  
 }
 
-export const addQuestion =async (req:Request, res:Response) => {
+export const addQuestion = async (req: Request, res: Response) => {
+  const user: ILdapAuth = req.body.user
+  const userId: string = user.uid;
+      const rolelevel = await checkUserRoles(userId,2);
+      if (!rolelevel) {
+        res.status(200).json("Not authorized to peform this transaction");
+        return;
+      }
   try {
     
       const httpData = req.body
@@ -43,7 +51,7 @@ export const addQuestion =async (req:Request, res:Response) => {
         _id: primaryKey,
         category: httpData.category,
         question:httpData.question,
-        createdBy: httpData.createdBy,
+        createdBy: userId,
         type: httpData.type,
         active: true,
         createdOn:new Date,
@@ -56,9 +64,9 @@ export const addQuestion =async (req:Request, res:Response) => {
               { "_id": httpData.category },
               { $push: {'questions': primaryKey } },
             ).exec();
-            console.log('Update result:', updateResult);
+          
       }
-      console.log(q)
+    
       await dbclose()
       res.status(200).json('saved')
   } catch (error) {

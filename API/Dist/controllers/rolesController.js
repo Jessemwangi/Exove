@@ -16,7 +16,6 @@ export const getRoles = async (req, res) => {
 export const createRole = async (req, res) => {
     try {
         const rolesHttpBody = req.body;
-        console.log(rolesHttpBody);
         const user = req.body.user;
         const userId = user.uid;
         const rolelevel = await checkUserRoles(userId, 2);
@@ -35,7 +34,6 @@ export const createRole = async (req, res) => {
             createdOn: new Date(),
             createBy: userId,
         };
-        console.log(rolesPost);
         const rolesInstance = new Roles(rolesPost);
         const validationError = rolesInstance.validateSync();
         if (validationError) {

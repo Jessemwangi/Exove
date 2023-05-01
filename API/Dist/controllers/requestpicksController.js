@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { addToNotification, checkUserRoles, } from "../utilities/functions.js";
+import { addToNotification, checkUserRoles, isUserInRequestPick, } from "../utilities/functions.js";
 export const getAllRequestPicks = async (req, res) => {
     try {
         await dbconnect();
@@ -105,6 +105,13 @@ export const submitRequestPicks = async (req, res) => {
     const requestHttpData = req.body;
     const user = req.body.user;
     const userId = user.uid;
+    await dbconnect();
+    const rolelevel = await checkUserRoles(userId, 2);
+    const requestPickData = await isUserInRequestPick(userId);
+    if (!rolelevel && requestPickData === null) {
+        res.status(200).json("Not authorized to peform this transaction");
+        return;
+    }
     const newPick = {
         ...requestHttpData, selectedBy: userId
     };
@@ -126,7 +133,6 @@ export const submitRequestPicks = async (req, res) => {
             sendNotification: true,
             createdOn: new Date(),
         };
-        await dbconnect();
         const result = await RequestPicks.updateOne({ "_id": id }, { $push: { SelectedList: newPick } });
         console.log('update result ...', result);
         if (result.modifiedCount === 0) {
@@ -144,6 +150,13 @@ export const submitRequestPicks = async (req, res) => {
     }
 };
 export const hrApprovesPicks = async (req, res) => {
+    const user = req.body.user;
+    const selectedBy = user.uid;
+    const rolelevel = await checkUserRoles(selectedBy, 2);
+    if (!rolelevel) {
+        res.status(200).json("Not authorized to peform this transaction");
+        return;
+    }
     try {
         if (!req.body && !req.params.id) {
             res.status(404).json("Post data not found or empty");
@@ -152,8 +165,6 @@ export const hrApprovesPicks = async (req, res) => {
         const requestPicksId = req.params.id;
         const userId = req.body.userId;
         const selectionStatus = req.body.selectionStatus;
-        const selectedBy = req.body.selectedBy;
-        console.log(req.body, req.params.id);
         await dbconnect();
         const result = await RequestPicks.updateOne({ _id: requestPicksId, 'SelectedList.userId': userId }, {
             $set: {
@@ -173,6 +184,13 @@ export const hrApprovesPicks = async (req, res) => {
     }
 };
 export const hrMassApprovesPicks = async (req, res) => {
+    const user = req.body.user;
+    const selectedBy = user.uid;
+    const rolelevel = await checkUserRoles(selectedBy, 2);
+    if (!rolelevel) {
+        res.status(200).json("Not authorized to peform this transaction");
+        return;
+    }
     try {
         if (!req.body) {
             res.status(404).json("Post data not found or empty");
@@ -181,7 +199,12 @@ export const hrMassApprovesPicks = async (req, res) => {
         const requestPicksId = req.body.requestPicksId;
         const selectedList = req.body.SelectedList;
         await dbconnect();
-        const updatePromises = selectedList.map(({ userId, selectionStatus }) => RequestPicks.updateOne({ _id: requestPicksId, 'SelectedList.userId': userId }, { $set: { 'SelectedList.$.selectionStatus': selectionStatus } }));
+        const updatePromises = selectedList.map(({ userId, selectionStatus }) => RequestPicks.updateOne({ _id: requestPicksId, 'SelectedList.userId': userId }, {
+            $set: {
+                'SelectedList.$.selectionStatus': selectionStatus,
+                'SelectedList.$.selectedBy': selectedBy
+            }
+        }));
         const results = await Promise.all(updatePromises);
         const nModified = results.reduce((acc, result) => acc + result.modifiedCount, 0);
         await dbclose();

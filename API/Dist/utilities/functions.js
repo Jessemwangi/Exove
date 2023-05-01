@@ -1,18 +1,18 @@
 import { dbclose, dbconnect, securityKey } from "../Configs/dbConnect.js";
 import { run } from "../Ldap/ldapTest.js";
 import jwt from 'jsonwebtoken';
-import { Approvals, Notifer, NotificationSetting, Roles, Template, Users } from "../dbcontext/dbContext.js";
+import { Approvals, Notifer, NotificationSetting, RequestPicks, Roles, Template, Users } from "../dbcontext/dbContext.js";
 export const checkUserRoles = async (userId, roleLevel) => {
+    const user = await getUserF({ ldapUid: userId });
     await dbconnect();
-    const roleData = await Roles.findOne({ userId, roleStatus: true }).lean();
-    await dbclose();
+    const roleData = await Roles.findOne({ users: user._id, roleStatus: true }).lean();
     if (roleData && roleData.roleLevel <= roleLevel) {
         return true;
     }
     return false;
 };
 export const addUserToRole = async (userId, roleId) => {
-    const result = await Roles.updateOne({ _id: roleId }, { $push: { userId } }).exec();
+    await Roles.updateOne({ _id: roleId }, { $push: { users: userId } }).exec();
 };
 export const getUserF = async ({ ldapUid, _id }) => {
     await dbconnect();
@@ -47,9 +47,18 @@ export const userEnabledNotification = async (userId, entityName) => {
     }
     return false;
 };
+export const isUserInRequestPick = async (requestedTo) => {
+    const data = await RequestPicks.findOne({
+        "requestedTo": requestedTo,
+        "submitted": false,
+    })
+        .lean()
+        .sort({ requestedOn: 1 })
+        .exec();
+    return data;
+};
 export const searchTemplate = async (template) => {
     const data = await Template.find({}).lean();
-    console.log(data);
     return data.length;
 };
 export const ldapAuthMiddleware = async (req, res, next) => {
@@ -66,15 +75,14 @@ export const ldapAuthMiddleware = async (req, res, next) => {
         if (req.path === '/api/login') {
             const username = req.body.username;
             const password = req.body.password;
-            const Luser = await run(username, password);
-            const user = await getUserF({ ldapUid: Luser.uid });
+            const user = await run(username, password);
+            const dbUser = await getUserF({ ldapUid: user.uid });
             const settoken = jwt.sign({ user }, securityKey);
-            console.log('ldap user', Luser, "db user", user);
             return res.cookie("access_token", settoken, {
                 httpOnly: true,
                 sameSite: "none",
                 secure: true,
-            }).status(200).json(user);
+            }).status(200).json({ ...user, ...dbUser });
         }
         const token = req.cookies.access_token;
         if (token) {

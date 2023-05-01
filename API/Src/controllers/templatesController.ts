@@ -82,8 +82,8 @@ export const addTemplate = async (req: Request, res: Response) => {
     await dbconnect();
     const template = await new Template(newTemplate).save();
     if (template) {
-      const needDefault = await searchTemplate(primaryKey) >= 1;
-      if (needDefault) {
+      const needDefault = await searchTemplate(primaryKey) > 1;
+      if (needDefault ) {
   
         const setDefault = await Template.updateMany(
           { _id: { $ne: primaryKey } },

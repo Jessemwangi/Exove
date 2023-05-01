@@ -1,6 +1,7 @@
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
 import { Category } from "../dbcontext/dbContext.js";
+import { checkUserRoles } from "../utilities/functions.js";
 export const getCategory = async (req, res) => {
     try {
         await dbconnect();
@@ -14,6 +15,13 @@ export const getCategory = async (req, res) => {
     }
 };
 export const addCategory = async (req, res) => {
+    const user = req.body.user;
+    const userId = user.uid;
+    const rolelevel = await checkUserRoles(userId, 2);
+    if (!rolelevel) {
+        res.status(200).json("Not authorized to peform this transaction");
+        return;
+    }
     try {
         const httpData = req.body;
         const data = {
@@ -21,7 +29,7 @@ export const addCategory = async (req, res) => {
             categoryName: httpData.name,
             description: httpData.description,
             questions: httpData.questions,
-            createdBy: httpData.createdBy,
+            createdBy: userId,
             categoryStatus: true,
             createdOn: new Date
         };
