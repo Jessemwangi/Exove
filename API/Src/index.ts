@@ -14,14 +14,29 @@ import { categoryRoute } from './routes/categoryRoute.js';
 import { templateRoute } from './routes/templateRoute.js';
 import { errorMiddleware, ldapAuthMiddleware } from './utilities/functions.js';
 import { usersRoutes } from './routes/usersRoutes.js';
+import cors from 'cors';
 
 const app = express()
 app.use(express.json())
 app.use(cookieParser())
+const allowedOrigins = [    "http://localhost:3001","https://exove.vercel.app",
+"http://localhost:3000",
+"http://localhost:3003", "https://exove-colleaguefeedback-client.vercel.app"];
+
+const options: cors.CorsOptions = {
+    origin: allowedOrigins,
+       credentials: true,
+};
+
+app.use(cors(options));
 
 const apiRouter = express.Router();
-app.use(ldapAuthMiddleware); // authentication
- 
+// app.use(ldapAuthMiddleware); // authentication
+
+  
+
+
+
 // routes
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/', defaultRoutes);
@@ -46,4 +61,4 @@ app.use(errorMiddleware)
 app.get('/', (req, res) => res.send('Hello World!'))
 
 
-app.listen(serverConfig.port, serverConfig.host, () => console.log(`Collegue feedback Server app listening on port ${serverConfig.port}! and host ${serverConfig.host}!`))
+app.listen(serverConfig.port, serverConfig.host, () => console.log(`Colleague feedback Server app listening on port ${serverConfig.port}! and host ${serverConfig.host}!`))

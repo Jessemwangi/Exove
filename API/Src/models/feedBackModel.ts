@@ -4,7 +4,7 @@ export const feedbackSchema = new mongoose.Schema({
   _id: { type: String, required: true }, // your custom ID field
   template: { type: String, ref: 'Template', required: true },
   userId: { type: String,  required: true },  // session logged in user
-  requestpicksId: { type: String, required: true, ref: "RequestPicks" }, // get user giving feedback in this pic, during complete update the user as submmitted
+  requestpicksId: { type: String, required: true, ref: "RequestPicks" }, // get user giving feedback in this pic, during complete on clicked by the hr update the user as submmitted
   roleLevel:{type:Number,required:true},
   feedbackTo: {
     type: mongoose.Schema.Types.String,

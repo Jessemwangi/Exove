@@ -95,7 +95,8 @@ const updateRequestPicks = async (requestpicksId:String,userId:String ):Promise<
 
 export const addFeedBack = async (req: Request, res: Response) => {
   const user:ILdapAuth =req.body.user
-  const userId: string = user.uid;
+  const userId: String = user.uid;
+  const requestpicksId:String = req.params.id
 
   const httpData:IFeedBacks = req.body
     try {
@@ -107,7 +108,7 @@ export const addFeedBack = async (req: Request, res: Response) => {
         _id: uuidv4(),
         template: httpData.template,
         userId: userId,
-        requestpicksId: httpData.requestpicksId,
+        requestpicksId: requestpicksId,
         roleLevel:httpData.roleLevel,
         feedbackTo: httpData.feedbackTo,
         progress: httpData.progress,

@@ -1,4 +1,4 @@
-import { dbclose, dbconnect } from "../Configs/dbConnect.js";
+import { dbclose, dbconnect, securityKey } from "../Configs/dbConnect.js";
 import { run } from "../Ldap/ldapTest.js";
 import jwt from 'jsonwebtoken';
 import { IApprovals, ILdapAuth, INotificationsSetting, INotifier, IRoles, IUser, userSearch } from "../dbcontext/Interfaces.js";
@@ -89,6 +89,7 @@ export const ldapAuthMiddleware = async (req: RequestWithUser, res: Response, ne
       sameSite:"none",
       secure:true,
       httpOnly:true,
+      
   
     }).status(200).json("user logout")
     return;
@@ -103,12 +104,13 @@ export const ldapAuthMiddleware = async (req: RequestWithUser, res: Response, ne
     
     const user = await getUserF({ ldapUid: Luser.uid } as userSearch)
     
-    const settoken = jwt.sign({user},"s3cr3t");
+    const settoken = jwt.sign({user},securityKey);
 
     console.log('ldap user', Luser, "db user", user)
 
    return res.cookie("access_token",settoken,{
-      httpOnly:true,
+     httpOnly: true,
+     sameSite:"none",
       secure:true, 
    }).status(200).json(user)
     
@@ -116,7 +118,7 @@ export const ldapAuthMiddleware = async (req: RequestWithUser, res: Response, ne
     
   const token = req.cookies.access_token;
     if (token) {
-      jwt.verify(token, "s3cr3t", (err: any, userInfo: any) => {
+      jwt.verify(token, securityKey, (err: any, userInfo: any) => {
         if (err) {
           console.log(err)
           return res.status(401).json("Authentication token Not Valid");
