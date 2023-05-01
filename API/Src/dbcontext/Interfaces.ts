@@ -90,7 +90,7 @@ export interface ILogs {
 export interface INotificationsSetting {
   _id: String;
   userid: String;
-  entityname: String[]; // this will get model name eg, question, category etc so that to enable or disable notification from this entinty
+  entityname: String[]; // this will get model name eg, question, category etc so that to enable or disable notification from this entity
   notisettingstatus: Boolean; //enable or disable notification from this entity
   email: String; // this will be used as alternative email if the found
   enableReminder: Boolean; // if set to true automatic reminder will be send

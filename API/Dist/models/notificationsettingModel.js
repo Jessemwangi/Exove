@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 export const notisettingSchema = new mongoose.Schema({
     _id: { type: String, required: true },
-    userid: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
+    userid: { type: mongoose.Schema.Types.String, ref: "Users", required: true },
     entityname: [{ type: String, required: true }],
     notisettingstatus: Boolean,
     email: String,
@@ -13,8 +13,8 @@ export const notifierSchema = new mongoose.Schema({
     entityname: String,
     message: String,
     link: String,
-    from: { type: mongoose.Schema.Types.ObjectId },
-    to: { type: [mongoose.Schema.Types.ObjectId], required: true },
+    from: { type: mongoose.Schema.Types.String },
+    to: { type: [mongoose.Schema.Types.String], required: true },
     notifierstatus: Boolean,
     transacteOn: {
         type: Date,

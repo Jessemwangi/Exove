@@ -7,7 +7,7 @@ export const approvalsSchema = new mongoose.Schema({
     entityname: { type: mongoose.Schema.Types.ObjectId, required: true },
     approverLevel: Number,
     ApprovalStatus: Boolean,
-    approvedBy: { type: mongoose.Schema.Types.ObjectId },
+    approvedBy: { type: mongoose.Schema.Types.String },
     ApprovedOn: Date,
     sendNotification: Boolean,
 });
