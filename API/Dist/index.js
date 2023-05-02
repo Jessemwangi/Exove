@@ -17,6 +17,7 @@ import { usersRoutes } from "./routes/usersRoutes.js";
 import cors from "cors";
 const app = express();
 const allowedOrigins = [
+    "https://main--restcountriesapibch.netlify.app",
     "http://localhost:3001",
     "https://exove.vercel.app",
     "http://localhost:3000",
