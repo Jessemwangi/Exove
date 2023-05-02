@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 const dbuser = process.env.DBUSERNAME;
 const dbpass = process.env.DBPASSWORD;
-export const securityKey:string =process.env.API_KEY!
+
 
 
  const uri = `mongodb+srv://${dbuser}:${dbpass}@cluster0.hounq81.mongodb.net/?retryWrites=true&w=majority`;
