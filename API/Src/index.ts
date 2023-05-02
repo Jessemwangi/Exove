@@ -17,25 +17,26 @@ import { usersRoutes } from "./routes/usersRoutes.js";
 import cors from "cors";
 
 const app = express();
+
+const allowedOrigins = [
+    "http://localhost:3001",
+    "https://exove.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3003",
+    "https://exove-colleaguefeedback-client.vercel.app",
+  ];
+  
+  const options: cors.CorsOptions = {
+    origin: allowedOrigins,
+    credentials: true,
+  };
+  
+  app.use(cors(options));
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = [
-  "http://localhost:3001",
-  "https://exove.vercel.app",
-  "http://localhost:3000",
-  "http://localhost:3003",
-  "https://exove-colleaguefeedback-client.vercel.app",
-];
-
-const options: cors.CorsOptions = {
-  origin: allowedOrigins,
-  credentials: true,
-};
-
-app.use('*',cors(options));
-
 const apiRouter = express.Router();
+apiRouter.use(cors());
 app.use(ldapAuthMiddleware); // authentication
 
 // routes
