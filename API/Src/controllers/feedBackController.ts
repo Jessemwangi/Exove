@@ -71,7 +71,7 @@ const verifiyFeedbackFrom = async (
     "SelectedList.userId": userId,
     "SelectedList.selectionStatus": true,
     "SelectedList.feedBackSubmitted": false,
-  })
+  }).select('-__v')
     .lean()
     .sort({ requestedOn: 1 })
     .exec();
