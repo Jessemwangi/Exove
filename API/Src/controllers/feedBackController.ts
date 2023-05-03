@@ -4,9 +4,12 @@ import {
   IFeedBacks,
   ILdapAuth,
   IRequestPicks,
+  IVerifyFeedRole,
 } from "../dbcontext/Interfaces.js";
 import { FeedBacks, RequestPicks } from "../dbcontext/dbContext.js";
 import { v4 as uuidv4 } from "uuid";
+
+
 
 export const getFeeds = async (req: Request, res: Response) => {
   await dbconnect();
@@ -56,13 +59,15 @@ export const getUserFeedReq = async (req: Request, res: Response) => {
 };
 
 const verifiyFeedbackFrom = async (
-  requestpicksId: String,
-  feedbackTo: String,
-  userId: String
+  { requestpicksId,
+    feedbackTo,
+    userId,
+    roleLevel }:IVerifyFeedRole
 ): Promise<IRequestPicks> => {
   const feedback = await RequestPicks.findOne({
     _id: requestpicksId,
     requestedTo: feedbackTo,
+    "SelectedList.roleLevel":roleLevel,
     "SelectedList.userId": userId,
     "SelectedList.selectionStatus": true,
     "SelectedList.feedBackSubmitted": false,
@@ -80,12 +85,21 @@ const addFeedbackToDatabase = async (newFeedback: IFeedBacks) => {
 };
 
 export const submitFeedBack = async (req: Request, res: Response) => {
+  const user: ILdapAuth = req.body.user;
+  const userId: String = user.uid;
+  const requestpicksId: String = req.params.id;
   const { id } = req.params;
-  const { feedbackTo, userId } = req.body;
+  const { feedbackTo,roleLevel } = req.body;
   console.log(feedbackTo, userId);
   if (feedbackTo && userId && id) {
     await dbconnect();
-    const feedback = await verifiyFeedbackFrom(id, feedbackTo, userId);
+    const verifyFeedFrom: IVerifyFeedRole = {
+      requestpicksId: id,
+      feedbackTo:feedbackTo,
+      userId:userId,
+        roleLevel:roleLevel
+    }
+    const feedback = await verifiyFeedbackFrom(verifyFeedFrom);
 
     if (!feedback) {
       res.status(405).json("Not authorized to Modify this feedback");
@@ -142,10 +156,14 @@ export const addFeedBack = async (req: Request, res: Response) => {
     }
 
     await dbconnect();
+    const verifyFeedFrom: IVerifyFeedRole = {
+      requestpicksId: requestpicksId,
+      feedbackTo:httpData.feedbackTo,
+      userId:userId,
+        roleLevel:httpData.roleLevel
+    }
     const feedback = await verifiyFeedbackFrom(
-      requestpicksId,
-      httpData.feedbackTo,
-      userId
+      verifyFeedFrom
     );
 
     if (!feedback) {

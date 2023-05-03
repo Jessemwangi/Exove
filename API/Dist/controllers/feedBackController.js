@@ -42,10 +42,11 @@ export const getUserFeedReq = async (req, res) => {
         return res.status(500).json("Internal server error");
     }
 };
-const verifiyFeedbackFrom = async (requestpicksId, feedbackTo, userId) => {
+const verifiyFeedbackFrom = async ({ requestpicksId, feedbackTo, userId, roleLevel }) => {
     const feedback = await RequestPicks.findOne({
         _id: requestpicksId,
         requestedTo: feedbackTo,
+        "SelectedList.roleLevel": roleLevel,
         "SelectedList.userId": userId,
         "SelectedList.selectionStatus": true,
         "SelectedList.feedBackSubmitted": false,
@@ -58,12 +59,21 @@ const verifiyFeedbackFrom = async (requestpicksId, feedbackTo, userId) => {
 const addFeedbackToDatabase = async (newFeedback) => {
 };
 export const submitFeedBack = async (req, res) => {
+    const user = req.body.user;
+    const userId = user.uid;
+    const requestpicksId = req.params.id;
     const { id } = req.params;
-    const { feedbackTo, userId } = req.body;
+    const { feedbackTo, roleLevel } = req.body;
     console.log(feedbackTo, userId);
     if (feedbackTo && userId && id) {
         await dbconnect();
-        const feedback = await verifiyFeedbackFrom(id, feedbackTo, userId);
+        const verifyFeedFrom = {
+            requestpicksId: id,
+            feedbackTo: feedbackTo,
+            userId: userId,
+            roleLevel: roleLevel
+        };
+        const feedback = await verifiyFeedbackFrom(verifyFeedFrom);
         if (!feedback) {
             res.status(405).json("Not authorized to Modify this feedback");
             await dbclose();
@@ -115,7 +125,13 @@ export const addFeedBack = async (req, res) => {
             return;
         }
         await dbconnect();
-        const feedback = await verifiyFeedbackFrom(requestpicksId, httpData.feedbackTo, userId);
+        const verifyFeedFrom = {
+            requestpicksId: requestpicksId,
+            feedbackTo: httpData.feedbackTo,
+            userId: userId,
+            roleLevel: httpData.roleLevel
+        };
+        const feedback = await verifiyFeedbackFrom(verifyFeedFrom);
         if (!feedback) {
             console.log("feebackfailed");
             res.status(405).json("Not authorized to give this feedback");

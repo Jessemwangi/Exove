@@ -3,7 +3,12 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export const securityKey: string = process.env.API_KEY!
-export const cookieExpiresIn: Date = new Date(Date.now() + parseInt(process.env.JWT_COOKIES_EXP!) * 24 * 60 * 60 * 1000) 
+const expireValue = parseInt(process.env.JWT_COOKIES_EXP!);
+
+const jwtCookiesExp = isNaN(expireValue) ? 10 : expireValue
+export const cookieExpiresIn: Date = new Date(Date.now() + jwtCookiesExp * 24 * 60 * 60 * 1000);
+
+ 
 
 export const cookieSecure:boolean = process.env.NODE_ENV ==='production' ? true : false
 

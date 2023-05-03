@@ -197,7 +197,7 @@ export interface IWorksReport {
   reportsTo: String;
   workReportStatus: Boolean;
   createdOn: Date | null;
-  deactivatedOn: Date | null;
+  deactivatedOn?: Date | null;
 }
 
 export interface ILdapAuth {
@@ -215,4 +215,11 @@ export interface ILdapAuth {
 export interface userSearch{
   _id?: String,
   ldapUid?:String,
+}
+
+export interface IVerifyFeedRole{
+  requestpicksId: String,
+  feedbackTo: String,
+  userId: String,
+  roleLevel:Number
 }

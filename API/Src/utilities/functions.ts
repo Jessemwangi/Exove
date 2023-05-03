@@ -27,6 +27,38 @@ interface RequestWithUser extends Request {
   user?: ILdapAuth;
 }
 
+/// user functions
+
+export const addUserReportTo = async (_id:String) => {
+
+    // const user =await Users.findOne({_id:_id})
+    // const totalWorkId:number = user.WorkId.length
+    // if (totalWorkId > 0) {
+      await Users.updateOne(
+        { _id: _id },
+        {
+          $set: {
+            'workId.$[elem].workReportStatus': false,
+            'workId.$[elem].deactivatedOn': new Date(),
+          },
+        },
+        { arrayFilters: [{ 'elem.workReportStatus': { $exists: true } }] }
+      );
+
+      // await Users.updateOne(
+      //   { _id: _id },
+      //   {
+      //     $set: {
+      //       'workId.$[].workReportStatus': false,
+      //       'workId.$[].deactivatedOn': new Date()
+      //     }
+      //   }
+      // )
+
+    
+  } 
+ 
+
 export const checkUserRoles = async (
   userId: String,
   roleLevel: Number
@@ -49,11 +81,12 @@ export const addUserToRole = async (userId: String, roleId: String) => {
   await Roles.updateOne({ _id: roleId }, { $push: { users: userId } }).exec();
 };
 
+// get user by name or ID
 export const getUserF = async ({ ldapUid, _id }: userSearch) => {
   await dbconnect();
   const usersResult: IUser = await Users.findOne({
     $or: [{ ldapUid: ldapUid }, { _id: _id }],
-  })
+  }).select('-__v')
     .populate({
       path: "rolesId",
       model: Roles,
@@ -101,6 +134,7 @@ export const userEnabledNotification = async (
   return false;
 };
 
+// Check user request pick
 export const isUserInRequestPick = async (
   requestedTo: string
 ): Promise<IRequestPicks> => {
@@ -121,6 +155,7 @@ export const searchTemplate = async (template: string): Promise<number> => {
   return data.length;
 };
 
+// middleware for authentication
 export const ldapAuthMiddleware = async (
   req: RequestWithUser,
   res: Response,
@@ -186,6 +221,8 @@ export const ldapAuthMiddleware = async (
     return res.status(401).send({ error: "Invalid username or password" });
   }
 };
+
+// middleware for general error
 
 export const errorMiddleware: ErrorRequestHandler = async (
   err,

@@ -3,6 +3,14 @@ import { run } from "../Ldap/ldapTest.js";
 import jwt from "jsonwebtoken";
 import { Approvals, Notifer, NotificationSetting, RequestPicks, Roles, Template, Users, } from "../dbcontext/dbContext.js";
 import { cookieExpiresIn, securityKey } from "../Configs/serverConfig.js";
+export const addUserReportTo = async (_id) => {
+    await Users.updateOne({ _id: _id }, {
+        $set: {
+            'workId.$[elem].workReportStatus': false,
+            'workId.$[elem].deactivatedOn': new Date(),
+        },
+    }, { arrayFilters: [{ 'elem.workReportStatus': { $exists: true } }] });
+};
 export const checkUserRoles = async (userId, roleLevel) => {
     const user = await getUserF({ ldapUid: userId });
     await dbconnect();
@@ -22,7 +30,7 @@ export const getUserF = async ({ ldapUid, _id }) => {
     await dbconnect();
     const usersResult = await Users.findOne({
         $or: [{ ldapUid: ldapUid }, { _id: _id }],
-    })
+    }).select('-__v')
         .populate({
         path: "rolesId",
         model: Roles,
