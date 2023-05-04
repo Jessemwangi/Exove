@@ -6,8 +6,8 @@ const dbpass = process.env.DBPASSWORD;
 
 
 
- const uri = `mongodb+srv://${dbuser}:${dbpass}@cluster0.hounq81.mongodb.net/?retryWrites=true&w=majority`;
-//const uri = 'mongodb://localhost:27017/feedback'; // replace with your database name
+// const uri = `mongodb+srv://${dbuser}:${dbpass}@cluster0.hounq81.mongodb.net/?retryWrites=true&w=majority`;
+const uri = 'mongodb://localhost:27017/feedback'; // replace with your database name
  const options =  { useNewUrlParser: true, useUnifiedTopology: true, } as ConnectOptions;
 
  // cloud connection

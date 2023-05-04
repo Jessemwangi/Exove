@@ -12,6 +12,7 @@ import { questionsSchema } from "../models/questionsModel.js";
 import { feedbackSchema } from "../models/feedBackModel.js";
 import { CategorySchema } from "../models/categoryModel.js";
 import { IQCategory, ITemplates } from "./Interfaces.js";
+import { reportSchema } from "../models/reportsModel.js";
 
 
 export const Approvals = mongoose.model('Approvals',approvalsSchema)
@@ -27,3 +28,4 @@ export const Template = mongoose.model<ITemplates>('Template', templateSchema);
 // export const UserRoles = mongoose.model('UserRoles',userRolesSchema)
 export const Users = mongoose.model('Users', usersSchema);
 export const JesseM = mongoose.model('Jesse', jesseSchema); // for personal testing
+export const Reports = mongoose.model('Reports', reportSchema)

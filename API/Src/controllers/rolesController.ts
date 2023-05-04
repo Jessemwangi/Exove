@@ -24,11 +24,11 @@ export const createRole = async (req:Request, res:Response) => {
       const rolesHttpBody: IRoles = req.body;
       const user: ILdapAuth = req.body.user
       const userId: string = user.uid;
-          const rolelevel = await checkUserRoles(userId,2);
-          if (!rolelevel) {
-            res.status(200).json("Not authorized to peform this transaction");
-            return;
-          }
+          // const rolelevel = await checkUserRoles(userId,2);
+          // if (!rolelevel) {
+          //   res.status(200).json("Not authorized to peform this transaction");
+          //   return;
+          // }
           if (!rolesHttpBody) return res.status(404).json("Roles not found or empty")
 const primaryKey =uuidv4()
               const rolesPost: IRoles = {
@@ -53,7 +53,7 @@ const primaryKey =uuidv4()
       await dbclose();
       return;      
     } catch (error) {
-          res.status(500).json("server responded with an error")
+          res.status(500).json(error)
           console.log(error)
       }
  

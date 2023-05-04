@@ -16,27 +16,44 @@ export const getFeed = async (req, res) => {
     }
     await dbconnect();
     const feedBacks = await FeedBacks.findOne({ _id: id })
+        .populate({
+        path: "categories",
+        select: 'categoryName',
+        populate: {
+            path: "questions",
+            select: 'type',
+        },
+    })
         .lean();
     await dbclose();
     return res.status(200).json(feedBacks);
 };
 export const getUserFeedReq = async (req, res) => {
-    const httpData = req.body;
-    if (!httpData) {
+    const name = req.params.name;
+    console.log(name);
+    if (!name) {
         return res.status(404).json("Post data not found or empty");
         return;
     }
     try {
         await dbconnect();
-        const userRequestPicks = await RequestPicks.find({
-            "SelectedList.userId": httpData,
-            "SelectedList.selectionStatus": true,
+        const userFeedback = await FeedBacks.find({
+            "feedbackTo": name
         })
+            .populate({
+            path: "categories.category",
+            select: "categoryName _id",
+        })
+            .populate({
+            path: "categories.questions._id",
+            select: "type _id question",
+        })
+            .select('-__v')
             .lean()
             .sort({ requestedOn: 1 })
             .exec();
         await dbclose();
-        return res.status(200).json(userRequestPicks);
+        return res.status(200).json(userFeedback);
     }
     catch (error) {
         return res.status(500).json("Internal server error");

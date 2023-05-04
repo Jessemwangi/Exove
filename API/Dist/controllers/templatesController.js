@@ -13,7 +13,7 @@ export const getTemplates = async (req, res) => {
                 path: "questions",
                 select: '-__v',
             },
-        })
+        }).select('-__v')
             .exec();
         await dbclose();
         res.status(200).json(templates);
@@ -34,7 +34,7 @@ export const getTemplate = async (req, res) => {
                 path: "questions",
                 select: '-__v',
             },
-        })
+        }).select('-__v')
             .exec();
         await dbclose();
         res.status(200).json(template);

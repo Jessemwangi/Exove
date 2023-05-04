@@ -27,32 +27,57 @@ export const getFeed = async (req: Request, res: Response) => {
   }
   await dbconnect();
   const feedBacks: IFeedBacks[] = await FeedBacks.findOne({ _id: id })
+  .populate({
+    path: "categories",
+    select: 'categoryName',
+    populate: {
+      path: "questions",
+      select: 'type',
+    },
+  })
     .lean();
   await dbclose();
   return res.status(200).json(feedBacks);
 };
 
 export const getUserFeedReq = async (req: Request, res: Response) => {
-  const httpData: String = req.body;
-
-  if (!httpData) {
+  const name: String = req.params.name;
+console.log(name)
+  if (!name) {
     return res.status(404).json("Post data not found or empty");
     return;
   }
   // get only the from the selectedlist
   //  const selectedLists: ISelectedList[][] =
-  //     await RequestPicks.find({ 'SelectedList.userId': httpData, 'SelectedList.selectionStatus': true }, { 'SelectedList.$': 1 }).lean().exec();
+  //     await RequestPicks.find({ 'SelectedList.userId': httpData, 
+//   'SelectedList.selectionStatus': true
+// }, { 'SelectedList.$': 1 }).lean().exec();
+  
   try {
     await dbconnect();
-    const userRequestPicks: IRequestPicks[] = await RequestPicks.find({
-      "SelectedList.userId": httpData,
-      "SelectedList.selectionStatus": true,
+    const userFeedback: IFeedBacks[] = await FeedBacks.find({
+      "feedbackTo": name
     })
-      .lean()
-      .sort({ requestedOn: 1 })
-      .exec();
+    .populate({
+      path: "categories.category",
+      select: "categoryName _id",
+    })
+    .populate({
+      path: "categories.questions._id",
+      select: "type _id question",
+      // options: {
+      //   limit: 1,
+      //   "question.$slice": 1 // retrieve only the first element of the `question` array
+      // }
+    })
+    .select('-__v')
+    .lean()
+    .sort({ requestedOn: 1 })
+    .exec();
+    
+    
     await dbclose();
-    return res.status(200).json(userRequestPicks);
+    return res.status(200).json(userFeedback);
   } catch (error) {
     return res.status(500).json("Internal server error");
   }

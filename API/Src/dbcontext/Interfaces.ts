@@ -20,10 +20,11 @@ export interface IQuestion {
 
 interface IQuestionLang{
   _id:String,
-  lang: String,
+  lang?: String,
   question?: String,
   answer?: String
-  answeredOn?:Date,
+  answeredOn?: Date,
+  type?:String
 }
 
 // questions ends 

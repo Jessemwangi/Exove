@@ -1,7 +1,6 @@
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from 'uuid';
 import { Roles } from "../dbcontext/dbContext.js";
-import { checkUserRoles } from "../utilities/functions.js";
 export const getRoles = async (req, res) => {
     try {
         await dbconnect();
@@ -18,11 +17,6 @@ export const createRole = async (req, res) => {
         const rolesHttpBody = req.body;
         const user = req.body.user;
         const userId = user.uid;
-        const rolelevel = await checkUserRoles(userId, 2);
-        if (!rolelevel) {
-            res.status(200).json("Not authorized to peform this transaction");
-            return;
-        }
         if (!rolesHttpBody)
             return res.status(404).json("Roles not found or empty");
         const primaryKey = uuidv4();
@@ -47,7 +41,7 @@ export const createRole = async (req, res) => {
         return;
     }
     catch (error) {
-        res.status(500).json("server responded with an error");
+        res.status(500).json(error);
         console.log(error);
     }
 };

@@ -10,6 +10,7 @@ import { templateSchema } from "../models/templatesModel.js";
 import { questionsSchema } from "../models/questionsModel.js";
 import { feedbackSchema } from "../models/feedBackModel.js";
 import { CategorySchema } from "../models/categoryModel.js";
+import { reportSchema } from "../models/reportsModel.js";
 export const Approvals = mongoose.model('Approvals', approvalsSchema);
 export const FeedBacks = mongoose.model('feedBacks', feedbackSchema);
 export const Logs = mongoose.model('Logs', logsSchema);
@@ -22,4 +23,5 @@ export const Roles = mongoose.model('Roles', rolesSchema);
 export const Template = mongoose.model('Template', templateSchema);
 export const Users = mongoose.model('Users', usersSchema);
 export const JesseM = mongoose.model('Jesse', jesseSchema);
+export const Reports = mongoose.model('Reports', reportSchema);
 //# sourceMappingURL=dbContext.js.map

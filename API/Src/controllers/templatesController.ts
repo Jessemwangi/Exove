@@ -16,7 +16,7 @@ export const getTemplates = async (req: Request, res: Response) => {
         path: "questions",
         select:'-__v',
       },
-    })
+    }).select('-__v')
       .exec();
     await dbclose();
     res.status(200).json(templates);
@@ -40,7 +40,7 @@ export const getTemplate = async (req: Request, res: Response) => {
         select:'-__v',
         //  match: {"question.active":true },
       },
-    })
+    }).select('-__v')
       .exec();
     await dbclose();
     // Send the template data in the response
