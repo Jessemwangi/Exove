@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { JesseM } from '../dbcontext/dbContext.js';
 import { v4 as uuidv4 } from 'uuid'
 import { dbclose, dbconnect } from '../Configs/dbConnect.js';
@@ -9,7 +9,7 @@ interface Ijesse{
     age:Number,
 }
 
-export const jesseGet = async (req: Request, res: Response) => {
+export const jesseGet = async (req: Request, res: Response ,  next: NextFunction) => {
     try {
         await dbconnect()
         
@@ -18,8 +18,8 @@ export const jesseGet = async (req: Request, res: Response) => {
         await dbclose()
 
         res.status(200).json({ data: jesseData })
-    } catch (error:any) {
-        res.status(500).json({ error: error.message })
+    } catch (error) {
+       next(error)
     }
 }
 

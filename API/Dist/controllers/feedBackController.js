@@ -1,26 +1,36 @@
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { FeedBacks, RequestPicks } from "../dbcontext/dbContext.js";
 import { v4 as uuidv4 } from "uuid";
-export const getFeeds = async (req, res) => {
-    await dbconnect();
-    const feedBacks = await FeedBacks.find({}).select('-__v')
-        .sort({ createdOn: 1 })
-        .lean();
-    await dbclose();
-    return res.status(200).json(feedBacks);
-};
-export const getFeed = async (req, res) => {
-    const id = req.params.id;
-    if (id) {
-        return res.status(404).json("Post data not found or empty");
+export const getFeeds = async (req, res, next) => {
+    try {
+        await dbconnect();
+        const feedBacks = await FeedBacks.find({}).select('-__v')
+            .sort({ createdOn: 1 })
+            .lean();
+        await dbclose();
+        return res.status(200).json(feedBacks);
     }
-    await dbconnect();
-    const feedBacks = await FeedBacks.findOne({ _id: id })
-        .lean();
-    await dbclose();
-    return res.status(200).json(feedBacks);
+    catch (error) {
+        next(error);
+    }
 };
-export const getUserFeedReq = async (req, res) => {
+export const getFeed = async (req, res, next) => {
+    const id = req.params.id;
+    try {
+        if (id) {
+            return res.status(404).json("Post data not found or empty");
+        }
+        await dbconnect();
+        const feedBacks = await FeedBacks.findOne({ _id: id })
+            .lean();
+        await dbclose();
+        return res.status(200).json(feedBacks);
+    }
+    catch (err) {
+        next(err);
+    }
+};
+export const getUserFeedReq = async (req, res, next) => {
     const name = req.params.name;
     if (!name) {
         return res.status(404).json("Post data not found or empty");
@@ -39,10 +49,10 @@ export const getUserFeedReq = async (req, res) => {
         return res.status(200).json(userFeedback);
     }
     catch (error) {
-        return res.status(500).json("Internal server error");
+        next(error);
     }
 };
-export const getUserTotalAnsFeed = async (req, res) => {
+export const getUserTotalAnsFeed = async (req, res, next) => {
     const name = req.params.name;
     if (!name) {
         return res.status(404).json("Post data not found or empty");
@@ -67,8 +77,12 @@ export const getUserTotalAnsFeed = async (req, res) => {
         return res.status(200).json({ ...userFeedback, feedbacksCount, requestPicksCount });
     }
     catch (error) {
-        return res.status(500).json("Internal server error");
+        next(error);
     }
+};
+const updateRequestPicks = async (requestpicksId, userId) => {
+    const result = await RequestPicks.updateOne({ _id: requestpicksId, "SelectedList.userId": userId }, { $set: { "SelectedList.$.feedBackSubmitted": true } });
+    return result.modifiedCount;
 };
 const verifiyFeedbackFrom = async ({ requestpicksId, feedbackTo, userId, roleLevel }) => {
     const feedback = await RequestPicks.findOne({
@@ -86,44 +100,49 @@ const verifiyFeedbackFrom = async ({ requestpicksId, feedbackTo, userId, roleLev
 };
 const addFeedbackToDatabase = async (newFeedback) => {
 };
-export const submitFeedBack = async (req, res) => {
-    const user = req.body.user;
-    const userId = user.uid;
-    const requestpicksId = req.params.id;
-    const { id } = req.params;
-    const { feedbackTo, roleLevel } = req.body;
-    console.log(feedbackTo, userId);
-    if (feedbackTo && userId && id) {
-        await dbconnect();
-        const verifyFeedFrom = {
-            requestpicksId: id,
-            feedbackTo: feedbackTo,
-            userId: userId,
-            roleLevel: roleLevel
-        };
-        const feedback = await verifiyFeedbackFrom(verifyFeedFrom);
-        if (!feedback) {
-            res.status(405).json("Not authorized to Modify this feedback");
+export const submitFeedBack = async (req, res, next) => {
+    try {
+        const user = req.body.user;
+        const userId = user.uid;
+        const requestpicksId = req.params.id;
+        const { id } = req.params;
+        const { feedbackTo, roleLevel } = req.body;
+        console.log(feedbackTo, userId);
+        if (feedbackTo && userId && id) {
+            await dbconnect();
+            const verifyFeedFrom = {
+                requestpicksId: id,
+                feedbackTo: feedbackTo,
+                userId: userId,
+                roleLevel: roleLevel
+            };
+            const feedback = await verifiyFeedbackFrom(verifyFeedFrom);
+            if (!feedback) {
+                res.status(405).json("Not authorized to Modify this feedback");
+                await dbclose();
+                return;
+            }
+            const result = await updateRequestPicks(id, userId);
+            console.log("result for submitt update", result);
             await dbclose();
-            return;
-        }
-        const result = await updateRequestPicks(id, userId);
-        console.log("result for submitt update", result);
-        await dbclose();
-        if (result !== 0) {
-            return res.status(200).json("feedback submitted successful");
+            if (result !== 0) {
+                return res.status(200).json("feedback submitted successful");
+            }
+            else {
+                return res.status(200).json("Failed to submit Feedback");
+            }
         }
         else {
-            return res.status(200).json("Failed to submit Feedback");
+            return res
+                .status(404)
+                .json("Post data Incomplete post or not found or empty");
         }
     }
-    else {
-        return res
-            .status(404)
-            .json("Post data Incomplete post or not found or empty");
+    catch (err) {
+        next(err);
     }
 };
-export const addFeedBack = async (req, res) => {
+export const addFeedBack = async (req, res, next) => {
     const user = req.body.user;
     const userId = user.uid;
     const requestpicksId = req.params.id;
@@ -161,21 +180,17 @@ export const addFeedBack = async (req, res) => {
         };
         const feedback = await verifiyFeedbackFrom(verifyFeedFrom);
         if (!feedback) {
-            console.log("feebackfailed");
             res.status(405).json("Not authorized to give this feedback");
             await dbclose();
             return;
         }
         const setFeedBack = await new FeedBacks(newFeedback).save();
-        console.log("setFeedBack result", setFeedBack);
         if (!setFeedBack) {
             res.status(405).json("failed to save feedback");
             await dbclose();
             return;
         }
-        console.log("newFeedback.submitted....", newFeedback.submitted);
         const result = await updateRequestPicks(newFeedback.requestpicksId, newFeedback.userId);
-        console.log("result for submitt update", result);
         await dbclose();
         if (result !== 0) {
             return res.status(200).json("feedback submitted successful");
@@ -185,12 +200,7 @@ export const addFeedBack = async (req, res) => {
         }
     }
     catch (error) {
-        console.log(error);
-        return res.status(500).json("Internal server error");
+        next(error);
     }
-};
-const updateRequestPicks = async (requestpicksId, userId) => {
-    const result = await RequestPicks.updateOne({ _id: requestpicksId, "SelectedList.userId": userId }, { $set: { "SelectedList.$.feedBackSubmitted": true } });
-    return result.modifiedCount;
 };
 //# sourceMappingURL=feedBackController.js.map

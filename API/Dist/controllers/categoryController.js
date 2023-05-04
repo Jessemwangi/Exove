@@ -2,19 +2,18 @@ import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
 import { Category } from "../dbcontext/dbContext.js";
 import { checkUserRoles } from "../utilities/functions.js";
-export const getCategory = async (req, res) => {
+export const getCategory = async (req, res, next) => {
     try {
         await dbconnect();
-        const category = await Category.find({}).select('-__v').lean();
+        const category = await Category.find({}).select("-__v").lean();
         await dbclose();
         return res.status(200).json(category);
     }
     catch (error) {
-        console.log(error);
-        return res.status(500).json('error');
+        next(error);
     }
 };
-export const addCategory = async (req, res) => {
+export const addCategory = async (req, res, next) => {
     const user = req.body.user;
     const userId = user.uid;
     const rolelevel = await checkUserRoles(userId, 2);
@@ -31,21 +30,20 @@ export const addCategory = async (req, res) => {
             questions: httpData.questions,
             createdBy: userId,
             categoryStatus: true,
-            createdOn: new Date
+            createdOn: new Date(),
         };
         await dbconnect();
         const q = await new Category(data).save();
         if (q) {
-            return res.status(200).json('saved');
+            return res.status(200).json("saved");
         }
         else {
-            return res.status(501).json('failed to save');
+            return res.status(501).json("failed to save");
         }
         await dbclose();
     }
     catch (error) {
-        console.log(error);
-        return res.status(500).json('error');
+        next(error);
     }
 };
 //# sourceMappingURL=categoryController.js.map

@@ -223,3 +223,12 @@ export interface IVerifyFeedRole{
   userId: String,
   roleLevel:Number
 }
+
+export interface IReports{
+  _id:String,
+  feedbacks:String[],
+  templates:String,
+  createBy:String,
+  userId: { type: String, required: true },
+  requestPicks:String,
+}

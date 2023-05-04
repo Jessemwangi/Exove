@@ -12,9 +12,11 @@ import { questionsSchema } from "../models/questionsModel.js";
 import { feedbackSchema } from "../models/feedBackModel.js";
 import { CategorySchema } from "../models/categoryModel.js";
 import { IQCategory, ITemplates } from "./Interfaces.js";
+import { reportSchema } from "../models/reportsModel.js";
 
 
-export const Approvals = mongoose.model('Approvals',approvalsSchema)
+export const Approvals = mongoose.model('Approvals', approvalsSchema);
+export const Reports = mongoose.model('Reports', reportSchema);
 export const FeedBacks = mongoose.model('feedBacks', feedbackSchema);
 export const Logs = mongoose.model('Logs', logsSchema);
 export const NotificationSetting = mongoose.model('Notificationsetting', notisettingSchema); // setting to receive notification
