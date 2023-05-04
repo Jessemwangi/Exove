@@ -21,22 +21,50 @@ export const getFeed = async (req, res) => {
     return res.status(200).json(feedBacks);
 };
 export const getUserFeedReq = async (req, res) => {
-    const httpData = req.body;
-    if (!httpData) {
+    const name = req.params.name;
+    if (!name) {
         return res.status(404).json("Post data not found or empty");
         return;
     }
     try {
         await dbconnect();
-        const userRequestPicks = await RequestPicks.find({
-            "SelectedList.userId": httpData,
-            "SelectedList.selectionStatus": true,
+        const userFeedback = await FeedBacks.find({
+            "feedbackTo": name
         })
+            .select('-__v')
             .lean()
-            .sort({ requestedOn: 1 })
+            .sort({ createdOn: 1 })
             .exec();
         await dbclose();
-        return res.status(200).json(userRequestPicks);
+        return res.status(200).json(userFeedback);
+    }
+    catch (error) {
+        return res.status(500).json("Internal server error");
+    }
+};
+export const getUserTotalAnsFeed = async (req, res) => {
+    const name = req.params.name;
+    if (!name) {
+        return res.status(404).json("Post data not found or empty");
+        return;
+    }
+    try {
+        await dbconnect();
+        const requestPicksCount = await RequestPicks.countDocuments({
+            "SelectedList.userId": name
+        });
+        const feedbacksCount = await FeedBacks.countDocuments({
+            userId: name
+        });
+        const userFeedback = await FeedBacks.find({
+            "feedbackTo": name
+        })
+            .select('-__v')
+            .lean()
+            .sort({ createdOn: 1 })
+            .exec();
+        await dbclose();
+        return res.status(200).json({ ...userFeedback, feedbacksCount, requestPicksCount });
     }
     catch (error) {
         return res.status(500).json("Internal server error");
