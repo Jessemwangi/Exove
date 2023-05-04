@@ -33,26 +33,31 @@ export const getFeed = async (req: Request, res: Response) => {
 };
 
 export const getUserFeedReq = async (req: Request, res: Response) => {
-  const httpData: String = req.body;
-
-  if (!httpData) {
+  const name: String = req.params.name;
+console.log(name)
+  if (!name) {
     return res.status(404).json("Post data not found or empty");
     return;
   }
   // get only the from the selectedlist
   //  const selectedLists: ISelectedList[][] =
-  //     await RequestPicks.find({ 'SelectedList.userId': httpData, 'SelectedList.selectionStatus': true }, { 'SelectedList.$': 1 }).lean().exec();
+  //     await RequestPicks.find({ 'SelectedList.userId': httpData, 
+//   'SelectedList.selectionStatus': true
+// }, { 'SelectedList.$': 1 }).lean().exec();
+  
   try {
     await dbconnect();
-    const userRequestPicks: IRequestPicks[] = await RequestPicks.find({
-      "SelectedList.userId": httpData,
-      "SelectedList.selectionStatus": true,
+    const userFeedback: IFeedBacks[] = await FeedBacks.find({
+      "feedbackTo": name
     })
-      .lean()
-      .sort({ requestedOn: 1 })
-      .exec();
+    .select('-__v')
+    .lean()
+    .sort({ createdOn: 1 })
+    .exec();
+    
+    
     await dbclose();
-    return res.status(200).json(userRequestPicks);
+    return res.status(200).json(userFeedback);
   } catch (error) {
     return res.status(500).json("Internal server error");
   }
