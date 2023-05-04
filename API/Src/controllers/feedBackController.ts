@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export const getFeeds = async (req: Request, res: Response) => {
   await dbconnect();
-  const feedBacks: IFeedBacks[] = await FeedBacks.find({})
+  const feedBacks: IFeedBacks[] = await FeedBacks.find({}).select('-__v')
     .sort({ createdOn: 1 })
     .lean();
   await dbclose();

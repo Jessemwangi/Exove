@@ -3,7 +3,7 @@ import { FeedBacks, RequestPicks } from "../dbcontext/dbContext.js";
 import { v4 as uuidv4 } from "uuid";
 export const getFeeds = async (req, res) => {
     await dbconnect();
-    const feedBacks = await FeedBacks.find({})
+    const feedBacks = await FeedBacks.find({}).select('-__v')
         .sort({ createdOn: 1 })
         .lean();
     await dbclose();
