@@ -85,7 +85,8 @@ const updateRequestPicks = async (requestpicksId, userId) => {
     return result.modifiedCount;
 };
 const verifiyFeedbackFrom = async ({ requestpicksId, feedbackTo, userId, roleLevel }) => {
-    const feedback = await RequestPicks.findOne({
+    console.log(requestpicksId, feedbackTo, userId, roleLevel);
+    const feedback = await RequestPicks.find({
         _id: requestpicksId,
         requestedTo: feedbackTo,
         "SelectedList.roleLevel": roleLevel,
@@ -147,6 +148,7 @@ export const addFeedBack = async (req, res, next) => {
     const userId = user.uid;
     const requestpicksId = req.params.id;
     const httpData = req.body;
+    const httpCategories = httpData.categories;
     try {
         if (!requestpicksId || requestpicksId === "") {
             res.status(404).json("Post data not found or empty");
@@ -161,15 +163,14 @@ export const addFeedBack = async (req, res, next) => {
             feedbackTo: httpData.feedbackTo,
             progress: httpData.progress,
             responseDateLog: [new Date()],
-            categories: httpData.categories,
+            categories: httpCategories,
             createdOn: new Date(),
             submitted: false,
         };
         const newFeedback = new FeedBacks(newFeedbackInstance);
         const validationError = newFeedback.validateSync();
         if (validationError) {
-            res.status(400).json(validationError.message);
-            return;
+            next(validationError);
         }
         await dbconnect();
         const verifyFeedFrom = {

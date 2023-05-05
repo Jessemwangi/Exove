@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import {
+  IFCategory,
   IFeedBacks,
   ILdapAuth,
+  IQCategory,
   IRequestPicks,
   IVerifyFeedRole,
 } from "../dbcontext/Interfaces.js";
@@ -128,18 +130,21 @@ const verifiyFeedbackFrom = async (
     userId,
     roleLevel }:IVerifyFeedRole
 ): Promise<IRequestPicks> => {
-  const feedback = await RequestPicks.findOne({
+  console.log(requestpicksId,
+    feedbackTo,
+    userId,
+    roleLevel) 
+  const feedback:IRequestPicks = await RequestPicks.find({
     _id: requestpicksId,
-    requestedTo: feedbackTo,
-    "SelectedList.roleLevel":roleLevel,
-    "SelectedList.userId": userId,
-    "SelectedList.selectionStatus": true,
-    "SelectedList.feedBackSubmitted": false,
+     requestedTo: feedbackTo,
+     "SelectedList.roleLevel":roleLevel,
+      "SelectedList.userId": userId,
+     "SelectedList.selectionStatus": true,
+     "SelectedList.feedBackSubmitted": false,
   }).select('-__v')
     .lean()
     .sort({ requestedOn: 1 })
     .exec();
-
   return feedback;
   // return interface type IRequestPicks
 };
@@ -198,6 +203,8 @@ export const addFeedBack = async (req: Request, res: Response, next: NextFunctio
   const requestpicksId: String = req.params.id;
 
   const httpData: IFeedBacks = req.body;
+  
+  const httpCategories: IFCategory[] = httpData.categories
   try {
     if (!requestpicksId || requestpicksId === "") {
       res.status(404).json("Post data not found or empty");
@@ -212,7 +219,7 @@ export const addFeedBack = async (req: Request, res: Response, next: NextFunctio
       feedbackTo: httpData.feedbackTo,
       progress: httpData.progress,
       responseDateLog: [new Date()],
-      categories: httpData.categories,
+      categories: httpCategories,
       createdOn: new Date(),
       submitted: false,
     };
@@ -220,8 +227,8 @@ export const addFeedBack = async (req: Request, res: Response, next: NextFunctio
     const validationError = newFeedback.validateSync();
 
     if (validationError) {
-      res.status(400).json(validationError.message);
-      return;
+      next(validationError);
+     
     }
 
     await dbconnect();
@@ -231,6 +238,7 @@ export const addFeedBack = async (req: Request, res: Response, next: NextFunctio
       userId:userId,
         roleLevel:httpData.roleLevel
     }
+   
     const feedback = await verifiyFeedbackFrom(
       verifyFeedFrom
     );

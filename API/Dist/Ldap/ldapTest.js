@@ -18,19 +18,4 @@ export const run = (username, password) => new Promise((resolve, reject) => {
         return resolve(user);
     });
 });
-const welcome = ({ cn, mail }) => {
-    console.log(`Welcome, ${cn}!`);
-    console.log(`Your e-mail address is "${mail}" according to the LDAP server.`);
-};
-console.log(`
-=================================
-Test LDAP authenticator with Node
-=================================
-
-Bind: ${options.bindDN}
-Search base: ${options.searchBase}
-Search filter: ${options.searchFilter}
-
-Authenticating user "${username}" against "${options.url}"...
-`);
 //# sourceMappingURL=ldapTest.js.map

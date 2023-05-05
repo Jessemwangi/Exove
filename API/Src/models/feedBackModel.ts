@@ -20,8 +20,8 @@ export const feedbackSchema = new mongoose.Schema({
     questions: [
       {
       _id: { type: String, ref: 'Question', required: true },
-      type: String,
-      question:String,
+      type: { type: String, required: true },
+      question:{ type: String, required: true },
       answer: { type: String, required: true },
       answeredOn:{ type: Date, default: Date.now },
       }
