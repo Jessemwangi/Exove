@@ -1,42 +1,42 @@
 export interface IQCategory {
-  _id: String,
-  categoryName: String,
-  description?:String,
-  questions?: String[];
+  _id: string,
+  categoryName: string,
+  description?:string,
+  questions?: string[];
   createdOn: Date,
-  createdBy: String,
-  categoryStatus:Boolean,
+  createdBy: string,
+  categoryStatus?:Boolean,
 }
 
 export interface IQuestion {
-  _id: String;
-  category: String,
-  createdBy: String,
+  _id: string;
+  category: string,
+  createdBy: string,
   createdOn: Date;
   active: Boolean,
-  type: String,
+  type: string,
   question: IQuestionLang[];// hold an array of questions
 }
 
 interface IQuestionLang{
-  _id:String,
-  type: String,
-  question: String,
-  answer: String
+  _id:string,
+  type: string,
+  question: string,
+  answer: string
   answeredOn:Date,
 }
 
 // questions ends 
 
 export interface IApprovals {
-  _id: String,
+  _id: string,
   createdOn: Date,
-  createdBy: String, // from which user, automatically selects current user
-  applicationId: String, // will get the primary key of the activity awaiting approval
-  entityname: String, // this will come from entitynamemodel, so as to identify what activity this approval belong to
+  createdBy: string, // from which user, automatically selects current user
+  applicationId: string, // will get the primary key of the activity awaiting approval
+  entityname: string, // this will come from entitynamemodel, so as to identify what activity this approval belong to
   approverLevel:Number,
   ApprovalStatus: Boolean,
-  approvedBy: String,
+  approvedBy: string,
   ApprovedOn: Date | null,
   sendNotification: Boolean,
 }
@@ -44,10 +44,10 @@ export interface IApprovals {
 // Approval interfance ends ...
 
 export interface IEntityName {
-  _id: String;
-  name: String; // the name here represent the model name, eg for Uses, Roles etc
-  description: String; // describes  the entity, eg selected five person to get feed, approve selected feedback, report generated, etc
-  approverRole: String;
+  _id: string;
+  name: string; // the name here represent the model name, eg for Uses, Roles etc
+  description: string; // describes  the entity, eg selected five person to get feed, approve selected feedback, report generated, etc
+  approverRole: string;
   transacteOn:Date,
 }
 
@@ -55,14 +55,14 @@ export interface IEntityName {
 
 // feedback interface
 export interface IFeedBacks {
-  _id: String;
-  template: String;
-  userId: String; // session logged in user
-  requestpicksId: String; // feedback to from the dashboard
+  _id: string;
+  template: string;
+  userId: string; // session logged in user
+  requestpicksId: string; // feedback to from the dashboard
   roleLevel:Number,
-  feedbackTo:String,
-  progress: String;
-  responseByDate?: String;
+  feedbackTo:string,
+  progress: string;
+  responseByDate?: string;
   responseDateLog: Date[]; // any time and update is made the date will be logged here
   categories: IFCategory[];
   createdOn: Date;
@@ -70,7 +70,13 @@ export interface IFeedBacks {
   submittedOn?: Date;
 }
 export interface IFCategory{
-  category: String;
+  category: string;
+  questions:IQuestionLang[],
+
+}
+          
+export interface IFCategories{
+  category: string;
   questions:IQuestionLang,
 
 }
@@ -78,9 +84,9 @@ export interface IFCategory{
 // fed back interface ends ...
 
 export interface ILogs {
-  _id: String;
-  userId: String;
-  activity: String;
+  _id: string;
+  userId: string;
+  activity: string;
   transacteOn: Date;
 }
 
@@ -88,22 +94,22 @@ export interface ILogs {
 
 //Notification interface start
 export interface INotificationsSetting {
-  _id: String;
-  userid: String;
-  entityname: String[]; // this will get model name eg, question, category etc so that to enable or disable notification from this entity
+  _id: string;
+  userid: string;
+  entityname: string[]; // this will get model name eg, question, category etc so that to enable or disable notification from this entity
   notisettingstatus: Boolean; //enable or disable notification from this entity
-  email: String; // this will be used as alternative email if the found
+  email: string; // this will be used as alternative email if the found
   enableReminder: Boolean; // if set to true automatic reminder will be send
 }
 
 export interface INotifier {
-  _id: String;
-  applicationid: String; // primary key from the model
-  entityname: String; // this will get model name eg, question, category etc and from it get the notification message and activity namee
-  message: String;
-  link: String;
-  from: String; // from
-  to: String[], // notification will be send to user, and this user must have enabled notification in 'notisetting'
+  _id: string;
+  applicationid: string; // primary key from the model
+  entityname: string; // this will get model name eg, question, category etc and from it get the notification message and activity namee
+  message: string;
+  link: string;
+  from: string; // from
+  to: string[], // notification will be send to user, and this user must have enabled notification in 'notisetting'
   notifierstatus: Boolean,
   sendOn:Date | null,
   transacteOn: Date;
@@ -114,9 +120,9 @@ export interface INotifier {
 
 // RequestPicks interface  start
 export interface IRequestPicks {
-  _id: String,
-  requestedTo: String, // the person who will recieve and select five individual to give  him /her feedback.
-  requestedBy: String, // user in the role of Hr or higher level
+  _id: string,
+  requestedTo: string, // the person who will recieve and select five individual to give  him /her feedback.
+  requestedBy: string, // user in the role of Hr or higher level
   requestedOn: Date,
   SelectedList: ISelectedList[], // an array of user select to give feedback, Hr can increase this number endless,
   submitted: Boolean,
@@ -124,22 +130,22 @@ export interface IRequestPicks {
 }
 
 export interface ISelectedList {
-  userId: String;
+  userId: string;
   roleLevel:Number,
   selectionStatus: Boolean; // allow the HR to approve or disapprove,
-  selectedBy: String;
+  selectedBy: string;
   feedBackSubmitted:Boolean,
 }
 
 // RequestPicks interface ends
 
 export interface IRoles {
-  _id: String;
-  roleName: String;
+  _id: string;
+  roleName: string;
   roleLevel: Number;
   roleStatus: Boolean;
-  createBy: String;
-  users?:String[];
+  createBy: string;
+  users?:string[];
   createdOn: Date;
 }
 
@@ -147,54 +153,54 @@ export interface IRoles {
 // roles interface ends ..
 
 export interface ITemplates {
-  _id: String;
-  templateTitle: String;
-  instructions:String,
+  _id: string;
+  templateTitle: string;
+  instructions:string,
   createdOn: Date,
-  createdBy:String
+  createdBy:string
   categories: ICat_Quest[];
   active: Boolean;
 }
 
 export interface ICat_Quest{
-  category: String,
-  questions:String[],
+  category: string,
+  questions:string[],
 }
 // templates inteface ends ..
 
 export interface IUserRoles {
-  _id: String;
-  userId: String;
-  roleId: String;
+  _id: string;
+  userId: string;
+  roleId: string;
 }
 
 // userroles interface ends ..
 
 export interface IUser {
-  _id: String;
-  firstName: { type: String; required: true };
-  surname: { type: String; required: true };
-  ldapUid: { type: String; required: true };
-  rolesId:String,
+  _id: string;
+  firstName: { type: string; required: true };
+  surname: { type: string; required: true };
+  ldapUid: { type: string; required: true };
+  rolesId:string,
   email: {
-    type: String;
+    type: string;
     required: true;
   };
-  displayName: String;
-    imageUrl?:String,
-  //   personal:  { type: String, required: true },
+  displayName: string;
+    imageUrl?:string,
+  //   personal:  { type: string, required: true },
   //   about: [{ type: mongoose.Schema.Types.ObjectId, ref: "About" }],
   workId: IWorksReport[];
-  title?: String;
-  department?: String;
-  site?: String;
+  title?: string;
+  department?: string;
+  site?: string;
   startDate?: Date | null;
-  phone?: String;
+  phone?: string;
   userStatus: Boolean;
 }
 
 export interface IWorksReport {
-  reportsTo: String;
+  reportsTo: string;
   workReportStatus: Boolean;
   createdOn: Date | null;
   deactivatedOn?: Date | null;
@@ -213,22 +219,40 @@ export interface ILdapAuth {
 }
 
 export interface userSearch{
-  _id?: String,
-  ldapUid?:String,
+  _id?: string,
+  ldapUid?:string,
 }
 
 export interface IVerifyFeedRole{
-  requestpicksId: String,
-  feedbackTo: String,
-  userId: String,
+  requestpicksId: string,
+  feedbackTo: string,
+  userId: string,
   roleLevel:Number
 }
 
 export interface IReports{
-  _id:String,
-  feedbacks:String[],
-  templates:String,
-  createBy:String,
-  userId: { type: String, required: true },
-  requestPicks:String,
+  _id:string,
+  feedbacks:string[],
+  templates:string,
+  createBy:string,
+  userId: { type: string, required: true },
+  requestPicks: string,
+  createdOn?: Date,
+}
+
+//// Reportting interfaces
+
+export interface ReportWithDetails extends IReports {
+
+  requestPicksSelectedList: ISelectedList[];
+  totalCategories: Number;
+  totalQuestions: Number;
+  categories: {
+    _id: string;
+    categoryName: string;
+    totalQuestions: Number;
+    questions: IQuestion[];
+  }[];
+  feedbacks: string[];
+  totalSelectedList: number;
 }

@@ -6,8 +6,8 @@ export const feedsRoutes = express.Router()
 
 feedsRoutes.get('/', getFeeds);
 feedsRoutes.get('/:id',);
-feedsRoutes.get('name/:name', getUserFeedReq);
-feedsRoutes.get('feed/:name', getUserTotalAnsFeed);
+feedsRoutes.get('/name/:name', getUserFeedReq);
+feedsRoutes.get('/feed/:name', getUserTotalAnsFeed);
 feedsRoutes.post('/:id',addFeedBack); //id will be requestpick id
 feedsRoutes.delete('/:id',);
 feedsRoutes.put('/',);

@@ -249,7 +249,7 @@ export const hrApprovesPicks = async (req: Request, res: Response) => {
 
 export const hrMassApprovesPicks = async (req: Request, res: Response) => {
   const user: ILdapAuth = req.body.user;
-  const selectedBy: String = user.uid;
+  const selectedBy: string = user.uid;
   const rolelevel = await checkUserRoles(selectedBy, 2);
   if (!rolelevel) {
     res.status(200).json("Not authorized to peform this transaction");

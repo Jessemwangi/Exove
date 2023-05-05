@@ -29,7 +29,7 @@ interface RequestWithUser extends Request {
 
 /// user functions
 
-export const addUserReportTo = async (_id:String) => {
+export const addUserReportTo = async (_id:string) => {
 
     // const user =await Users.findOne({_id:_id})
     // const totalWorkId:number = user.WorkId.length
@@ -60,7 +60,7 @@ export const addUserReportTo = async (_id:String) => {
  
 
 export const checkUserRoles = async (
-  userId: String,
+  userId: string,
   roleLevel: Number
 ): Promise<Boolean> => {
   const user: IUser = await getUserF({ ldapUid: userId });
@@ -77,7 +77,7 @@ export const checkUserRoles = async (
   return false;
 };
 
-export const addUserToRole = async (userId: String, roleId: String) => {
+export const addUserToRole = async (userId: string, roleId: string) => {
   await Roles.updateOne({ _id: roleId }, { $push: { users: userId } }).exec();
 };
 
@@ -122,8 +122,8 @@ export const addToNotification = async (newNotification: INotifier) => {
 };
 
 export const userEnabledNotification = async (
-  userId: String,
-  entityName: String
+  userId: string,
+  entityName: string
 ): Promise<boolean> => {
   const notiSettingsData: INotificationsSetting =
     await NotificationSetting.find({ userId, notisettingstatus: true }).lean();

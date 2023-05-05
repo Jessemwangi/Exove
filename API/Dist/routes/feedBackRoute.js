@@ -3,8 +3,8 @@ import { addFeedBack, getFeeds, getUserFeedReq, getUserTotalAnsFeed, submitFeedB
 export const feedsRoutes = express.Router();
 feedsRoutes.get('/', getFeeds);
 feedsRoutes.get('/:id');
-feedsRoutes.get('name/:name', getUserFeedReq);
-feedsRoutes.get('feed/:name', getUserTotalAnsFeed);
+feedsRoutes.get('/name/:name', getUserFeedReq);
+feedsRoutes.get('/feed/:name', getUserTotalAnsFeed);
 feedsRoutes.post('/:id', addFeedBack);
 feedsRoutes.delete('/:id');
 feedsRoutes.put('/');

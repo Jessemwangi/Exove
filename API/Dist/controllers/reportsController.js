@@ -1,7 +1,7 @@
-import { FeedBacks, Reports } from "../dbcontext/dbContext.js";
+import { FeedBacks, Reports, RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 export const getReports = (req, res) => {
-    const name = req.params.name;
+    const id = req.params.id;
 };
 export const postReports = async (req, res, next) => {
     const httpData = req.body;
@@ -71,5 +71,53 @@ export const getuserTotal = async (name) => {
             },
         },
     ]);
+};
+const reportData = async (reportId) => {
+    const report = await Reports.findById(reportId)
+        .populate('feedbacks')
+        .populate('requestPicks')
+        .exec();
+    if (!report) {
+        throw new Error('Report not found');
+    }
+    const totalCategories = new Set();
+    const totalQuestions = new Set();
+    const questionsPerCategory = {};
+    let categoryNames = [];
+    let questions = [];
+    let answers = [];
+    report.feedbacks.forEach((feedback) => {
+        feedback.categories.forEach(category => {
+            totalCategories.add(category.category);
+            categoryNames.push(category.category);
+            if (!questionsPerCategory[category.category]) {
+                questionsPerCategory[category.category] = 0;
+            }
+            category.questions.forEach(question => {
+                totalQuestions.add(question._id);
+                questionsPerCategory[category.category]++;
+                questions.push(question.question);
+                answers.push(question.answer);
+            });
+        });
+    });
+    const requestPick = await RequestPicks.findById(report.requestPicks);
+    const totalSelectedList = requestPick.SelectedList.filter(item => item.selectionStatus).length;
+    const userIds = requestPick.SelectedList.map(item => item.userId);
+    return {
+        userId: userIds,
+        ...report,
+        requestPicksSelectedList: requestPick.SelectedList,
+        totalCategories: totalCategories.size,
+        totalQuestions: totalQuestions.size,
+        categories: Object.entries(questionsPerCategory).map(([categoryName, totalQuestions]) => ({
+            _id: categoryName,
+            categoryName,
+            totalQuestions,
+            questions: []
+        })),
+        feedbacks: report.feedbacks,
+        totalSelectedList
+    };
 };
 //# sourceMappingURL=reportsController.js.map

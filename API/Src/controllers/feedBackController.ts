@@ -46,7 +46,7 @@ export const getFeed = async (req: Request, res: Response , next: NextFunction) 
 };
 
 export const getUserFeedReq = async (req: Request, res: Response, next: NextFunction) => {
-  const name: String = req.params.name;
+  const name: string = req.params.name;
   if (!name) {
     return res.status(404).json("Post data not found or empty");
     return;
@@ -76,7 +76,7 @@ export const getUserFeedReq = async (req: Request, res: Response, next: NextFunc
 };
 
 export const getUserTotalAnsFeed = async (req: Request, res: Response, next: NextFunction) => {
-  const name: String = req.params.name;
+  const name: string = req.params.name;
   if (!name) {
     return res.status(404).json("Post data not found or empty");
     return;
@@ -113,8 +113,8 @@ export const getUserTotalAnsFeed = async (req: Request, res: Response, next: Nex
 };
 
 const updateRequestPicks = async (
-  requestpicksId: String,
-  userId: String
+  requestpicksId: string,
+  userId: string
 ): Promise<Number> => {
   // code to update RequestPicks collection after submitted
   const result = await RequestPicks.updateOne(
@@ -156,8 +156,8 @@ const addFeedbackToDatabase = async (newFeedback: IFeedBacks) => {
 export const submitFeedBack = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user: ILdapAuth = req.body.user;
-    const userId: String = user.uid;
-    const requestpicksId: String = req.params.id;
+    const userId: string = user.uid;
+    const requestpicksId: string = req.params.id;
     const { id } = req.params;
     const { feedbackTo, roleLevel } = req.body;
     console.log(feedbackTo, userId);
@@ -199,8 +199,8 @@ export const submitFeedBack = async (req: Request, res: Response, next: NextFunc
 
 export const addFeedBack = async (req: Request, res: Response, next: NextFunction) => {
   const user: ILdapAuth = req.body.user;
-  const userId: String = user.uid;
-  const requestpicksId: String = req.params.id;
+  const userId: string = user.uid;
+  const requestpicksId: string = req.params.id;
 
   const httpData: IFeedBacks = req.body;
   
