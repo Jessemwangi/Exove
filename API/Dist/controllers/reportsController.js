@@ -1,15 +1,26 @@
 import { FeedBacks, Reports, RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-export const getReports = (req, res) => {
+import { v4 as uuidv4 } from "uuid";
+export const getReports = async (req, res, next) => {
     const id = req.params.id;
+    try {
+        await dbconnect();
+        const reportsData = await reportData(id);
+        res.status(200).json(reportsData);
+    }
+    catch (error) {
+        next(error);
+    }
 };
 export const postReports = async (req, res, next) => {
     const httpData = req.body;
+    const user = req.body.user;
+    const userId = user.uid;
     const newReport = {
-        _id: httpData._id,
+        _id: uuidv4(),
         feedbacks: httpData.feedbacks,
         templates: httpData.templates,
-        createBy: httpData.createBy,
+        createBy: userId,
         userId: httpData.userId,
         requestPicks: httpData.requestPicks,
     };
@@ -72,7 +83,7 @@ export const getuserTotal = async (name) => {
         },
     ]);
 };
-const reportData = async (reportId) => {
+export const reportData = async (reportId) => {
     const report = await Reports.findById(reportId)
         .populate('feedbacks')
         .populate('requestPicks')

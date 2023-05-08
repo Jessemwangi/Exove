@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import {
   IApprovals,
   ILdapAuth,
@@ -191,7 +191,7 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
     };
 
     const result = await RequestPicks.updateOne(
-      { _id: id },
+      { _id: id , "submitted": false},
       { $push: { SelectedList: newPick } }
     );
     console.log("update result ...", result);
@@ -293,3 +293,27 @@ export const hrMassApprovesPicks = async (req: Request, res: Response) => {
     res.status(500).json("server responded with an error");
   }
 };
+
+export const finalPickSubmit = async (req: Request, res: Response, next:NextFunction) => {
+  const pickId: string = req.params.id
+  try {   
+    await dbconnect()
+    const submit: IRequestPicks = RequestPicks.findOneAndUpdate(
+      {
+        _id: pickId,
+        "submitted": false
+      },
+      { "submitted": true},
+      { new: true },
+    )
+    await dbclose();
+    if (!submit) {
+      return res.status(200).json('failed to submit')
+    } else {
+      res.status(200).json('Request submitted successful')
+      return
+    }
+  } catch (error) {
+    next(error)
+  }
+}

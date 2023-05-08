@@ -28,8 +28,8 @@ export const getTemplate = async (req, res) => {
         await dbconnect();
         const template = await Template.findOne({ active: true }).select("-__v")
             .populate({
-            path: "categories",
-            select: '-__v -_id',
+            path: "categories.category",
+            select: 'categoryName',
             populate: {
                 path: "questions",
                 select: '-__v',

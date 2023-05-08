@@ -33,8 +33,8 @@ export const getTemplate = async (req: Request, res: Response) => {
     await dbconnect();
     const template: ITemplates = await Template.findOne({ active: true }). select("-__v")
     .populate({
-      path: "categories",
-      select:'-__v -_id',
+      path: "categories.category",
+      select:'categoryName',
       populate: {
         path: "questions",
         select:'-__v',

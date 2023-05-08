@@ -154,7 +154,7 @@ export const submitRequestPicks = async (req, res) => {
             sendNotification: true,
             createdOn: new Date(),
         };
-        const result = await RequestPicks.updateOne({ _id: id }, { $push: { SelectedList: newPick } });
+        const result = await RequestPicks.updateOne({ _id: id, "submitted": false }, { $push: { SelectedList: newPick } });
         console.log("update result ...", result);
         if (result.modifiedCount === 0) {
             res.status(404).json("No document was updated");
@@ -240,6 +240,27 @@ export const hrMassApprovesPicks = async (req, res) => {
         await dbclose();
         console.log(error);
         res.status(500).json("server responded with an error");
+    }
+};
+export const finalPickSubmit = async (req, res, next) => {
+    const pickId = req.params.id;
+    try {
+        await dbconnect();
+        const submit = RequestPicks.findOneAndUpdate({
+            _id: pickId,
+            "submitted": false
+        }, { "submitted": true }, { new: true });
+        await dbclose();
+        if (!submit) {
+            return res.status(200).json('failed to submit');
+        }
+        else {
+            res.status(200).json('Request submitted successful');
+            return;
+        }
+    }
+    catch (error) {
+        next(error);
     }
 };
 //# sourceMappingURL=requestpicksController.js.map

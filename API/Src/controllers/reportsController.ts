@@ -1,21 +1,29 @@
 import { NextFunction, Request, Response } from "express";
 import { FeedBacks, Reports, RequestPicks } from "../dbcontext/dbContext.js";
-import { IFeedBacks, IReports, IRequestPicks, ReportWithDetails } from "../dbcontext/Interfaces.js";
+import { IFeedBacks, ILdapAuth, IReports, IRequestPicks, ReportWithDetails } from "../dbcontext/Interfaces.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
+import { v4 as uuidv4 } from "uuid";
 
-export const getReports = (req: Request, res: Response) => {
+export const getReports = async (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.id; // to get a user report you send the report id
-  
+  try {
+    await dbconnect()
+    const reportsData: ReportWithDetails = await reportData(id)
+    res.status(200).json(reportsData)
+  } catch (error) {
+    next(error)
+  }
 };
 
 export const postReports = async (req: Request, res: Response, next: NextFunction) => {
   const httpData: IReports = req.body;
-
+  const user: ILdapAuth = req.body.user;
+  const userId: string = user.uid;
   const newReport: IReports = {
-    _id: httpData._id,
+    _id: uuidv4(),
     feedbacks: httpData.feedbacks,
     templates: httpData.templates,
-    createBy: httpData.createBy,
+    createBy: userId,
     userId: httpData.userId,
     requestPicks: httpData.requestPicks,
   };
@@ -86,7 +94,7 @@ export const getuserTotal = async (name: String) => {
 };
 
 
-const reportData = async (reportId: string):Promise<ReportWithDetails> => {
+export const reportData = async (reportId: string):Promise<ReportWithDetails> => {
  
   const report = await Reports.findById(reportId)
       .populate('feedbacks')
