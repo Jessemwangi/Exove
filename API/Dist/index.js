@@ -18,7 +18,7 @@ import cors from "cors";
 const app = express();
 const allowedOrigins = [
     "https://main--restcountriesapibch.netlify.app",
-    "http://localhost:3001",
+    "http://localhost:3001", "http://localhost:3002",
     "https://exove.vercel.app",
     "http://localhost:3000",
     "http://localhost:3003",

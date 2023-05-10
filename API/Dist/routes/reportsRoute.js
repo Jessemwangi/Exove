@@ -1,8 +1,8 @@
 import express from 'express';
-import { postReports } from '../controllers/reportsController.js';
+import { getReports, postReports } from '../controllers/reportsController.js';
 export const reportsRoutes = express.Router();
 reportsRoutes.get('/');
-reportsRoutes.get('/:id');
+reportsRoutes.get('/:id', getReports);
 reportsRoutes.post('/', postReports);
 reportsRoutes.delete('/:id');
 reportsRoutes.put('/');
