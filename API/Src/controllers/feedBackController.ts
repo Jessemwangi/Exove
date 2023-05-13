@@ -4,7 +4,6 @@ import {
   IFCategory,
   IFeedBacks,
   ILdapAuth,
-  IQCategory,
   IRequestPicks,
   IVerifyFeedRole,
 } from "../dbcontext/Interfaces.js";

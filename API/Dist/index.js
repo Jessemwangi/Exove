@@ -1,3 +1,4 @@
+'use strict';
 import express from "express";
 import { serverConfig } from "./Configs/serverConfig.js";
 import cookieParser from "cookie-parser";
@@ -43,6 +44,7 @@ apiRouter.use("/category", categoryRoute);
 apiRouter.use("/picks", reqPicksRoutes);
 apiRouter.use("/report", reportsRoutes);
 apiRouter.use("/roles", rolesRoutes);
+apiRouter.use('/notify');
 apiRouter.use("/jesse", jesseRoutes);
 apiRouter.use("/users", usersRoutes);
 apiRouter.use("/approval", approvalsRoutes);
