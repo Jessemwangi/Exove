@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 import express, { application } from "express";
 import { serverConfig } from "./Configs/serverConfig.js";
 import cookieParser from "cookie-parser";
@@ -16,24 +16,27 @@ import { templateRoute } from "./routes/templateRoute.js";
 import { errorMiddleware, ldapAuthMiddleware } from "./utilities/functions.js";
 import { usersRoutes } from "./routes/usersRoutes.js";
 import cors from "cors";
+import { notificationRoute } from "./routes/notificationRoute.js";
+import { entityRoute } from "./routes/entityRoute.js";
 
 const app = express();
 
 const allowedOrigins = [
-    "https://main--restcountriesapibch.netlify.app",
-    "http://localhost:3001","http://localhost:3002",
-    "https://exove.vercel.app",
-    "http://localhost:3000",
-    "http://localhost:3003",
-    "https://exove-colleaguefeedback-client.vercel.app",
-  ];
-  
-  const options: cors.CorsOptions = {
-    origin: allowedOrigins,
-    credentials: true,
-  };
-  
-  app.use(cors(options));
+  "https://main--restcountriesapibch.netlify.app",
+  "http://localhost:3001",
+  "http://localhost:3002",
+  "https://exove.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:3003",
+  "https://exove-colleaguefeedback-client.vercel.app",
+];
+
+const options: cors.CorsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+};
+
+app.use(cors(options));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -51,10 +54,11 @@ apiRouter.use("/category", categoryRoute);
 apiRouter.use("/picks", reqPicksRoutes);
 apiRouter.use("/report", reportsRoutes);
 apiRouter.use("/roles", rolesRoutes);
-apiRouter.use('/notify',);
 apiRouter.use("/jesse", jesseRoutes);
 apiRouter.use("/users", usersRoutes);
 apiRouter.use("/approval", approvalsRoutes);
+apiRouter.use("/notify",notificationRoute);
+apiRouter.use('/entity',entityRoute)
 
 //map all path to /api
 app.use("/api", apiRouter);

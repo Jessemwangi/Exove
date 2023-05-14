@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-export const notisettingSchema = new mongoose.Schema({
+export const NotisettingSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     userid: { type: mongoose.Schema.Types.String, ref: "Users", required: true },
     entityname: [{ type: String, required: true }],
@@ -7,7 +7,7 @@ export const notisettingSchema = new mongoose.Schema({
     email: String,
     enableReminder: Boolean,
 });
-export const notifierSchema = new mongoose.Schema({
+export const NotifierSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     applicationid: { type: String, unique: true, required: true },
     entityname: String,

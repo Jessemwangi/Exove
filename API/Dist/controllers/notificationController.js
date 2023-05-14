@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
-import { Notifer } from '../dbcontext/dbContext.js';
-export const postNotificaation = async (req, res, next) => {
+import { Entity, Notifer } from '../dbcontext/dbContext.js';
+import { dbclose, dbconnect } from '../Configs/dbConnect.js';
+export const postNotification = async (req, res, next) => {
     const httpData = req.body;
     if (!httpData)
         next(new Error("body cannot be empty"));
@@ -27,6 +28,45 @@ export const postNotificaation = async (req, res, next) => {
         next(error.message);
     }
 };
-export const getNotification = (req, res, next) => {
+export const getNotifications = async (req, res, next) => {
+    let allNotifications = [];
+    try {
+        await dbconnect();
+        const allModelName = await Entity.find({}).select('_id name').exec();
+        for (const entity of allModelName) {
+            const notifications = await Notifer.find({ 'entityname': entity.name })
+                .populate({
+                path: 'applicationid',
+                model: entity.name,
+                select: '-__v'
+            });
+            allNotifications = allNotifications.concat(notifications);
+        }
+        await dbclose();
+        res.status(200).json(allNotifications);
+    }
+    catch (error) {
+        next(error.message);
+    }
+};
+export const getNotification = async (req, res, next) => {
+    const notificationId = req.params.id;
+    if (!notificationId)
+        next(new Error("body cannot be empty"));
+    try {
+        await dbconnect();
+        const entityName = await Notifer.findOne({ '_id': notificationId }).select('entityname');
+        const notification = await Notifer.findOne({ '_id': notificationId })
+            .populate({
+            path: 'applicationid',
+            model: entityName.entityname,
+            select: '-__v'
+        });
+        await dbclose();
+        res.status(200).json(notification);
+    }
+    catch (error) {
+        next(error.message);
+    }
 };
 //# sourceMappingURL=notificationController.js.map

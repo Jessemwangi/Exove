@@ -47,8 +47,8 @@ export interface IEntityName {
   _id: string;
   name: string; // the name here represent the model name, eg for Uses, Roles etc
   description: string; // describes  the entity, eg selected five person to get feed, approve selected feedback, report generated, etc
-  approverRole: string;
-  transacteOn:Date,
+  approverRoleLevel: number;
+  transacteOn?:Date,
 }
 
 //EntityName interface ends ...
