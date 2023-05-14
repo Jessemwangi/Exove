@@ -3,8 +3,8 @@ import { Entity, Notifer } from '../dbcontext/dbContext.js';
 import { dbclose, dbconnect } from '../Configs/dbConnect.js';
 export const postNotification = async (req, res, next) => {
     const httpData = req.body;
-    if (!httpData)
-        next(new Error("body cannot be empty"));
+    const user = req.body.user;
+    const userId = user.uid;
     try {
         const newNotification = {
             _id: uuidv4(),
@@ -16,9 +16,16 @@ export const postNotification = async (req, res, next) => {
             to: httpData.to,
             notifierstatus: httpData.notifierstatus,
             sendOn: httpData.sendOn,
-            transacteOn: httpData.transacteOn
+            transacteOn: httpData.transacteOn,
+            createdBy: userId
         };
-        const notification = await new Notifer(newNotification).save();
+        const notiInstance = new new Notifer(newNotification);
+        const validationError = notiInstance.validateSync();
+        if (validationError) {
+            res.status(400).json(validationError.message);
+            return;
+        }
+        const notification = await notiInstance.save();
         if (notification) {
             res.status(200).json('saved, you can view notifivation in https://exove.vercel.app/api/notify');
             return;

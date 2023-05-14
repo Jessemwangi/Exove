@@ -10,12 +10,12 @@ import { templateSchema } from "../models/templatesModel.js";
 import { questionsSchema } from "../models/questionsModel.js";
 import { feedbackSchema } from "../models/feedBackModel.js";
 import { CategorySchema } from "../models/categoryModel.js";
-import { IApprovals, IFeedBacks, ILogs, INotifier, IQCategory, IQuestion, IReports, IRequestPicks, IRoles, ITemplates, IUser } from "./Interfaces.js";
+import { IApprovals, IEntityName, IFeedBacks, ILogs, INotifier, IQCategory, IQuestion, IReports, IRequestPicks, IRoles, ITemplates, IUser } from "./Interfaces.js";
 import { reportSchema } from "../models/reportsModel.js";
 import { NotifierSchema, NotisettingSchema } from "../models/notificationsettingModel.js";
 import { EntitySchema } from "../models/entitynameModels.js";
 
-export const Entity = mongoose.model('Entity',EntitySchema)
+export const Entity = mongoose.model<IEntityName>('Entity',EntitySchema)
 export const Approvals = mongoose.model<IApprovals>('Approvals', approvalsSchema);
 export const Reports = mongoose.model<IReports>('Reports', reportSchema);
 export const FeedBacks = mongoose.model<IFeedBacks>('FeedBacks', feedbackSchema);

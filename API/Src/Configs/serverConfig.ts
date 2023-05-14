@@ -8,7 +8,7 @@ const expireValue = parseInt(process.env.JWT_COOKIES_EXP!);
 const jwtCookiesExp = isNaN(expireValue) ? 10 : expireValue
 export const cookieExpiresIn: Date = new Date(Date.now() + jwtCookiesExp * 24 * 60 * 60 * 1000);
 
- 
+ export const frontEnd:string = process.env.FRONT_END!
 
 export const cookieSecure:boolean = process.env.NODE_ENV ==='production' ? true : false
 

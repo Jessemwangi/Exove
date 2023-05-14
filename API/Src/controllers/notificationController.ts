@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
-import { IEntityName, INotifier } from '../dbcontext/Interfaces.js';
+import { IEntityName, ILdapAuth, INotifier } from '../dbcontext/Interfaces.js';
 import { v4 as uuidv4 } from "uuid";
 import { Entity, Notifer } from '../dbcontext/dbContext.js';
 import { dbclose, dbconnect } from '../Configs/dbConnect.js';
 
 export const postNotification = async (req:Request ,res:Response,next:NextFunction ) => {
-    const httpData:INotifier = req.body;
-    if (!httpData) next(new Error("body cannot be empty"));
+    const httpData: INotifier = req.body;
+    const user: ILdapAuth = req.body.user;
+    const userId: string = user.uid;
     try {
         
         const newNotification:INotifier = {
@@ -19,10 +20,16 @@ export const postNotification = async (req:Request ,res:Response,next:NextFuncti
             to: httpData.to,
             notifierstatus: httpData.notifierstatus,
             sendOn: httpData.sendOn,
-            transacteOn:httpData.transacteOn
+            transacteOn: httpData.transacteOn,
+            createdBy:userId
         }
-    
-        const notification = await new Notifer(newNotification).save()
+        const notiInstance = new new Notifer(newNotification)
+        const validationError = notiInstance.validateSync()
+        if(validationError) {
+            res.status(400).json(validationError.message);
+            return;
+          }
+        const notification = await notiInstance.save()
         if (notification) {
             res.status(200).json('saved, you can view notifivation in https://exove.vercel.app/api/notify')
             return

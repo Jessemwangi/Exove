@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { addToNotification, checkUserRoles, isUserInRequestPick, } from "../utilities/functions.js";
+import { frontEnd } from "../Configs/serverConfig.js";
 export const getAllRequestPicks = async (req, res) => {
     try {
         await dbconnect();
@@ -98,13 +99,14 @@ export const createRequestPicks = async (req, res) => {
                 _id: uuidv4(),
                 message: "",
                 applicationid: primaryKey,
-                entityname: "",
-                link: "",
+                entityname: "Create_New_Request_Pick",
+                link: frontEnd,
                 from: requestHttpData.requestedBy,
                 to: [requestHttpData.requestedTo],
                 notifierstatus: false,
                 sendOn: null,
                 transacteOn: new Date(),
+                createdBy: userId,
             };
             console.log(newNotification);
             await addToNotification(newNotification);

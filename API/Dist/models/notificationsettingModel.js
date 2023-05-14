@@ -22,5 +22,6 @@ export const NotifierSchema = new mongoose.Schema({
         required: true,
     },
     sendOn: Date,
+    createdBy: { type: String, required: true },
 });
 //# sourceMappingURL=notificationsettingModel.js.map

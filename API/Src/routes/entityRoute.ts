@@ -1,8 +1,8 @@
 import express from 'express'
-import { postEntity } from '../controllers/entityController.js'
+import { getEntities, postEntity } from '../controllers/entityController.js'
 
 export const entityRoute = express.Router()
 
-entityRoute.get('/',)
-entityRoute.post('/',postEntity)
+entityRoute.get('/',getEntities)
+entityRoute.post('/:id?',postEntity)
 entityRoute.put('/',)

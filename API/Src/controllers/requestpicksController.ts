@@ -17,6 +17,7 @@ import {
   isUserInRequestPick,
 } from "../utilities/functions.js";
 import { UpdateWriteOpResult } from "mongoose";
+import { frontEnd } from "../Configs/serverConfig.js";
 
 // get Request Picks
 
@@ -130,13 +131,14 @@ export const createRequestPicks = async (req: Request, res: Response) => {
         _id: uuidv4(),
         message: "",
         applicationid: primaryKey,
-        entityname: "",
-        link: "",
+        entityname: "Create_New_Request_Pick",
+        link: frontEnd,
         from: requestHttpData.requestedBy, // from
         to: [requestHttpData.requestedTo], // notification will be send to user, and this user must have enabled notification in 'notisetting'
         notifierstatus: false, // false not send
         sendOn: null,
         transacteOn: new Date(),
+        createdBy:userId,
       };
       console.log(newNotification);
       await addToNotification(newNotification);

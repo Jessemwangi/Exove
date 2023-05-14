@@ -48,7 +48,8 @@ export interface IEntityName {
   name: string; // the name here represent the model name, eg for Uses, Roles etc
   description: string; // describes  the entity, eg selected five person to get feed, approve selected feedback, report generated, etc
   approverRoleLevel: number;
-  transacteOn?:Date,
+  transacteOn?: Date;
+  createdBy: string;
 }
 
 //EntityName interface ends ...
@@ -113,6 +114,7 @@ export interface INotifier {
   notifierstatus: Boolean,
   sendOn:Date | null,
   transacteOn: Date;
+  createdBy: string;
 }
 
 // Notification interface ends ..

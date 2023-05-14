@@ -25,7 +25,8 @@ export const NotifierSchema = new mongoose.Schema({
         default: Date.now,
         required: true,
     },
-    sendOn:Date,
+    sendOn: Date,
+    createdBy:{ type: String, required: true },
 })
 
 //during insert the system will check if the users involve in the transaction should recieve notificationSchema, hence if yes then insert into notifier
