@@ -118,7 +118,7 @@ export const postNotiSetting = async (req: Request, res: Response, next: NextFun
   };
   
 
-  const addEntityNametoNotisetting = async (req: Request, res: Response, next: NextFunction) => {
+  export const addEntityNametoNotisetting = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
   
@@ -138,7 +138,7 @@ export const postNotiSetting = async (req: Request, res: Response, next: NextFun
     }
   };
   
-  const deleteEntityNameToNotiSetting = async (req: Request, res: Response, next: NextFunction) => {
+  export const deleteEntityNameToNotiSetting = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       const { entityName } = req.body;
