@@ -30,8 +30,6 @@ console.log(newEntity)
       res.status(200).json("Not authorized to peform this transaction");
       return;
     }
-
-
     const entityInstance = new Entity(newEntity);
     const validationError = entityInstance.validateSync();
 
@@ -42,7 +40,9 @@ console.log(newEntity)
 
     await dbconnect();
       if (id) {
-        await entityInstance.findOneAndUpdate({_id:id},entityInstance.toObject())
+          const putEntity = await Entity.findByIdAndUpdate({ _id: id }, entityInstance.toObject(), { new: true }).exec()
+          console.log(putEntity)
+          if(!putEntity) return next (res.status(500).json('not updated'))
       }
       else {
         await entityInstance.save();
@@ -50,7 +50,7 @@ console.log(newEntity)
 
     await dbclose();
 
-    res.status(200).json("entity transacted successfully");
+    res.status(200).json("Entity transacted successfully");
     return;
   } catch (error: any) {
     next(error.message);

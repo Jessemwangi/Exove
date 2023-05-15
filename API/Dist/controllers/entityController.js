@@ -30,13 +30,16 @@ export const postEntity = async (req, res, next) => {
         }
         await dbconnect();
         if (id) {
-            await entityInstance.findOneAndUpdate({ _id: id }, entityInstance.toObject());
+            const putEntity = await Entity.findByIdAndUpdate({ _id: id }, entityInstance.toObject(), { new: true }).exec();
+            console.log(putEntity);
+            if (!putEntity)
+                return next(res.status(500).json('not updated'));
         }
         else {
             await entityInstance.save();
         }
         await dbclose();
-        res.status(200).json("entity transacted successfully");
+        res.status(200).json("Entity transacted successfully");
         return;
     }
     catch (error) {
