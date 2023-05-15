@@ -1,3 +1,4 @@
+'use strict'
 import { NextFunction, Request, Response } from 'express';
 import { Approvals } from '../dbcontext/dbContext.js';
 import { IApprovals } from '../dbcontext/Interfaces.js';

@@ -10,7 +10,7 @@ import { templateSchema } from "../models/templatesModel.js";
 import { questionsSchema } from "../models/questionsModel.js";
 import { feedbackSchema } from "../models/feedBackModel.js";
 import { CategorySchema } from "../models/categoryModel.js";
-import { IApprovals, IEntityName, IFeedBacks, ILogs, INotifier, IQCategory, IQuestion, IReports, IRequestPicks, IRoles, ITemplates, IUser } from "./Interfaces.js";
+import { IApprovals, IEntityName, IFeedBacks, ILogs, INotificationsSetting, INotifier, IQCategory, IQuestion, IReports, IRequestPicks, IRoles, ITemplates, IUser } from "./Interfaces.js";
 import { reportSchema } from "../models/reportsModel.js";
 import { NotifierSchema, NotisettingSchema } from "../models/notificationsettingModel.js";
 import { EntitySchema } from "../models/entitynameModels.js";
@@ -20,7 +20,7 @@ export const Approvals = mongoose.model<IApprovals>('Approvals', approvalsSchema
 export const Reports = mongoose.model<IReports>('Reports', reportSchema);
 export const FeedBacks = mongoose.model<IFeedBacks>('FeedBacks', feedbackSchema);
 export const Logs = mongoose.model<ILogs>('Logs', logsSchema);
-export const NotificationSetting = mongoose.model('Notificationsetting', NotisettingSchema); // setting to receive notification
+export const NotificationSetting = mongoose.model<INotificationsSetting>('Notificationsetting', NotisettingSchema); // setting to receive notification
 export const Notifer = mongoose.model<INotifier>('Notifer', NotifierSchema); // sent notification
 export const Category = mongoose.model<IQCategory>('Category', CategorySchema);
 export const Question = mongoose.model<IQuestion>('Question', questionsSchema);

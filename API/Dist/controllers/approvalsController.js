@@ -1,3 +1,4 @@
+'use strict';
 import { Approvals } from '../dbcontext/dbContext.js';
 import { dbclose, dbconnect } from '../Configs/dbConnect.js';
 export const getApps = async (req, res, next) => {

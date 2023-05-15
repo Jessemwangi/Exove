@@ -55,12 +55,13 @@ export const addToNotification = async (newNotification) => {
     }
 };
 export const userEnabledNotification = async (userId, entityName) => {
-    const notiSettingsData = await NotificationSetting.find({ userId, notisettingstatus: true }).lean();
-    console.log(notiSettingsData);
-    if (notiSettingsData) {
+    const notiSettingsData = await NotificationSetting.findOne({ userId, notisettingstatus: true }).lean();
+    if (notiSettingsData && notiSettingsData.entityname.length > 0) {
         return notiSettingsData.entityname.includes(entityName);
     }
-    return false;
+    else {
+        return false;
+    }
 };
 export const isUserInRequestPick = async (requestedTo) => {
     const data = await RequestPicks.findOne({

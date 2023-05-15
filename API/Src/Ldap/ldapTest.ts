@@ -33,23 +33,3 @@ export const run = (username:string, password:string) : Promise<ILdapAuth> => ne
   })
 })
 
-// const welcome = ({cn, mail}:welcomeType) => {
-//   console.log(`Welcome, ${cn}!`)
-//   console.log(`Your e-mail address is "${mail}" according to the LDAP server.`)
-// }
-
-// console.log(`
-// =================================
-// Test LDAP authenticator with Node
-// =================================
-
-// Bind: ${options.bindDN}
-// Search base: ${options.searchBase}
-// Search filter: ${options.searchFilter}
-
-// Authenticating user "${username}" against "${options.url}"...
-// `)
-
-// run()
-// .then((r:any) => (welcome(r), process.exit(0)))
-// .catch((e) => (console.error('Caught', e), process.exit(1)))

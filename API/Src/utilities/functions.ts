@@ -126,12 +126,13 @@ export const userEnabledNotification = async (
   entityName: string
 ): Promise<boolean> => {
   const notiSettingsData: INotificationsSetting =
-    await NotificationSetting.find({ userId, notisettingstatus: true }).lean();
-  console.log(notiSettingsData);
-  if (notiSettingsData) {
+    await NotificationSetting.findOne({ userId, notisettingstatus: true }).lean();
+  if (notiSettingsData && notiSettingsData.entityname.length > 0)  {
     return notiSettingsData.entityname.includes(entityName);
   }
-  return false;
+  else {
+    return false;
+  }
 };
 
 // Check user request pick

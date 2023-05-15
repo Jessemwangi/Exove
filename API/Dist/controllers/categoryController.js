@@ -1,3 +1,4 @@
+'use strict';
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
 import { Category } from "../dbcontext/dbContext.js";

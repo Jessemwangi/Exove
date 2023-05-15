@@ -1,7 +1,7 @@
 import express from 'express';
-import { getNotification, postNotification } from '../controllers/notificationController.js';
+import { getNotification, getNotifications, postNotification } from '../controllers/notificationController.js';
 export const notificationRoute = express.Router();
 notificationRoute.post('/', postNotification);
-notificationRoute.get('/', getNotification);
+notificationRoute.get('/', getNotifications);
 notificationRoute.get('/:id', getNotification);
 //# sourceMappingURL=notificationRoute.js.map

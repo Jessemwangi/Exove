@@ -18,6 +18,7 @@ import {
 } from "../utilities/functions.js";
 import { UpdateWriteOpResult } from "mongoose";
 import { frontEnd } from "../Configs/serverConfig.js";
+import {  SelectedListModel } from "../models/requestpicksModel.js";
 
 // get Request Picks
 
@@ -86,11 +87,11 @@ export const getIdRequestPick = async (req: Request, res: Response) => {
 };
 
 // will be executed by the hr
-export const createRequestPicks = async (req: Request, res: Response) => {
+export const createRequestPicks = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const requestHttpData: IRequestPicks = req.body;
-    const user: ILdapAuth = req.body.user;
-    const userId: string = user.uid;
+   const user: ILdapAuth = req.body.user;
+    const userId: string =  user.uid;
     const rolelevel = await checkUserRoles(userId, 2);
     if (!rolelevel) {
       res.status(200).json("Not authorized to peform this transaction");
@@ -126,21 +127,20 @@ export const createRequestPicks = async (req: Request, res: Response) => {
       }
       await dbconnect();
       await requestInstance.save();
-
+      
       const newNotification: INotifier = {
         _id: uuidv4(),
         message: "",
         applicationid: primaryKey,
-        entityname: "Create_New_Request_Pick",
-        link: frontEnd,
-        from: requestHttpData.requestedBy, // from
+        entityname: "RequestPicks",
+        link: `https://exove.vercel.app/api/picks/pick-id/${primaryKey}`,
+        from: userId, // from
         to: [requestHttpData.requestedTo], // notification will be send to user, and this user must have enabled notification in 'notisetting'
         notifierstatus: false, // false not send
         sendOn: null,
         transacteOn: new Date(),
         createdBy: userId,
       };
-      console.log(newNotification);
       await addToNotification(newNotification);
       res.status(200).json("Data saved successfully!");
       await dbclose();
@@ -167,10 +167,20 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
     res.status(200).json("Not authorized to peform this transaction");
     return;
   }
-  const newPick: ISelectedList = {
-    ...requestHttpData,
+
+  const newPick = new SelectedListModel({
+    roleLevel: requestHttpData.roleLevel,
+    selectionStatus: requestHttpData.selectionStatus,
+    userId: requestHttpData.userId,
+    feedBackSubmitted:false,
     selectedBy: userId,
-  };
+  });
+
+  const validationError = newPick.validateSync();
+  if (validationError) {
+    res.status(400).json(validationError.message);
+    return;
+  }
 
   const id = req.params.id;
 
@@ -192,9 +202,9 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
       createdOn: new Date(),
     };
 
-    const result = await RequestPicks.updateOne(
+    const result = await RequestPicks.findByIdAndUpdate(
       { _id: id, submitted: false },
-      { $push: { SelectedList: newPick } }
+      { $push: { SelectedList: newPick } }, {new:true}
     );
     console.log("update result ...", result);
     if (result.modifiedCount === 0) {

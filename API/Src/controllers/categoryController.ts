@@ -1,3 +1,4 @@
+'use strict'
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { NextFunction, Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";

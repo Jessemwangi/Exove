@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { addToNotification, checkUserRoles, isUserInRequestPick, } from "../utilities/functions.js";
-import { frontEnd } from "../Configs/serverConfig.js";
+import { SelectedListModel } from "../models/requestpicksModel.js";
 export const getAllRequestPicks = async (req, res) => {
     try {
         await dbconnect();
@@ -59,7 +59,7 @@ export const getIdRequestPick = async (req, res) => {
         res.status(500).json("Internal server error");
     }
 };
-export const createRequestPicks = async (req, res) => {
+export const createRequestPicks = async (req, res, next) => {
     try {
         const requestHttpData = req.body;
         const user = req.body.user;
@@ -99,16 +99,15 @@ export const createRequestPicks = async (req, res) => {
                 _id: uuidv4(),
                 message: "",
                 applicationid: primaryKey,
-                entityname: "Create_New_Request_Pick",
-                link: frontEnd,
-                from: requestHttpData.requestedBy,
+                entityname: "RequestPicks",
+                link: `https://exove.vercel.app/api/picks/pick-id/${primaryKey}`,
+                from: userId,
                 to: [requestHttpData.requestedTo],
                 notifierstatus: false,
                 sendOn: null,
                 transacteOn: new Date(),
                 createdBy: userId,
             };
-            console.log(newNotification);
             await addToNotification(newNotification);
             res.status(200).json("Data saved successfully!");
             await dbclose();
@@ -134,10 +133,18 @@ export const submitRequestPicks = async (req, res) => {
         res.status(200).json("Not authorized to peform this transaction");
         return;
     }
-    const newPick = {
-        ...requestHttpData,
+    const newPick = new SelectedListModel({
+        roleLevel: requestHttpData.roleLevel,
+        selectionStatus: requestHttpData.selectionStatus,
+        userId: requestHttpData.userId,
+        feedBackSubmitted: false,
         selectedBy: userId,
-    };
+    });
+    const validationError = newPick.validateSync();
+    if (validationError) {
+        res.status(400).json(validationError.message);
+        return;
+    }
     const id = req.params.id;
     try {
         if (!requestHttpData) {
@@ -156,7 +163,7 @@ export const submitRequestPicks = async (req, res) => {
             sendNotification: true,
             createdOn: new Date(),
         };
-        const result = await RequestPicks.updateOne({ _id: id, submitted: false }, { $push: { SelectedList: newPick } });
+        const result = await RequestPicks.findByIdAndUpdate({ _id: id, submitted: false }, { $push: { SelectedList: newPick } }, { new: true });
         console.log("update result ...", result);
         if (result.modifiedCount === 0) {
             res.status(404).json("No document was updated");
