@@ -117,3 +117,45 @@ export const postNotiSetting = async (req: Request, res: Response, next: NextFun
     }
   };
   
+
+  const addEntityNametoNotisetting = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+  
+      // Retrieve the entity name to be added from the request body once the user add the entitiy
+      const { entityName } = req.body;
+  
+      // Find the document by ID
+      const notisetting = await NotificationSetting.findById({_id:id});
+      if (!notisetting) {
+        throw new Error("Notisetting not found");
+      }
+      notisetting.entityname.push(entityName);
+      await notisetting.save();
+      res.status(200).json(notisetting);
+    } catch (error:any) {
+      next(error.message);
+    }
+  };
+  
+  const deleteEntityNameToNotiSetting = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const { entityName } = req.body;
+
+      const notisetting = await NotificationSetting.findById({_id:id});
+
+      if (!notisetting) {
+        throw new Error("Notisetting not found");
+      }
+      notisetting.entityname = notisetting.entityname.filter((name: string) => name !== entityName);
+
+      await notisetting.save();
+  
+      res.json(notisetting);
+    } catch (error:any) {
+      // Handle any errors that occur during the process
+      next(error.message);
+    }
+  };
+  

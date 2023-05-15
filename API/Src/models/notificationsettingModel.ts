@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 export const NotisettingSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     userid: { type: mongoose.Schema.Types.String, ref: "Users", required: true },
-    entityname: [{ type: String, required: true }], // this will get model name eg, question, category etc so that to enable or disable notification from this entinty
+    entityname: { type: [mongoose.Schema.Types.String], required: true }, // this will get model name eg, question, category etc so that to enable or disable notification from this entinty
     notisettingstatus: Boolean, //enable or disable notification for this user
     email: String, // this will be used as alternative email if the found
     enableReminder: Boolean, // if set to true automatic reminder will be send
