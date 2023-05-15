@@ -113,7 +113,7 @@ export interface INotifier {
   to: string[], // notification will be send to user, and this user must have enabled notification in 'notisetting'
   notifierstatus: Boolean,
   sendOn:Date | null,
-  transacteOn: Date;
+  transacteOn?: Date;
   createdBy: string;
 }
 

@@ -49,7 +49,7 @@ export const postEntity = async (req, res, next) => {
 export const getEntities = async (req, res, next) => {
     try {
         await dbconnect();
-        const entities = await Entity.find({}).lean();
+        const entities = await Entity.find({}).select('-__v').lean();
         await dbclose();
         res.status(200).json(entities);
     }

@@ -7,7 +7,7 @@ export const requestpicksSchema = new mongoose.Schema({
     SelectedList: [
         {
             userId: { type: String, required: true },
-            roleLevel: { type: Number, required: true, default: 5 },
+            roleLevel: { type: Number, required: true },
             selectionStatus: { type: Boolean, required: true },
             selectedBy: { type: String, required: true },
             feedBackSubmitted: { type: Boolean, default: false, required: true },

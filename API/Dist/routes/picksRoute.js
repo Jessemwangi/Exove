@@ -9,5 +9,5 @@ reqPicksRoutes.patch('/:id', submitRequestPicks);
 reqPicksRoutes.patch('/approve-pick/:id', hrApprovesPicks);
 reqPicksRoutes.patch('/approve-picks/:id', hrMassApprovesPicks);
 reqPicksRoutes.delete('/:id');
-reqPicksRoutes.get('/submit/:id', finalPickSubmit);
+reqPicksRoutes.patch('/submit/:id', finalPickSubmit);
 //# sourceMappingURL=picksRoute.js.map

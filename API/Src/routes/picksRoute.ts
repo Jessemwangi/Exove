@@ -12,5 +12,5 @@ reqPicksRoutes.patch('/:id', submitRequestPicks);   //add the selected list of f
 reqPicksRoutes.patch('/approve-pick/:id', hrApprovesPicks);   // approve or disapprove a single request pick /picks/approve-pickload >> {}
 reqPicksRoutes.patch('/approve-picks/:id', hrMassApprovesPicks);   // approve or disapprove a multiple request picks /picks/approve-picks  load: >> "SelectedList": [{}]
 reqPicksRoutes.delete('/:id',);
-reqPicksRoutes.get('/submit/:id',finalPickSubmit);
+reqPicksRoutes.patch('/submit/:id',finalPickSubmit);
 

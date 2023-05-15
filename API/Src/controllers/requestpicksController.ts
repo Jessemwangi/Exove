@@ -138,7 +138,7 @@ export const createRequestPicks = async (req: Request, res: Response) => {
         notifierstatus: false, // false not send
         sendOn: null,
         transacteOn: new Date(),
-        createdBy:userId,
+        createdBy: userId,
       };
       console.log(newNotification);
       await addToNotification(newNotification);
@@ -193,7 +193,7 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
     };
 
     const result = await RequestPicks.updateOne(
-      { _id: id , "submitted": false},
+      { _id: id, submitted: false },
       { $push: { SelectedList: newPick } }
     );
     console.log("update result ...", result);
@@ -248,7 +248,7 @@ export const hrApprovesPicks = async (req: Request, res: Response) => {
     res.status(500).json("server responded with an error");
   }
 };
-
+// work from here
 export const hrMassApprovesPicks = async (req: Request, res: Response) => {
   const user: ILdapAuth = req.body.user;
   const selectedBy: string = user.uid;
@@ -296,26 +296,35 @@ export const hrMassApprovesPicks = async (req: Request, res: Response) => {
   }
 };
 
-export const finalPickSubmit = async (req: Request, res: Response, next:NextFunction) => {
-  const pickId: string = req.params.id
-  try {   
-    await dbconnect()
-    const submit: IRequestPicks = RequestPicks.findOneAndUpdate(
+export const finalPickSubmit = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const pickId: string = req.params.id;
+  console.log(pickId);
+  try {
+    await dbconnect();
+    const submit: IRequestPicks = await RequestPicks.findOneAndUpdate(
       {
         _id: pickId,
-        "submitted": false
+        submitted: false,
       },
-      { "submitted": true},
-      { new: true },
-    )
+      {
+        submitted: true,
+        submittedOn: new Date(),
+      },
+      { new: true }
+    ).exec();
     await dbclose();
+    console.log(submit);
     if (!submit) {
-      return res.status(200).json('failed to submit')
+      return res.status(200).json("failed to submit");
     } else {
-      res.status(200).json('Request submitted successful')
-      return
+      res.status(200).json("Request submitted successful");
+      return;
     }
-  } catch (error) {
-    next(error)
+  } catch (error: any) {
+    next(error.message);
   }
-}
+};

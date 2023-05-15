@@ -61,7 +61,7 @@ export const getEntities = async (req: Request, res: Response, next: NextFunctio
     
     try {
     await dbconnect()
-        const entities: IEntityName = await Entity.find({}).lean()
+        const entities: IEntityName = await Entity.find({}).select('-__v') .lean()
         await dbclose()
 	res.status(200).json(entities)
     } catch (error: any) {

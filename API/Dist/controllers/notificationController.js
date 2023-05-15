@@ -16,7 +16,6 @@ export const postNotification = async (req, res, next) => {
             to: httpData.to,
             notifierstatus: httpData.notifierstatus,
             sendOn: httpData.sendOn,
-            transacteOn: httpData.transacteOn,
             createdBy: userId
         };
         const notiInstance = new new Notifer(newNotification);
