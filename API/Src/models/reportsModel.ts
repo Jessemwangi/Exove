@@ -5,10 +5,15 @@ export const reportSchema = new mongoose.Schema({
     feedbacks: { type: [mongoose.Schema.Types.String], ref: "FeedBacks" },
     template: { type: String, ref: "Template" },
     createdBy: { type: String, required: true },
-    createdOn: { type: Date, default: Date.now },
     userId: { type: String, required: true },
     requestPicks: { type: String, required: true },
+    createdOn: { type: Date, default: Date.now },
     
 })
 
 
+export const reportsStepSchema = new mongoose.Schema({
+    _id: { type: String, required: true },
+    reportId: { type: String, required: true },
+    reportLevel:{ type: Number, required: true },
+})

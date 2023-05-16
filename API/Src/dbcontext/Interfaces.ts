@@ -235,7 +235,7 @@ export interface IVerifyFeedRole{
 export interface IReports{
   _id:string,
   feedbacks:string[],
-  templates:string,
+  template:string,
   createBy?:string,
   userId: string,
   requestPicks: string,

@@ -3,6 +3,7 @@ import { FeedBacks, Reports, RequestPicks } from "../dbcontext/dbContext.js";
 import { IFeedBacks, ILdapAuth, IReports, IRequestPicks, ReportWithDetails } from "../dbcontext/Interfaces.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
+import { savedSuccess } from "../Configs/serverConfig.js";
 
 export const getReports = async (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.id; // to get a user report you send the report id
@@ -22,19 +23,26 @@ export const postReports = async (req: Request, res: Response, next: NextFunctio
   const newReport: IReports = {
     _id: uuidv4(),
     feedbacks: httpData.feedbacks,
-    templates: httpData.templates,
+    template: httpData.template,
     createBy: userId,
     userId: httpData.userId,
     requestPicks: httpData.requestPicks,
   };
+
+  const reportInstance = new Reports(newReport)
+  const validationError = reportInstance.validateSync()
+  if (validationError) {
+   return next(validationError);
+   
+  }
     try {
         await dbconnect()
         await new Reports(newReport).save()
         await dbclose()
-        res.status(200).json('Report saved successfully')
+        res.status(200).json(savedSuccess)
         return
-    } catch (error) {
-        next(error)
+    } catch (error:any) {
+        next(error.message)
     }
     
 };

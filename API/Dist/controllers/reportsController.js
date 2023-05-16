@@ -1,6 +1,7 @@
 import { FeedBacks, Reports, RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
+import { savedSuccess } from "../Configs/serverConfig.js";
 export const getReports = async (req, res, next) => {
     const id = req.params.id;
     try {
@@ -19,20 +20,25 @@ export const postReports = async (req, res, next) => {
     const newReport = {
         _id: uuidv4(),
         feedbacks: httpData.feedbacks,
-        templates: httpData.templates,
+        template: httpData.template,
         createBy: userId,
         userId: httpData.userId,
         requestPicks: httpData.requestPicks,
     };
+    const reportInstance = new Reports(newReport);
+    const validationError = reportInstance.validateSync();
+    if (validationError) {
+        return next(validationError);
+    }
     try {
         await dbconnect();
         await new Reports(newReport).save();
         await dbclose();
-        res.status(200).json('Report saved successfully');
+        res.status(200).json(savedSuccess);
         return;
     }
     catch (error) {
-        next(error);
+        next(error.message);
     }
 };
 export const putReports = (req, res, next) => {

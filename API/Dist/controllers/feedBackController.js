@@ -108,7 +108,6 @@ export const submitFeedBack = async (req, res, next) => {
         const requestpicksId = req.params.id;
         const { id } = req.params;
         const { feedbackTo, roleLevel } = req.body;
-        console.log(feedbackTo, userId);
         if (feedbackTo && userId && id) {
             await dbconnect();
             const verifyFeedFrom = {
@@ -170,7 +169,7 @@ export const addFeedBack = async (req, res, next) => {
         const newFeedback = new FeedBacks(newFeedbackInstance);
         const validationError = newFeedback.validateSync();
         if (validationError) {
-            next(validationError);
+            return next(validationError);
         }
         await dbconnect();
         const verifyFeedFrom = {
