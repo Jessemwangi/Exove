@@ -6,6 +6,7 @@ export const getReports = async (req, res, next) => {
     try {
         await dbconnect();
         const reportsData = Reports.find({}).lean();
+        await dbclose();
         res.status(200).json(reportsData);
     }
     catch (error) {
