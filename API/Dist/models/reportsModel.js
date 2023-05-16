@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 export const reportSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     feedbacks: { type: [mongoose.Schema.Types.String], ref: "FeedBacks" },
-    template: { type: String, ref: "Template" },
+    template: { type: String, required: true, ref: "Template" },
     createdBy: { type: String, required: true },
     userId: { type: String, required: true },
     requestPicks: { type: String, required: true },
