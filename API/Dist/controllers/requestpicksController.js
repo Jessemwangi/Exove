@@ -80,6 +80,7 @@ export const createRequestPicks = async (req, res, next) => {
             const primaryKey = uuidv4();
             const requestData = {
                 _id: primaryKey,
+                template: requestHttpData.template,
                 requestedTo: requestHttpData.requestedTo,
                 requestedBy: userId,
                 requestedOn: new Date(),

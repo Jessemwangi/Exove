@@ -110,6 +110,7 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
       const primaryKey = uuidv4();
       const requestData: IRequestPicks = {
         _id: primaryKey,
+        template:requestHttpData.template,
         requestedTo: requestHttpData.requestedTo,
         requestedBy: userId, // will will get this info from token when we encrypt
         requestedOn: new Date(),

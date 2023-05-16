@@ -22,6 +22,7 @@ export const ModelSelectedList = new Schema<ISelectedList>({
 
 export const requestpicksSchema = new mongoose.Schema<IRequestPicks>({
   _id: { type: String, required: true },
+  template: { type: String, required: true },
   requestedTo: { type: String, required: true }, // the person who will recieve and select five individual to give  him /her feedback.
   requestedBy: { type: String, required: true }, // user in the role of Hr or higher level
   requestedOn: { type: Date, default: new Date(), required: true },

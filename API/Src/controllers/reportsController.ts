@@ -35,6 +35,7 @@ export const postReports = async (req: Request, res: Response, next: NextFunctio
 
   const user: ILdapAuth = req.body.user;
   const userId: string = user.uid;
+  console.log(httpData.feedbacks)
   const newReport: IReports = {
     _id: uuidv4(),
     feedbacks: httpData.feedbacks,
@@ -50,15 +51,16 @@ export const postReports = async (req: Request, res: Response, next: NextFunctio
    return next(validationError);
    
   }
-    try {
-        await dbconnect()
-        await new Reports(newReport).save()
-        await dbclose()
-        res.status(200).json(savedSuccess.toString())
-        return
-    } catch (error:any) {
-        next(error.message)
-    }
+  res.send(newReport)
+    // try {
+    //     await dbconnect()
+    //     await new Reports(newReport).save()
+    //     await dbclose()
+    //     res.status(200).json(savedSuccess.toString())
+    //     return
+    // } catch (error:any) {
+    //     next(error.message)
+    // }
     
 };
 
@@ -175,3 +177,32 @@ export const reportData = async (reportId: string):Promise<ReportWithDetails> =>
 
 }
 
+export const test = async (req: Request, res: Response, next: NextFunction) => {
+try{
+  const reports = await Reports.find().populate({
+      path: 'feedbacks',
+      populate: {
+        path: 'template',
+      },
+    });
+    const summary = await FeedBacks.aggregate([
+      { $unwind: '$categories' },
+      {
+        $group: {
+          _id: '$_id',
+          totalCategories: { $sum: 1 },
+          questionsPerCategory: {
+            $push: {
+              category: '$categories.category',
+              totalQuestions: { $size: '$categories.questions' },
+            },
+          },
+        },
+      },
+    ]);
+    res.json({ reports, summary });
+  } catch (err:any) {
+    res.status(500).json(err.message );
+  }
+
+}

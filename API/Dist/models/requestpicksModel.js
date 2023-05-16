@@ -19,6 +19,7 @@ export const ModelSelectedList = new Schema({
 });
 export const requestpicksSchema = new mongoose.Schema({
     _id: { type: String, required: true },
+    template: { type: String, required: true },
     requestedTo: { type: String, required: true },
     requestedBy: { type: String, required: true },
     requestedOn: { type: Date, default: new Date(), required: true },

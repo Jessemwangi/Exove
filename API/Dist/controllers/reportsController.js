@@ -1,7 +1,6 @@
 import { FeedBacks, Reports, RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
-import { savedSuccess } from "../Configs/serverConfig.js";
 export const getReports = async (req, res, next) => {
     try {
         await dbconnect();
@@ -29,6 +28,7 @@ export const postReports = async (req, res, next) => {
     const httpData = req.body;
     const user = req.body.user;
     const userId = user.uid;
+    console.log(httpData.feedbacks);
     const newReport = {
         _id: uuidv4(),
         feedbacks: httpData.feedbacks,
@@ -42,16 +42,7 @@ export const postReports = async (req, res, next) => {
     if (validationError) {
         return next(validationError);
     }
-    try {
-        await dbconnect();
-        await new Reports(newReport).save();
-        await dbclose();
-        res.status(200).json(savedSuccess.toString());
-        return;
-    }
-    catch (error) {
-        next(error.message);
-    }
+    res.send(newReport);
 };
 export const putReports = (req, res, next) => {
 };
@@ -148,5 +139,34 @@ export const reportData = async (reportId) => {
         feedbacks: report.feedbacks,
         totalSelectedList
     };
+};
+export const test = async (req, res, next) => {
+    try {
+        const reports = await Reports.find().populate({
+            path: 'feedbacks',
+            populate: {
+                path: 'template',
+            },
+        });
+        const summary = await FeedBacks.aggregate([
+            { $unwind: '$categories' },
+            {
+                $group: {
+                    _id: '$_id',
+                    totalCategories: { $sum: 1 },
+                    questionsPerCategory: {
+                        $push: {
+                            category: '$categories.category',
+                            totalQuestions: { $size: '$categories.questions' },
+                        },
+                    },
+                },
+            },
+        ]);
+        res.json({ reports, summary });
+    }
+    catch (err) {
+        res.status(500).json(err.message);
+    }
 };
 //# sourceMappingURL=reportsController.js.map

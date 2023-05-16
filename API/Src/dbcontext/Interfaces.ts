@@ -123,6 +123,7 @@ export interface INotifier {
 // RequestPicks interface  start
 export interface IRequestPicks {
   _id: string,
+  template:string,
   requestedTo: string, // the person who will recieve and select five individual to give  him /her feedback.
   requestedBy: string, // user in the role of Hr or higher level
   requestedOn: Date,
