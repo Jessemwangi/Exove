@@ -74,7 +74,7 @@ export const createRequestPicks = async (req, res, next) => {
             selectionStatus: true,
             roleLevel: 5,
             selectedBy: userId,
-            feedBackSubmitted: true,
+            feedBackSubmitted: false,
         };
         if (requestHttpData) {
             const primaryKey = uuidv4();
@@ -123,7 +123,7 @@ export const createRequestPicks = async (req, res, next) => {
         console.log(error);
     }
 };
-export const submitRequestPicks = async (req, res) => {
+export const submitRequestPicks = async (req, res, next) => {
     const requestHttpData = req.body;
     const user = req.body.user;
     const userId = user.uid;
@@ -180,7 +180,7 @@ export const submitRequestPicks = async (req, res) => {
         console.log(error);
     }
 };
-export const hrApprovesPicks = async (req, res) => {
+export const hrApprovesPicks = async (req, res, next) => {
     const user = req.body.user;
     const selectedBy = user.uid;
     const rolelevel = await checkUserRoles(selectedBy, 2);
@@ -195,14 +195,18 @@ export const hrApprovesPicks = async (req, res) => {
         }
         const requestPicksId = req.params.id;
         const userId = req.body.userId;
+        const roleLevel = req.body.roleLevel;
         const selectionStatus = req.body.selectionStatus;
+        if (!requestPicksId && !userId && !roleLevel && !selectionStatus)
+            return next(new Error(`Please provide the following, requestPicksId,selectionStatus, roleLevel and userId.`));
         await dbconnect();
-        const result = await RequestPicks.updateOne({ _id: requestPicksId, "SelectedList.userId": userId }, {
+        const result = await RequestPicks.updateOne({ _id: requestPicksId, "SelectedList.userId": userId, "SelectedList.roleLevel": roleLevel }, {
             $set: {
                 "SelectedList.$.selectionStatus": selectionStatus,
                 "SelectedList.$.selectedBy": selectedBy,
             },
         });
+        console.log(result);
         if (result.modifiedCount === 0) {
             res.status(404).json("No document was updated");
             return;

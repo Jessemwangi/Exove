@@ -103,7 +103,7 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
       selectionStatus: true,
       roleLevel: 5,
       selectedBy: userId,
-      feedBackSubmitted: true,
+      feedBackSubmitted: false,
     };
 
     if (requestHttpData) {
@@ -155,7 +155,7 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
   }
 };
 
-export const submitRequestPicks = async (req: Request, res: Response) => {
+export const submitRequestPicks = async (req: Request, res: Response, next:NextFunction) => {
   // check if user is authenticated and also we will check if current user is the same as requestedTo or in the role of hr
   const requestHttpData: ISelectedList = req.body;
   const user: ILdapAuth = req.body.user;
@@ -222,7 +222,7 @@ export const submitRequestPicks = async (req: Request, res: Response) => {
   }
 };
 
-export const hrApprovesPicks = async (req: Request, res: Response) => {
+export const hrApprovesPicks = async (req: Request, res: Response,next:NextFunction) => {
   const user: ILdapAuth = req.body.user;
   const selectedBy: string = user.uid;
   const rolelevel = await checkUserRoles(selectedBy, 2);
@@ -235,13 +235,16 @@ export const hrApprovesPicks = async (req: Request, res: Response) => {
       res.status(404).json("Post data not found or empty");
       return;
     }
-    const requestPicksId: String = req.params.id;
-    const userId: String = req.body.userId;
+    const requestPicksId: string = req.params.id;
+    const userId: string = req.body.userId;
+    const roleLevel: number = req.body.roleLevel;
     const selectionStatus: Boolean = req.body.selectionStatus;
+    
+    if (!requestPicksId && !userId && !roleLevel && !selectionStatus) return next(new Error(`Please provide the following, requestPicksId,selectionStatus, roleLevel and userId.`))
 
     await dbconnect();
     const result: UpdateWriteOpResult = await RequestPicks.updateOne(
-      { _id: requestPicksId, "SelectedList.userId": userId },
+      { _id: requestPicksId, "SelectedList.userId": userId , "SelectedList.roleLevel": roleLevel},
       {
         $set: {
           "SelectedList.$.selectionStatus": selectionStatus,
@@ -249,6 +252,7 @@ export const hrApprovesPicks = async (req: Request, res: Response) => {
         },
       }
     );
+    console.log(result)
     if (result.modifiedCount === 0) {
       res.status(404).json("No document was updated");
       return;

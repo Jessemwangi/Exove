@@ -7,5 +7,5 @@ reportsRoutes.post('/', postReports);
 reportsRoutes.delete('/:id');
 reportsRoutes.put('/');
 reportsRoutes.patch('/');
-reportsRoutes.get('/summary', test);
+reportsRoutes.get('/summary/all', test);
 //# sourceMappingURL=reportsRoute.js.map

@@ -201,7 +201,8 @@ try{
       },
     ]);
     res.json({ reports, summary });
-  } catch (err:any) {
+} catch (err: any) {
+  console.log(err)
     res.status(500).json(err.message );
   }
 
