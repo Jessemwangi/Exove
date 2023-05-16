@@ -10,7 +10,7 @@ export const getReports = async (req: Request, res: Response, next: NextFunction
   try {
     await dbconnect()
 
-    const reportsData: IReports = Reports.find({}).lean()
+    const reportsData: IReports[] = Reports.find({}).select('-__v').lean()
     await dbclose()
     res.status(200).json(reportsData)
   } catch (error) {
