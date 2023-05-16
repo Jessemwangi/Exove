@@ -142,6 +142,7 @@ export const reportData = async (reportId) => {
 };
 export const test = async (req, res, next) => {
     try {
+        await dbconnect();
         const reports = await Reports.find().populate({
             path: 'feedbacks',
             populate: {
@@ -163,6 +164,7 @@ export const test = async (req, res, next) => {
                 },
             },
         ]);
+        await dbclose();
         res.json({ reports, summary });
     }
     catch (err) {

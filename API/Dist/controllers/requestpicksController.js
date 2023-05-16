@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { addToNotification, checkUserRoles, isUserInRequestPick, } from "../utilities/functions.js";
+import { addToNotification, checkUserRoles, getUserReportTo, isUserInRequestPick, } from "../utilities/functions.js";
 import { SelectedListModel } from "../models/requestpicksModel.js";
 export const getAllRequestPicks = async (req, res) => {
     try {
@@ -69,6 +69,15 @@ export const createRequestPicks = async (req, res, next) => {
             res.status(200).json("Not authorized to peform this transaction");
             return;
         }
+        const reportTo = await getUserReportTo(requestHttpData.requestedTo);
+        const defaultReportTo = {
+            userId: reportTo,
+            selectionStatus: true,
+            roleLevel: 3,
+            selectedBy: userId,
+            feedBackSubmitted: false,
+        };
+        console.log('defaultReportTo ***************', defaultReportTo);
         const defaultList = {
             userId: requestHttpData.requestedTo,
             selectionStatus: true,
@@ -84,7 +93,7 @@ export const createRequestPicks = async (req, res, next) => {
                 requestedTo: requestHttpData.requestedTo,
                 requestedBy: userId,
                 requestedOn: new Date(),
-                SelectedList: [defaultList],
+                SelectedList: [defaultList, defaultReportTo],
                 submitted: false,
                 submittedOn: null,
             };

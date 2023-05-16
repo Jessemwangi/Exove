@@ -40,6 +40,20 @@ export const getUserF = async ({ ldapUid, _id }) => {
     await dbclose();
     return usersResult;
 };
+export const getUserReportTo = async (userId) => {
+    console.log(userId);
+    await dbconnect();
+    const user = await Users.findOne({
+        'ldapUid': userId,
+        'workId.workReportStatus': true
+    })
+        .select({ 'workId.reportsTo': 1 })
+        .exec();
+    await dbclose();
+    const userReportTo = user?.workId[0].reportsTo;
+    console.log('user **************', user, '***************************userReportTo ********', userReportTo);
+    return userReportTo;
+};
 export const addApprovals = async (approval) => {
     await new Approvals(approval).save();
 };

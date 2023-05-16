@@ -178,7 +178,8 @@ export const reportData = async (reportId: string):Promise<ReportWithDetails> =>
 }
 
 export const test = async (req: Request, res: Response, next: NextFunction) => {
-try{
+  try {
+  await dbconnect()
   const reports = await Reports.find().populate({
       path: 'feedbacks',
       populate: {
@@ -200,6 +201,7 @@ try{
         },
       },
     ]);
+    await dbclose()
     res.json({ reports, summary });
 } catch (err: any) {
   console.log(err)

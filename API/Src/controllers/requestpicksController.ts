@@ -14,6 +14,7 @@ import {
   addApprovals,
   addToNotification,
   checkUserRoles,
+  getUserReportTo,
   isUserInRequestPick,
 } from "../utilities/functions.js";
 import { UpdateWriteOpResult } from "mongoose";
@@ -97,6 +98,17 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
       res.status(200).json("Not authorized to peform this transaction");
       return;
     }
+    const reportTo = await getUserReportTo(requestHttpData.requestedTo)
+    
+    const defaultReportTo: ISelectedList = {
+      userId: reportTo,
+      selectionStatus: true,
+      roleLevel: 3,
+      selectedBy: userId,
+      feedBackSubmitted: false,
+    };
+
+    console.log('defaultReportTo ***************', defaultReportTo)
 
     const defaultList: ISelectedList = {
       userId: requestHttpData.requestedTo,
@@ -114,7 +126,7 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
         requestedTo: requestHttpData.requestedTo,
         requestedBy: userId, // will will get this info from token when we encrypt
         requestedOn: new Date(),
-        SelectedList: [defaultList],
+        SelectedList: [defaultList,defaultReportTo],
         submitted: false,
         submittedOn: null,
       };
