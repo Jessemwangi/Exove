@@ -93,6 +93,8 @@ export const ldapAuthMiddleware = async (req, res, next) => {
         if (req.path === "/api/login") {
             const username = req.body.username;
             const password = req.body.password;
+            if (!username && !password)
+                return next(new Error('Please provide both a username and a password.'));
             const user = await run(username, password);
             const dbUser = await getUserF({ ldapUid: user.uid });
             const settoken = jwt.sign({ user }, securityKey);
@@ -111,7 +113,7 @@ export const ldapAuthMiddleware = async (req, res, next) => {
             jwt.verify(token, securityKey, (err, userInfo) => {
                 if (err) {
                     console.log(err);
-                    return res.status(401).json("Authentication token Not Valid");
+                    return res.status(401).json("Sorry, the authentication token you provided is not valid. Please check your token and try again.");
                 }
                 const user = userInfo;
                 req.body = {

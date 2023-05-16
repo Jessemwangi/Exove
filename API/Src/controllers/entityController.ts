@@ -27,7 +27,7 @@ console.log(newEntity)
   try {
     const rolelevel = await checkUserRoles(userId, 4);
     if (!rolelevel) {
-      res.status(200).json("Not authorized to peform this transaction");
+      res.status(200).json("Apologies, but you are not authorized to perform this transaction. Please contact support for assistance.");
       return;
     }
     const entityInstance = new Entity(newEntity);
@@ -50,7 +50,7 @@ console.log(newEntity)
 
     await dbclose();
 
-    res.status(200).json("Entity transacted successfully");
+    res.status(200).json("Success! New entity has been saved successfully.");
     return;
   } catch (error: any) {
     next(error.message);

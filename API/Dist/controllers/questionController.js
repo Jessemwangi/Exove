@@ -32,7 +32,7 @@ export const addQuestion = async (req, res) => {
     const userId = user.uid;
     const rolelevel = await checkUserRoles(userId, 2);
     if (!rolelevel) {
-        res.status(200).json("Not authorized to peform this transaction");
+        res.status(200).json("Apologies, but you are not authorized to perform this transaction. Please contact support for assistance.");
         return;
     }
     try {
@@ -53,7 +53,7 @@ export const addQuestion = async (req, res) => {
             const updateResult = await Category.updateOne({ "_id": httpData.category }, { $push: { 'questions': primaryKey } }).exec();
         }
         await dbclose();
-        res.status(200).json('saved');
+        res.status(200).json('Success! New question has been saved successfully.');
     }
     catch (error) {
         res.status(500).json('error');

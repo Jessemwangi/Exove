@@ -19,7 +19,7 @@ export const addCategory = async (req, res, next) => {
     const userId = user.uid;
     const rolelevel = await checkUserRoles(userId, 2);
     if (!rolelevel) {
-        res.status(200).json("Not authorized to peform this transaction");
+        res.status(200).json("Apologies, but you are not authorized to perform this transaction. Please contact support for assistance.");
         return;
     }
     try {
@@ -36,10 +36,10 @@ export const addCategory = async (req, res, next) => {
         await dbconnect();
         const q = await new Category(data).save();
         if (q) {
-            return res.status(200).json("saved");
+            return res.status(200).json("Success! Your data has been saved successfully.");
         }
         else {
-            return res.status(501).json("failed to save");
+            return res.status(501).json("Oops! We encountered an issue while trying to save your data. Please try again later or contact support for further assistance.");
         }
         await dbclose();
     }

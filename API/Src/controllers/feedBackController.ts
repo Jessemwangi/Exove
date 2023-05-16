@@ -262,10 +262,10 @@ export const addFeedBack = async (req: Request, res: Response, next: NextFunctio
       );
       await dbclose();
       if (result !== 0) {
-        return res.status(200).json("feedback submitted successful");
+        return res.status(200).json("Success! Your data has been saved successfully.");
         // The update was successful
       } else {
-        return res.status(200).json("Feedback saved successfully but not submitted");
+        return res.status(200).json("Success! Your data has been saved successfully. But not submitted");
       }
   } catch (error) {
   next(error)
