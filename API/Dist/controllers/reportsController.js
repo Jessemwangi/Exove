@@ -5,7 +5,7 @@ import { savedSuccess } from "../Configs/serverConfig.js";
 export const getReports = async (req, res, next) => {
     try {
         await dbconnect();
-        const reportsData = Reports.find({}).select('-__v').lean();
+        const reportsData = await Reports.find({}).select('-__v').lean();
         await dbclose();
         res.status(200).json(reportsData);
     }
