@@ -9,7 +9,5 @@ reportsRoutes.get('/',getReports);
 reportsRoutes.get('/:id',getReport);
 reportsRoutes.post('/',postReports);
 reportsRoutes.delete('/:id',);
-reportsRoutes.put('/',);
-reportsRoutes.patch('/',);
 reportsRoutes.get('/summary/:id', summaryById)
 reportsRoutes.get('/totals/all/:name',getuserTotal)
