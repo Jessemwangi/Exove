@@ -21,7 +21,7 @@ export const postReports = async (req, res, next) => {
         _id: uuidv4(),
         feedbacks: httpData.feedbacks,
         template: httpData.template,
-        createBy: userId,
+        createdBy: userId,
         userId: httpData.userId,
         requestPicks: httpData.requestPicks,
     };

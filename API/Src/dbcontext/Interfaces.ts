@@ -236,7 +236,7 @@ export interface IReports{
   _id:string,
   feedbacks:string[],
   template:string,
-  createBy?:string,
+  createdBy?:string,
   userId: string,
   requestPicks: string,
   createdOn?: Date,

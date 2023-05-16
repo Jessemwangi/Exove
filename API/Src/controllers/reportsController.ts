@@ -18,13 +18,14 @@ export const getReports = async (req: Request, res: Response, next: NextFunction
 
 export const postReports = async (req: Request, res: Response, next: NextFunction) => {
   const httpData: IReports = req.body;
+
   const user: ILdapAuth = req.body.user;
   const userId: string = user.uid;
   const newReport: IReports = {
     _id: uuidv4(),
     feedbacks: httpData.feedbacks,
     template: httpData.template,
-    createBy: userId,
+    createdBy: userId,
     userId: httpData.userId,
     requestPicks: httpData.requestPicks,
   };
