@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 export const NotisettingSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     userid: { type: mongoose.Schema.Types.String, ref: "Users", required: true },
-    entityname: [{ type: String, required: true }],
+    entityname: { type: [mongoose.Schema.Types.String], required: true },
     notisettingstatus: Boolean,
     email: String,
     enableReminder: Boolean,

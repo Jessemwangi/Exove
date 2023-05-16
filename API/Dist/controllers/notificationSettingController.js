@@ -93,4 +93,36 @@ export const patchNotiSetting = async (req, res, next) => {
         next(error.message);
     }
 };
+export const addEntityNametoNotisetting = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { entityName } = req.body;
+        const notisetting = await NotificationSetting.findById({ _id: id });
+        if (!notisetting) {
+            throw new Error("Notisetting not found");
+        }
+        notisetting.entityname.push(entityName);
+        await notisetting.save();
+        res.status(200).json(notisetting);
+    }
+    catch (error) {
+        next(error.message);
+    }
+};
+export const deleteEntityNameToNotiSetting = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { entityName } = req.body;
+        const notisetting = await NotificationSetting.findById({ _id: id });
+        if (!notisetting) {
+            throw new Error("Notisetting not found");
+        }
+        notisetting.entityname = notisetting.entityname.filter((name) => name !== entityName);
+        await notisetting.save();
+        res.json(notisetting);
+    }
+    catch (error) {
+        next(error.message);
+    }
+};
 //# sourceMappingURL=notificationSettingController.js.map
