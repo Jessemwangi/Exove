@@ -3,11 +3,22 @@ import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
 import { savedSuccess } from "../Configs/serverConfig.js";
 export const getReports = async (req, res, next) => {
+    try {
+        await dbconnect();
+        const reportsData = Reports.find({}).lean();
+        res.status(200).json(reportsData);
+    }
+    catch (error) {
+        next(error);
+    }
+};
+export const getReport = async (req, res, next) => {
     const id = req.params.id;
     try {
         await dbconnect();
         const reportsData = await reportData(id);
         res.status(200).json(reportsData);
+        await dbclose();
     }
     catch (error) {
         next(error);
@@ -34,7 +45,7 @@ export const postReports = async (req, res, next) => {
         await dbconnect();
         await new Reports(newReport).save();
         await dbclose();
-        res.status(200).json(savedSuccess);
+        res.status(200).json(savedSuccess.toString());
         return;
     }
     catch (error) {

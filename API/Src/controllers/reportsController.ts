@@ -6,11 +6,24 @@ import { v4 as uuidv4 } from "uuid";
 import { savedSuccess } from "../Configs/serverConfig.js";
 
 export const getReports = async (req: Request, res: Response, next: NextFunction) => {
+  // get all report without fetching the adjusted collections
+  try {
+    await dbconnect()
+
+    const reportsData:IReports = Reports.find({}).lean()
+    res.status(200).json(reportsData)
+  } catch (error) {
+    next(error)
+  }
+};
+
+export const getReport = async (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.id; // to get a user report you send the report id
   try {
     await dbconnect()
     const reportsData: ReportWithDetails = await reportData(id)
     res.status(200).json(reportsData)
+    await dbclose()
   } catch (error) {
     next(error)
   }
@@ -40,7 +53,7 @@ export const postReports = async (req: Request, res: Response, next: NextFunctio
         await dbconnect()
         await new Reports(newReport).save()
         await dbclose()
-        res.status(200).json(savedSuccess)
+        res.status(200).json(savedSuccess.toString())
         return
     } catch (error:any) {
         next(error.message)

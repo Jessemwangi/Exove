@@ -1,12 +1,12 @@
 import express from 'express';
-import { getReports, postReports } from '../controllers/reportsController.js';
+import { getReport, getReports, postReports } from '../controllers/reportsController.js';
 
 export const reportsRoutes = express.Router()
 
 
 
-reportsRoutes.get('/',);
-reportsRoutes.get('/:id',getReports);
+reportsRoutes.get('/',getReports);
+reportsRoutes.get('/:id',getReport);
 reportsRoutes.post('/',postReports);
 reportsRoutes.delete('/:id',);
 reportsRoutes.put('/',);
