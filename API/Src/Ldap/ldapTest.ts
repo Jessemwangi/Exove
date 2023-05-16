@@ -11,7 +11,7 @@ const options = {
   'searchBase': 'dc=example,dc=com',
   'searchFilter': 'uid={{username}}'
 }
-const client = new LdapAuth(options)
+// const client = new LdapAuth(options)
 const username = 'galieleo'
 const password = 'passord'
 const message="wrong password"
@@ -23,13 +23,13 @@ interface welcomeType {
   }
 
 export const run = (username:string, password:string) : Promise<ILdapAuth> => new Promise((resolve, reject) => {
-  client.authenticate(username, password, (error, user:ILdapAuth) => {
-    if (error) {
-      return reject(error)
+  // client.authenticate(username, password, (error, user:ILdapAuth) => {
+  //   if (error) {
+  //     return reject(error)
      
-    }
+  //   }
     
-    return resolve(user)
-  })
+  //   return resolve(user)
+  // })
 })
 

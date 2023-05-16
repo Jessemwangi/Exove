@@ -4,6 +4,7 @@ import { IFeedBacks, ILdapAuth, IReports, IRequestPicks, ReportWithDetails } fro
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
 import { savedSuccess } from "../Configs/serverConfig.js";
+import { model } from "mongoose";
 
 export const getReports = async (req: Request, res: Response, next: NextFunction) => {
   // get all report without fetching the adjusted collections
@@ -69,10 +70,10 @@ export const putReports = (req: Request, res: Response, next: NextFunction) => {
 };
 
 // Report functions
-export const getuserTotal = async (name: String) => {
-  
+export const getuserTotal = async (req: Request, res: Response, next: NextFunction) => {
+  await dbconnect()
         const feeds = await FeedBacks.aggregate([
-            { $match: { _id: name } },
+            { $match: { _id: req.params.name } },
             {
               $lookup: {
                 from: "categories",
@@ -114,17 +115,20 @@ export const getuserTotal = async (name: String) => {
                 feedbackInfo: { $first: "$_id" },
               },
             },
-          ]);
-
+        ]);
+  await dbclose()
+res.send(feeds)
 };
 
 
 export const reportData = async (reportId: string):Promise<ReportWithDetails> => {
  
   const report = await Reports.findById(reportId)
-      .populate('feedbacks')
+    .populate(
+      'feedbacks'
+    )
       .populate('requestPicks')
-      .exec();
+      .exec().lean();
   
     if (!report) {
       throw new Error('Report not found');
@@ -177,15 +181,39 @@ export const reportData = async (reportId: string):Promise<ReportWithDetails> =>
 
 }
 
-export const test = async (req: Request, res: Response, next: NextFunction) => {
+export const summaryById = async (req: Request, res: Response, next: NextFunction) => {
   try {
   await dbconnect()
-  const reports = await Reports.find().populate({
-      path: 'feedbacks',
-      populate: {
-        path: 'template',
-      },
-    });
+  const reports = await Reports.findOne({_id:req.params.id})
+  .select('_id userId createdBy')
+  .populate({
+  path: 'feedbacks',
+  select: '_id userId roleLevel categories',
+    populate: {
+      path: 'categories.category',
+      model: 'Category',
+      select: '_id categoryName',
+      
+        // path: 'categories.questions',
+        // model: 'Question',
+        // select:'_id '
+      }
+
+  }).populate({
+    path: 'requestPicks',
+    model: 'RequestPicks',
+    select:'SelectedList _id'
+  }).
+    populate(
+      {
+      path: 'template',
+      model: 'Template',
+      select: '_id template active'
+      // match: { active: true }
+      }
+      )
+  
+    ;
     const summary = await FeedBacks.aggregate([
       { $unwind: '$categories' },
       {

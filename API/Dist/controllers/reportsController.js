@@ -46,9 +46,10 @@ export const postReports = async (req, res, next) => {
 };
 export const putReports = (req, res, next) => {
 };
-export const getuserTotal = async (name) => {
+export const getuserTotal = async (req, res, next) => {
+    await dbconnect();
     const feeds = await FeedBacks.aggregate([
-        { $match: { _id: name } },
+        { $match: { _id: req.params.name } },
         {
             $lookup: {
                 from: "categories",
@@ -91,12 +92,14 @@ export const getuserTotal = async (name) => {
             },
         },
     ]);
+    await dbclose();
+    res.send(feeds);
 };
 export const reportData = async (reportId) => {
     const report = await Reports.findById(reportId)
         .populate('feedbacks')
         .populate('requestPicks')
-        .exec();
+        .exec().lean();
     if (!report) {
         throw new Error('Report not found');
     }
@@ -140,14 +143,28 @@ export const reportData = async (reportId) => {
         totalSelectedList
     };
 };
-export const test = async (req, res, next) => {
+export const summaryById = async (req, res, next) => {
     try {
         await dbconnect();
-        const reports = await Reports.find().populate({
+        const reports = await Reports.findOne({ _id: req.params.id })
+            .select('_id userId createdBy')
+            .populate({
             path: 'feedbacks',
+            select: '_id userId roleLevel categories',
             populate: {
-                path: 'template',
-            },
+                path: 'categories.category',
+                model: 'Category',
+                select: '_id categoryName',
+            }
+        }).populate({
+            path: 'requestPicks',
+            model: 'RequestPicks',
+            select: 'SelectedList _id'
+        }).
+            populate({
+            path: 'template',
+            model: 'Template',
+            select: '_id template active'
         });
         const summary = await FeedBacks.aggregate([
             { $unwind: '$categories' },

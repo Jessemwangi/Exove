@@ -42,7 +42,7 @@ app.use(cookieParser());
 
 const apiRouter = express.Router();
 apiRouter.use(cors(options));
-app.use(ldapAuthMiddleware); // authentication
+// app.use(ldapAuthMiddleware); // authentication
 
 // routes
 apiRouter.use("/auth", authRoutes);
