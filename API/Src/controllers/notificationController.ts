@@ -22,19 +22,23 @@ export const postNotification = async (req:Request ,res:Response,next:NextFuncti
             sendOn: httpData.sendOn,
             createdBy:userId
         }
-        const notiInstance = new new Notifer(newNotification)
+
+        const notiInstance = new Notifer(newNotification)
         const validationError = notiInstance.validateSync()
         if(validationError) {
             res.status(400).json(validationError.message);
             return;
-          }
+        }
+        await dbconnect()
         const notification = await notiInstance.save()
+        await dbclose()
         if (notification) {
             res.status(200).json('saved, you can view notifivation in https://exove.vercel.app/api/notify')
             return
         }
     }
-    catch (error:any){
+    catch (error: any) {
+        console.log(error)
         next(error.message)
     }
 
