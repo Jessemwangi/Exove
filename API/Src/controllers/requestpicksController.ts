@@ -287,6 +287,7 @@ export const hrApprovesPicks = async (req: Request, res: Response,next:NextFunct
     res.status(500).json("server responded with an error");
   }
 };
+
 // work from here
 export const hrMassApprovesPicks = async (req: Request, res: Response) => {
   const user: ILdapAuth = req.body.user;
@@ -301,7 +302,7 @@ export const hrMassApprovesPicks = async (req: Request, res: Response) => {
       res.status(404).json("Data not found or empty");
       return;
     }
-    const requestPicksId: String = req.body.requestPicksId;
+    const requestPicksId: String = req.params.id;
     const selectedList: ISelectedList[] = req.body.SelectedList;
     await dbconnect();
     const updatePromises = selectedList.map(

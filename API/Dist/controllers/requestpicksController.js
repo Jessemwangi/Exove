@@ -243,7 +243,7 @@ export const hrMassApprovesPicks = async (req, res) => {
             res.status(404).json("Data not found or empty");
             return;
         }
-        const requestPicksId = req.body.requestPicksId;
+        const requestPicksId = req.params.id;
         const selectedList = req.body.SelectedList;
         await dbconnect();
         const updatePromises = selectedList.map(async (n) => await RequestPicks.updateOne({ _id: requestPicksId, "SelectedList.userId": n.userId }, {
