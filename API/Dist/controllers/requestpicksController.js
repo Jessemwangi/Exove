@@ -59,6 +59,24 @@ export const getIdRequestPick = async (req, res) => {
         res.status(500).json("Internal server error");
     }
 };
+export const WhoToGiveFeedbackTo = async (req, res) => {
+    const userId = req.params.name;
+    if (!userId) {
+        res.status(404).json("Post data not found or empty");
+        return;
+    }
+    try {
+        await dbconnect();
+        const selectedLists = await RequestPicks.find({ "SelectedList.userId": userId, "SelectedList.selectionStatus": true }, { "SelectedList.$": 1, "requestedTo": 1 })
+            .lean()
+            .exec();
+        await dbclose();
+        res.status(200).json(selectedLists);
+    }
+    catch (error) {
+        res.status(500).json("Internal server error");
+    }
+};
 export const createRequestPicks = async (req, res, next) => {
     try {
         const requestHttpData = req.body;
@@ -112,7 +130,7 @@ export const createRequestPicks = async (req, res, next) => {
             await requestInstance.save();
             const newNotification = {
                 _id: uuidv4(),
-                message: "",
+                messageBody: "",
                 applicationid: primaryKey,
                 entityname: "RequestPicks",
                 link: `https://exove.vercel.app/api/picks/pick-id/${primaryKey}`,
@@ -213,7 +231,11 @@ export const hrApprovesPicks = async (req, res, next) => {
         if (!requestPicksId && !userId && !roleLevel && !selectionStatus)
             return next(new Error(`Please provide the following, requestPicksId,selectionStatus, roleLevel and userId.`));
         await dbconnect();
-        const result = await RequestPicks.updateOne({ _id: requestPicksId, "SelectedList.userId": userId, "SelectedList.roleLevel": roleLevel }, {
+        const result = await RequestPicks.updateOne({
+            _id: requestPicksId,
+            "SelectedList.userId": userId,
+            "SelectedList.roleLevel": roleLevel,
+        }, {
             $set: {
                 "SelectedList.$.selectionStatus": selectionStatus,
                 "SelectedList.$.selectedBy": selectedBy,

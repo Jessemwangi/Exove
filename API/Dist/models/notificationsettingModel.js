@@ -11,7 +11,7 @@ export const NotifierSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     applicationid: { type: String, unique: true, required: true },
     entityname: String,
-    message: String,
+    messageBody: String,
     link: String,
     from: { type: mongoose.Schema.Types.String },
     to: { type: [mongoose.Schema.Types.String], required: true },

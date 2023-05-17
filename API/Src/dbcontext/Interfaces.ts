@@ -107,7 +107,7 @@ export interface INotifier {
   _id: string;
   applicationid: string; // primary key from the model
   entityname: string; // this will get model name eg, question, category etc and from it get the notification message and activity namee
-  message: string;
+  messageBody: string;
   link: string;
   from: string; // from
   to: string[], // notification will be send to user, and this user must have enabled notification in 'notisetting'

@@ -15,7 +15,7 @@ export const NotifierSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     applicationid:{ type: String, unique: true, required: true }, // primary key from the model
     entityname: String,  // this will get model name eg, question, category etc and from it get the notification message and activity namee
-    message: String,
+    messageBody: String,
     link:String,
     from: { type: mongoose.Schema.Types.String }, // from 
     to: { type: [mongoose.Schema.Types.String], required: true }, // notification will be send to user, and this user must have enabled notification in 'notisetting'

@@ -14,7 +14,7 @@ export const postNotification = async (req:Request ,res:Response,next:NextFuncti
             _id: uuidv4(),
             applicationid: httpData.applicationid,
             entityname: httpData.entityname,
-            message: httpData.message,
+            messageBody: httpData.messageBody,
             link: httpData.link,
             from: httpData.from,
             to: httpData.to,

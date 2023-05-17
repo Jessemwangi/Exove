@@ -17,7 +17,7 @@ export const getFeeds = async (req, res, next) => {
 export const getFeed = async (req, res, next) => {
     const id = req.params.id;
     try {
-        if (id) {
+        if (!id) {
             return res.status(404).json("Post data not found or empty");
         }
         await dbconnect();
@@ -33,7 +33,7 @@ export const getFeed = async (req, res, next) => {
 export const getUserFeedReq = async (req, res, next) => {
     const name = req.params.name;
     if (!name) {
-        return res.status(404).json("Post data not found or empty");
+        res.status(404).json("Post data not found or empty");
         return;
     }
     try {

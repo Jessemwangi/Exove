@@ -21,7 +21,7 @@ import {
 } from "../utilities/functions.js";
 import { UpdateWriteOpResult } from "mongoose";
 import { frontEnd } from "../Configs/serverConfig.js";
-import {  SelectedListModel } from "../models/requestpicksModel.js";
+import { SelectedListModel } from "../models/requestpicksModel.js";
 
 // get Request Picks
 
@@ -89,13 +89,40 @@ export const getIdRequestPick = async (req: Request, res: Response) => {
   }
 };
 
+export const WhoToGiveFeedbackTo = async (req: Request, res: Response) => {
+  const userId = req.params.name;
+  if (!userId) {
+    res.status(404).json("Post data not found or empty");
+    return;
+  }
+  // get only the from the selectedlist
+  try {
+    await dbconnect();
+    const selectedLists: ISelectedList[][] = await RequestPicks.find(
+      { "SelectedList.userId": userId, "SelectedList.selectionStatus": true },
+      { "SelectedList.$": 1, "requestedTo": 1 }
+    )
+      .lean()
+      .exec();
+
+    await dbclose();
+    res.status(200).json(selectedLists);
+  } catch (error) {
+    res.status(500).json("Internal server error");
+  }
+};
+
 // will be executed by the hr
-export const createRequestPicks = async (req: Request, res: Response,next:NextFunction) => {
+export const createRequestPicks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const requestHttpData: IRequestPicks = req.body;
-   const user: ILdapAuth = req.body.user;
+    const user: ILdapAuth = req.body.user;
     const userId: string = user.uid;
-    
+
     const rolelevel = await checkUserRoles(userId, 2);
     if (!rolelevel) {
       res.status(403).json("Not authorized to peform this transaction");
@@ -103,18 +130,23 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
     }
 
     const requestedTo: string = requestHttpData.requestedTo;
-    const template: string = requestHttpData.template
+    const template: string = requestHttpData.template;
 
-    const activePick: IUserTemplateInPicks = await getUserPrevPicksAndTemplate(template, requestedTo)
+    const activePick: IUserTemplateInPicks = await getUserPrevPicksAndTemplate(
+      template,
+      requestedTo
+    );
 
-    if (activePick.count !== 0)
-    {
-      return next(new Error(`Cannot request more than one pick against current template please view the pick https://exove.vercel.app/api/picks/pick-id/${activePick._id._id}`))
+    if (activePick.count !== 0) {
+      return next(
+        new Error(
+          `Cannot request more than one pick against current template please view the pick https://exove.vercel.app/api/picks/pick-id/${activePick._id._id}`
+        )
+      );
     }
-    
-    const reportTo = await getUserReportTo(requestHttpData.requestedTo)
-   
-    
+
+    const reportTo = await getUserReportTo(requestHttpData.requestedTo);
+
     const defaultReportTo: ISelectedList = {
       userId: reportTo,
       selectionStatus: true,
@@ -135,11 +167,11 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
       const primaryKey = uuidv4();
       const requestData: IRequestPicks = {
         _id: primaryKey,
-        template:template,
+        template: template,
         requestedTo: requestedTo,
         requestedBy: userId, // will will get this info from token when we encrypt
         requestedOn: new Date(),
-        SelectedList: [defaultList,defaultReportTo],
+        SelectedList: [defaultList, defaultReportTo],
         submitted: false,
         submittedOn: null,
       };
@@ -153,10 +185,10 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
       }
       await dbconnect();
       await requestInstance.save();
-      
+
       const newNotification: INotifier = {
         _id: uuidv4(),
-        message: "",
+        messageBody: "",
         applicationid: primaryKey,
         entityname: "RequestPicks",
         link: `https://exove.vercel.app/api/picks/pick-id/${primaryKey}`,
@@ -180,7 +212,11 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
   }
 };
 
-export const submitRequestPicks = async (req: Request, res: Response, next:NextFunction) => {
+export const submitRequestPicks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // check if user is authenticated and also we will check if current user is the same as requestedTo or in the role of hr
   const requestHttpData: ISelectedList = req.body;
   const user: ILdapAuth = req.body.user;
@@ -198,7 +234,7 @@ export const submitRequestPicks = async (req: Request, res: Response, next:NextF
     roleLevel: requestHttpData.roleLevel,
     selectionStatus: requestHttpData.selectionStatus,
     userId: requestHttpData.userId,
-    feedBackSubmitted:false,
+    feedBackSubmitted: false,
     selectedBy: userId,
   });
 
@@ -230,7 +266,8 @@ export const submitRequestPicks = async (req: Request, res: Response, next:NextF
 
     const result = await RequestPicks.findByIdAndUpdate(
       { _id: id, submitted: false },
-      { $push: { SelectedList: newPick } }, {new:true}
+      { $push: { SelectedList: newPick } },
+      { new: true }
     );
     if (result.modifiedCount === 0) {
       res.status(404).json("No document was updated");
@@ -246,7 +283,11 @@ export const submitRequestPicks = async (req: Request, res: Response, next:NextF
   }
 };
 
-export const hrApprovesPicks = async (req: Request, res: Response,next:NextFunction) => {
+export const hrApprovesPicks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const user: ILdapAuth = req.body.user;
   const selectedBy: string = user.uid;
   const rolelevel = await checkUserRoles(selectedBy, 2);
@@ -263,12 +304,21 @@ export const hrApprovesPicks = async (req: Request, res: Response,next:NextFunct
     const userId: string = req.body.userId;
     const roleLevel: number = req.body.roleLevel;
     const selectionStatus: Boolean = req.body.selectionStatus;
-    
-    if (!requestPicksId && !userId && !roleLevel && !selectionStatus) return next(new Error(`Please provide the following, requestPicksId,selectionStatus, roleLevel and userId.`))
+
+    if (!requestPicksId && !userId && !roleLevel && !selectionStatus)
+      return next(
+        new Error(
+          `Please provide the following, requestPicksId,selectionStatus, roleLevel and userId.`
+        )
+      );
 
     await dbconnect();
     const result: UpdateWriteOpResult = await RequestPicks.updateOne(
-      { _id: requestPicksId, "SelectedList.userId": userId , "SelectedList.roleLevel": roleLevel},
+      {
+        _id: requestPicksId,
+        "SelectedList.userId": userId,
+        "SelectedList.roleLevel": roleLevel,
+      },
       {
         $set: {
           "SelectedList.$.selectionStatus": selectionStatus,
@@ -276,7 +326,7 @@ export const hrApprovesPicks = async (req: Request, res: Response,next:NextFunct
         },
       }
     );
-   
+
     if (result.modifiedCount === 0) {
       res.status(404).json("No document was updated");
       return;

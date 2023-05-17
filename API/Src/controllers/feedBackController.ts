@@ -29,7 +29,7 @@ export const getFeeds = async (req: Request, res: Response, next: NextFunction) 
 export const getFeed = async (req: Request, res: Response , next: NextFunction) => {
   const id = req.params.id;
   try {
-    if (id) {
+    if (!id) {
       return res.status(404).json("Post data not found or empty");
     }
     await dbconnect();
@@ -47,7 +47,7 @@ export const getFeed = async (req: Request, res: Response , next: NextFunction) 
 export const getUserFeedReq = async (req: Request, res: Response, next: NextFunction) => {
   const name: string = req.params.name;
   if (!name) {
-    return res.status(404).json("Post data not found or empty");
+     res.status(404).json("Post data not found or empty");
     return;
   }
   // get only the from the selectedlist
@@ -80,11 +80,6 @@ export const getUserTotalAnsFeed = async (req: Request, res: Response, next: Nex
     return res.status(404).json("Post data not found or empty");
     return;
   }
-  // get only the from the selectedlist
-  //  const selectedLists: ISelectedList[][] =
-  //     await RequestPicks.find({ 'SelectedList.userId': httpData, 
-//   'SelectedList.selectionStatus': true
-// }, { 'SelectedList.$': 1 }).lean().exec();
   
   try {
     await dbconnect();
