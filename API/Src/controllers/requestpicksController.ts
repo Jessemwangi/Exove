@@ -108,8 +108,6 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
       feedBackSubmitted: false,
     };
 
-    console.log('defaultReportTo ***************', defaultReportTo)
-
     const defaultList: ISelectedList = {
       userId: requestHttpData.requestedTo,
       selectionStatus: true,
@@ -219,7 +217,6 @@ export const submitRequestPicks = async (req: Request, res: Response, next:NextF
       { _id: id, submitted: false },
       { $push: { SelectedList: newPick } }, {new:true}
     );
-    console.log("update result ...", result);
     if (result.modifiedCount === 0) {
       res.status(404).json("No document was updated");
       return;
@@ -264,7 +261,7 @@ export const hrApprovesPicks = async (req: Request, res: Response,next:NextFunct
         },
       }
     );
-    console.log(result)
+   
     if (result.modifiedCount === 0) {
       res.status(404).json("No document was updated");
       return;
@@ -291,7 +288,6 @@ export const hrMassApprovesPicks = async (req: Request, res: Response) => {
     }
     const requestPicksId: String = req.body.requestPicksId;
     const selectedList: ISelectedList[] = req.body.SelectedList;
-    console.log("selectedList .....", selectedList);
     await dbconnect();
     const updatePromises = selectedList.map(
       async (n) =>
@@ -329,7 +325,6 @@ export const finalPickSubmit = async (
   next: NextFunction
 ) => {
   const pickId: string = req.params.id;
-  console.log(pickId);
   try {
     await dbconnect();
     const submit: IRequestPicks = await RequestPicks.findOneAndUpdate(
@@ -344,7 +339,6 @@ export const finalPickSubmit = async (
       { new: true }
     ).exec();
     await dbclose();
-    console.log(submit);
     if (!submit) {
       return res.status(200).json("failed to submit");
     } else {

@@ -10,4 +10,4 @@ reportsRoutes.get('/:id',getReport);
 reportsRoutes.post('/',postReports);
 reportsRoutes.delete('/:id',);
 reportsRoutes.get('/summary/:id', summaryById)
-reportsRoutes.get('/totals/all/:name',getuserTotal)
+reportsRoutes.get('/totals/all/:name',getuserTotal) // still needs more adjustedments

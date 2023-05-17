@@ -36,7 +36,7 @@ export const postReports = async (req: Request, res: Response, next: NextFunctio
 
   const user: ILdapAuth = req.body.user;
   const userId: string = user.uid;
-  console.log(httpData.feedbacks)
+
   const newReport: IReports = {
     _id: uuidv4(),
     feedbacks: httpData.feedbacks,
