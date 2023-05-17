@@ -75,6 +75,10 @@ export const userEnabledNotification = async (userId, entityName) => {
         return false;
     }
 };
+export const countIdNotfication = async (applicationid) => {
+    const totalNotification = await Notifer.countDocuments({ 'applicationid': applicationid });
+    return totalNotification;
+};
 export const isUserInRequestPick = async (requestedTo) => {
     const data = await RequestPicks.findOne({
         requestedTo: requestedTo,

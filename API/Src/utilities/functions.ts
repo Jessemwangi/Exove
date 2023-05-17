@@ -146,6 +146,7 @@ export const addToNotification = async (newNotification: INotifier) => {
   }
 };
 
+// chck if the user has enabled notification in the dashboard setting
 export const userEnabledNotification = async (
   userId: string,
   entityName: string
@@ -159,6 +160,11 @@ export const userEnabledNotification = async (
     return false;
   }
 };
+
+export const countIdNotfication = async (applicationid:string):Promise<number>  => { //pass request pick Id to verify no duplication of application id before insert
+  const totalNotification:number = await Notifer.countDocuments({ 'applicationid': applicationid })
+              return totalNotification
+}
 
 // End of notification
 // Check user request pick  *************************************************************************************
