@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { addToNotification, checkUserRoles, getUserReportTo, isUserInRequestPick, } from "../utilities/functions.js";
+import { addToNotification, checkUserRoles, getUserPrevPicksAndTemplate, getUserReportTo, isUserInRequestPick, } from "../utilities/functions.js";
 import { SelectedListModel } from "../models/requestpicksModel.js";
 export const getAllRequestPicks = async (req, res) => {
     try {
@@ -66,8 +66,14 @@ export const createRequestPicks = async (req, res, next) => {
         const userId = user.uid;
         const rolelevel = await checkUserRoles(userId, 2);
         if (!rolelevel) {
-            res.status(200).json("Not authorized to peform this transaction");
+            res.status(403).json("Not authorized to peform this transaction");
             return;
+        }
+        const requestedTo = requestHttpData.requestedTo;
+        const template = requestHttpData.template;
+        const activePick = await getUserPrevPicksAndTemplate(template, requestedTo);
+        if (activePick.count !== 0) {
+            return next(new Error(`Cannot request more than one pick against current template please view the pick https://exove.vercel.app/api/picks/pick-id/${activePick._id._id}`));
         }
         const reportTo = await getUserReportTo(requestHttpData.requestedTo);
         const defaultReportTo = {
@@ -78,7 +84,7 @@ export const createRequestPicks = async (req, res, next) => {
             feedBackSubmitted: false,
         };
         const defaultList = {
-            userId: requestHttpData.requestedTo,
+            userId: requestedTo,
             selectionStatus: true,
             roleLevel: 5,
             selectedBy: userId,
@@ -88,8 +94,8 @@ export const createRequestPicks = async (req, res, next) => {
             const primaryKey = uuidv4();
             const requestData = {
                 _id: primaryKey,
-                template: requestHttpData.template,
-                requestedTo: requestHttpData.requestedTo,
+                template: template,
+                requestedTo: requestedTo,
                 requestedBy: userId,
                 requestedOn: new Date(),
                 SelectedList: [defaultList, defaultReportTo],

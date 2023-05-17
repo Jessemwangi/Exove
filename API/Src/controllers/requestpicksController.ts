@@ -11,9 +11,11 @@ import { v4 as uuidv4 } from "uuid";
 import { Approvals, RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import {
+  IUserTemplateInPicks,
   addApprovals,
   addToNotification,
   checkUserRoles,
+  getUserPrevPicksAndTemplate,
   getUserReportTo,
   isUserInRequestPick,
 } from "../utilities/functions.js";
@@ -92,13 +94,26 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
   try {
     const requestHttpData: IRequestPicks = req.body;
    const user: ILdapAuth = req.body.user;
-    const userId: string =  user.uid;
+    const userId: string = user.uid;
+    
     const rolelevel = await checkUserRoles(userId, 2);
     if (!rolelevel) {
-      res.status(200).json("Not authorized to peform this transaction");
+      res.status(403).json("Not authorized to peform this transaction");
       return;
     }
+
+    const requestedTo: string = requestHttpData.requestedTo;
+    const template: string = requestHttpData.template
+
+    const activePick: IUserTemplateInPicks = await getUserPrevPicksAndTemplate(template, requestedTo)
+
+    if (activePick.count !== 0)
+    {
+      return next(new Error(`Cannot request more than one pick against current template please view the pick https://exove.vercel.app/api/picks/pick-id/${activePick._id._id}`))
+    }
+    
     const reportTo = await getUserReportTo(requestHttpData.requestedTo)
+   
     
     const defaultReportTo: ISelectedList = {
       userId: reportTo,
@@ -109,7 +124,7 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
     };
 
     const defaultList: ISelectedList = {
-      userId: requestHttpData.requestedTo,
+      userId: requestedTo,
       selectionStatus: true,
       roleLevel: 5,
       selectedBy: userId,
@@ -120,8 +135,8 @@ export const createRequestPicks = async (req: Request, res: Response,next:NextFu
       const primaryKey = uuidv4();
       const requestData: IRequestPicks = {
         _id: primaryKey,
-        template:requestHttpData.template,
-        requestedTo: requestHttpData.requestedTo,
+        template:template,
+        requestedTo: requestedTo,
         requestedBy: userId, // will will get this info from token when we encrypt
         requestedOn: new Date(),
         SelectedList: [defaultList,defaultReportTo],

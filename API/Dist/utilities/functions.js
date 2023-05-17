@@ -85,6 +85,23 @@ export const isUserInRequestPick = async (requestedTo) => {
         .exec();
     return data;
 };
+export const getUserPrevPicksAndTemplate = async (template, requestedTo) => {
+    await dbconnect();
+    const count = await RequestPicks.countDocuments({
+        template: template,
+        requestedTo: requestedTo
+    });
+    if (count === 0)
+        return { count, _id: { _id: '' } };
+    const _id = await RequestPicks.findOne({
+        template: template,
+        requestedTo: requestedTo
+    }, '_id').exec();
+    await dbclose();
+    const result = { count, _id };
+    console.log(_id._id);
+    return result;
+};
 export const searchTemplate = async (template) => {
     const data = await Template.find({}).lean();
     return data.length;

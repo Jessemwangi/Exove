@@ -26,8 +26,16 @@ import { cookieExpiresIn, securityKey } from "../Configs/serverConfig.js";
 interface RequestWithUser extends Request {
   user?: ILdapAuth;
 }
+export interface IUserTemplateInPicks {
+  count: number,
+  _id:_id
+}
 
-/// user functions
+interface _id {
+  _id:string
+}
+
+/// user functions  *************************************************************************************
 
 export const addUserReportTo = async (_id:string) => {
 
@@ -81,6 +89,7 @@ export const addUserToRole = async (userId: string, roleId: string) => {
   await Roles.updateOne({ _id: roleId }, { $push: { users: userId } }).exec();
 };
 
+
 // get user by name or ID
 export const getUserF = async ({ ldapUid, _id }: userSearch) => {
   await dbconnect();
@@ -110,10 +119,13 @@ await dbclose()
  return userReportTo;
 }
 
+// end of user function
+//Approvals functions *************************************************************************************
 export const addApprovals = async (approval: IApprovals) => {
   await new Approvals(approval).save();
 };
 
+//notification  *************************************************************************************
 export const addToNotification = async (newNotification: INotifier) => {
   if (newNotification.to.length > 0 && newNotification.entityname !== "") {
     const promises = newNotification.to.map(async (userId) => {
@@ -148,7 +160,8 @@ export const userEnabledNotification = async (
   }
 };
 
-// Check user request pick
+// End of notification
+// Check user request pick  *************************************************************************************
 export const isUserInRequestPick = async (
   requestedTo: string
 ): Promise<IRequestPicks> => {
@@ -163,13 +176,33 @@ export const isUserInRequestPick = async (
   return data;
 };
 
+export const getUserPrevPicksAndTemplate = async (template: string, requestedTo: string): Promise<IUserTemplateInPicks> => {
+  await dbconnect()
+  const count:number = await RequestPicks.countDocuments({
+    template: template,
+    requestedTo: requestedTo
+   });
+   if (count === 0) return    { count, _id:{_id:''} };
+   const _id:_id = await RequestPicks.findOne(
+    {
+    template: template,
+    requestedTo: requestedTo
+    },
+    '_id'
+   ).exec()
+   await dbclose()
+  const result: IUserTemplateInPicks = { count, _id };
+  console.log(_id._id)
+  return result
+}
+
 export const searchTemplate = async (template: string): Promise<number> => {
   const data = await Template.find({}).lean();
 
   return data.length;
 };
 
-// middleware for authentication
+// middleware for authentication  *************************************************************************************
 export const ldapAuthMiddleware = async (
   req: RequestWithUser,
   res: Response,
@@ -236,7 +269,7 @@ export const ldapAuthMiddleware = async (
   }
 };
 
-// middleware for general error
+// middleware for general error  *************************************************************************************
 
 export const errorMiddleware: ErrorRequestHandler = async (
   err,
