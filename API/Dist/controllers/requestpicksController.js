@@ -77,7 +77,6 @@ export const createRequestPicks = async (req, res, next) => {
             selectedBy: userId,
             feedBackSubmitted: false,
         };
-        console.log('defaultReportTo ***************', defaultReportTo);
         const defaultList = {
             userId: requestHttpData.requestedTo,
             selectionStatus: true,
@@ -174,7 +173,6 @@ export const submitRequestPicks = async (req, res, next) => {
             createdOn: new Date(),
         };
         const result = await RequestPicks.findByIdAndUpdate({ _id: id, submitted: false }, { $push: { SelectedList: newPick } }, { new: true });
-        console.log("update result ...", result);
         if (result.modifiedCount === 0) {
             res.status(404).json("No document was updated");
             return;
@@ -215,7 +213,6 @@ export const hrApprovesPicks = async (req, res, next) => {
                 "SelectedList.$.selectedBy": selectedBy,
             },
         });
-        console.log(result);
         if (result.modifiedCount === 0) {
             res.status(404).json("No document was updated");
             return;
@@ -242,7 +239,6 @@ export const hrMassApprovesPicks = async (req, res) => {
         }
         const requestPicksId = req.body.requestPicksId;
         const selectedList = req.body.SelectedList;
-        console.log("selectedList .....", selectedList);
         await dbconnect();
         const updatePromises = selectedList.map(async (n) => await RequestPicks.updateOne({ _id: requestPicksId, "SelectedList.userId": n.userId }, {
             $set: {
@@ -267,7 +263,6 @@ export const hrMassApprovesPicks = async (req, res) => {
 };
 export const finalPickSubmit = async (req, res, next) => {
     const pickId = req.params.id;
-    console.log(pickId);
     try {
         await dbconnect();
         const submit = await RequestPicks.findOneAndUpdate({
@@ -278,7 +273,6 @@ export const finalPickSubmit = async (req, res, next) => {
             submittedOn: new Date(),
         }, { new: true }).exec();
         await dbclose();
-        console.log(submit);
         if (!submit) {
             return res.status(200).json("failed to submit");
         }

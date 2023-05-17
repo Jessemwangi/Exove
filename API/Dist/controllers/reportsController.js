@@ -28,7 +28,6 @@ export const postReports = async (req, res, next) => {
     const httpData = req.body;
     const user = req.body.user;
     const userId = user.uid;
-    console.log(httpData.feedbacks);
     const newReport = {
         _id: uuidv4(),
         feedbacks: httpData.feedbacks,

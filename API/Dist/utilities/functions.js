@@ -41,7 +41,6 @@ export const getUserF = async ({ ldapUid, _id }) => {
     return usersResult;
 };
 export const getUserReportTo = async (userId) => {
-    console.log(userId);
     await dbconnect();
     const user = await Users.findOne({
         'ldapUid': userId,
@@ -51,7 +50,6 @@ export const getUserReportTo = async (userId) => {
         .exec();
     await dbclose();
     const userReportTo = user?.workId[0].reportsTo;
-    console.log('user **************', user, '***************************userReportTo ********', userReportTo);
     return userReportTo;
 };
 export const addApprovals = async (approval) => {
