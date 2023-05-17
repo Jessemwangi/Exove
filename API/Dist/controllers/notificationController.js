@@ -5,7 +5,7 @@ import { applicationIdValidation, countIdNotfication } from "../utilities/functi
 export const postNotification = async (req, res, next) => {
     const httpData = req.body;
     const user = req.body.user;
-    const userId = 'user.uid';
+    const userId = user.uid;
     try {
         const applicationid = httpData.applicationid;
         const newNotification = {

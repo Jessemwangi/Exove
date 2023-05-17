@@ -66,7 +66,7 @@ export const postNotification = async (
 ) => {
   const httpData: INotifier = req.body;
   const user: ILdapAuth = req.body.user;
-  const userId: string = 'user.uid';
+  const userId: string = user.uid;
   try {
     const applicationid = httpData.applicationid;
     const newNotification: INotifier = {
