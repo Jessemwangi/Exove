@@ -97,8 +97,8 @@ export const getuserTotal = async (req, res, next) => {
 export const reportData = async (reportId) => {
     const report = await Reports.findById(reportId)
         .populate('feedbacks')
-        .populate('requestPicks')
-        .exec().lean();
+        .populate('requestPicks').lean()
+        .exec();
     if (!report) {
         throw new Error('Report not found');
     }
@@ -124,10 +124,9 @@ export const reportData = async (reportId) => {
         });
     });
     const requestPick = await RequestPicks.findById(report.requestPicks);
-    const totalSelectedList = requestPick.SelectedList.filter(item => item.selectionStatus).length;
-    const userIds = requestPick.SelectedList.map(item => item.userId);
+    const totalSelectedList = requestPick?.SelectedList.filter(item => item.selectionStatus).length || 0;
+    const userIds = requestPick?.SelectedList.map(item => item.userId);
     return {
-        userId: userIds,
         ...report,
         requestPicksSelectedList: requestPick.SelectedList,
         totalCategories: totalCategories.size,

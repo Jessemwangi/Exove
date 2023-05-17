@@ -127,8 +127,8 @@ export const reportData = async (reportId: string):Promise<ReportWithDetails> =>
     .populate(
       'feedbacks'
     )
-      .populate('requestPicks')
-      .exec().lean();
+      .populate('requestPicks').lean()
+      .exec();
   
     if (!report) {
       throw new Error('Report not found');
@@ -157,16 +157,16 @@ export const reportData = async (reportId: string):Promise<ReportWithDetails> =>
       });
     });
   
-    const requestPick:IRequestPicks = await RequestPicks.findById(report.requestPicks);
-    const totalSelectedList = requestPick.SelectedList.filter(
+    const requestPick:IRequestPicks | null = await RequestPicks.findById(report.requestPicks);
+    const totalSelectedList = requestPick?.SelectedList.filter(
       item => item.selectionStatus
-    ).length;
-    const userIds = requestPick.SelectedList.map(item => item.userId);
+    ).length || 0;
+    const userIds = requestPick?.SelectedList.map(item => item.userId);
   
   return {
-    userId:userIds,
+  
       ...report,
-      requestPicksSelectedList: requestPick.SelectedList,
+      requestPicksSelectedList: requestPick!.SelectedList,
       totalCategories: totalCategories.size,
       totalQuestions: totalQuestions.size,
       categories: Object.entries(questionsPerCategory).map(([categoryName, totalQuestions]) => ({

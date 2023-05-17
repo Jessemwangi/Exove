@@ -29,7 +29,7 @@ export const getUser = async (req: Request, res: Response) => {
 export const getUsers = async (req: Request, res: Response) => {
   try {
     await dbconnect()
- const users:IUser =await Users.find({}).select('-__v')
+ const users:IUser[] =await Users.find({}).select('-__v')
     .populate({
       path: "rolesId",
       model: Roles,

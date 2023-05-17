@@ -1,6 +1,7 @@
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { run } from "../Ldap/ldapTest.js";
 import jwt from "jsonwebtoken";
+import { Document, Model } from 'mongoose';
 import {
   IApprovals,
   ILdapAuth,
@@ -13,8 +14,10 @@ import {
 } from "../dbcontext/Interfaces.js";
 import {
   Approvals,
+  FeedBacks,
   Notifer,
   NotificationSetting,
+  Reports,
   RequestPicks,
   Roles,
   Template,
@@ -71,11 +74,11 @@ export const checkUserRoles = async (
   userId: string,
   roleLevel: Number
 ): Promise<Boolean> => {
-  const user: IUser = await getUserF({ ldapUid: userId });
+  const user: IUser | null = await getUserF({ ldapUid: userId });
 
   await dbconnect();
-  const roleData: IRoles = await Roles.findOne({
-    users: user._id,
+  const roleData: IRoles  | null= await Roles.findOne({
+    users: user?._id,
     roleStatus: true,
   }).lean();
 
@@ -93,7 +96,7 @@ export const addUserToRole = async (userId: string, roleId: string) => {
 // get user by name or ID
 export const getUserF = async ({ ldapUid, _id }: userSearch) => {
   await dbconnect();
-  const usersResult: IUser = await Users.findOne({
+  const usersResult = await Users.findOne({
     $or: [{ ldapUid: ldapUid }, { _id: _id }],
   }).select('-__v')
     .populate({
@@ -115,7 +118,7 @@ export const getUserReportTo = async (userId: string): Promise<string> => {
   .select({ 'workId.reportsTo': 1 })
   .exec();
 await dbclose()
-  const userReportTo = user?.workId[0].reportsTo;
+  const userReportTo = user?.workId[0].reportsTo || '';
  return userReportTo;
 }
 
@@ -151,7 +154,7 @@ export const userEnabledNotification = async (
   userId: string,
   entityName: string
 ): Promise<boolean> => {
-  const notiSettingsData: INotificationsSetting =
+  const notiSettingsData: INotificationsSetting | null =
     await NotificationSetting.findOne({ userId, notisettingstatus: true }).lean();
   if (notiSettingsData && notiSettingsData.entityname.length > 0)  {
     return notiSettingsData.entityname.includes(entityName);
@@ -166,12 +169,39 @@ export const countIdNotfication = async (applicationid:string):Promise<number>  
               return totalNotification
 }
 
+export const applicationIdValidation = async (
+  id: string,
+  entityName:string
+): Promise<number> => {
+  const models:{ [key: string]: Model<Document> } = {
+    Approvals: Approvals as unknown as Model<Document>,
+  Notifer:Notifer as unknown as Model<Document>,
+  NotificationSetting:NotificationSetting as unknown as Model<Document>,
+  RequestPicks:RequestPicks as unknown as Model<Document>,
+  Roles:Roles as unknown as Model<Document>,
+  Template:Template as unknown as Model<Document>,
+    Users:Users as unknown as Model<Document>,
+    FeedBacks:FeedBacks as unknown as Model<Document>,
+    Reports:Reports as unknown as Model<Document>,
+  };
+  const Model = models[entityName];
+  console.log('Model',Model, 'id',id)
+  if (!Model) {
+    throw new Error(`Invalid model name: ${entityName}`);
+  }
+  const appCounts: number = await Model.countDocuments({
+    _id: id,
+  })
+    .exec();
+
+  return appCounts;
+}
 // End of notification
 // Check user request pick  *************************************************************************************
 export const isUserInRequestPick = async (
   requestedTo: string
-): Promise<IRequestPicks> => {
-  const data: IRequestPicks = await RequestPicks.findOne({
+): Promise<IRequestPicks | null> => {
+  const data: IRequestPicks | null = await RequestPicks.findOne({
     requestedTo: requestedTo,
     submitted: false,
   })
@@ -195,12 +225,24 @@ export const getUserPrevPicksAndTemplate = async (template: string, requestedTo:
     requestedTo: requestedTo
     },
     '_id'
-   ).exec()
+   ).exec() || ''
    await dbclose()
   const result: IUserTemplateInPicks = { count, _id };
-  console.log(_id._id)
   return result
 }
+
+// validate requestpickID
+
+export const RequestPickCount = async (
+  id: string
+): Promise<number> => {
+  const picksCount: number = await RequestPicks.countDocuments({
+    _id: id,
+  })
+    .exec();
+
+  return picksCount;
+};
 
 export const searchTemplate = async (template: string): Promise<number> => {
   const data = await Template.find({}).lean();
@@ -292,3 +334,4 @@ export const errorMiddleware: ErrorRequestHandler = async (
 
   res.json(err.message);
 };
+

@@ -3,21 +3,21 @@ import { JesseM } from '../dbcontext/dbContext.js';
 import { v4 as uuidv4 } from 'uuid'
 import { dbclose, dbconnect } from '../Configs/dbConnect.js';
 interface Ijesse{
-    _id:String,
-    name: String,
-    createOn: Date,
-    age:Number,
+    _id?:String,
+    name?: String,
+    createOn?: Date,
+    age?:Number,
 }
 
 export const jesseGet = async (req: Request, res: Response ,  next: NextFunction) => {
     try {
         await dbconnect()
         
-        const jesseData:Ijesse = await JesseM.find().sort({ createOn:1, name: 1 }).limit(10).exec();
+        const jesseData:Ijesse[] = await JesseM.find({}).sort({ createOn:1, name: 1 }).limit(10).exec();
     
         await dbclose()
 
-        res.status(200).json({ data: jesseData })
+        res.status(200).json(jesseData )
     } catch (error) {
        next(error)
     }

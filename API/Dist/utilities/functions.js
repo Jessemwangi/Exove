@@ -1,7 +1,7 @@
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { run } from "../Ldap/ldapTest.js";
 import jwt from "jsonwebtoken";
-import { Approvals, Notifer, NotificationSetting, RequestPicks, Roles, Template, Users, } from "../dbcontext/dbContext.js";
+import { Approvals, FeedBacks, Notifer, NotificationSetting, Reports, RequestPicks, Roles, Template, Users, } from "../dbcontext/dbContext.js";
 import { cookieExpiresIn, securityKey } from "../Configs/serverConfig.js";
 export const addUserReportTo = async (_id) => {
     await Users.updateOne({ _id: _id }, {
@@ -15,7 +15,7 @@ export const checkUserRoles = async (userId, roleLevel) => {
     const user = await getUserF({ ldapUid: userId });
     await dbconnect();
     const roleData = await Roles.findOne({
-        users: user._id,
+        users: user?._id,
         roleStatus: true,
     }).lean();
     if (roleData && roleData.roleLevel <= roleLevel) {
@@ -49,7 +49,7 @@ export const getUserReportTo = async (userId) => {
         .select({ 'workId.reportsTo': 1 })
         .exec();
     await dbclose();
-    const userReportTo = user?.workId[0].reportsTo;
+    const userReportTo = user?.workId[0].reportsTo || '';
     return userReportTo;
 };
 export const addApprovals = async (approval) => {
@@ -79,6 +79,29 @@ export const countIdNotfication = async (applicationid) => {
     const totalNotification = await Notifer.countDocuments({ 'applicationid': applicationid });
     return totalNotification;
 };
+export const applicationIdValidation = async (id, entityName) => {
+    const models = {
+        Approvals: Approvals,
+        Notifer: Notifer,
+        NotificationSetting: NotificationSetting,
+        RequestPicks: RequestPicks,
+        Roles: Roles,
+        Template: Template,
+        Users: Users,
+        FeedBacks: FeedBacks,
+        Reports: Reports,
+    };
+    const Model = models[entityName];
+    console.log('Model', Model, 'id', id);
+    if (!Model) {
+        throw new Error(`Invalid model name: ${entityName}`);
+    }
+    const appCounts = await Model.countDocuments({
+        _id: id,
+    })
+        .exec();
+    return appCounts;
+};
 export const isUserInRequestPick = async (requestedTo) => {
     const data = await RequestPicks.findOne({
         requestedTo: requestedTo,
@@ -100,11 +123,17 @@ export const getUserPrevPicksAndTemplate = async (template, requestedTo) => {
     const _id = await RequestPicks.findOne({
         template: template,
         requestedTo: requestedTo
-    }, '_id').exec();
+    }, '_id').exec() || '';
     await dbclose();
     const result = { count, _id };
-    console.log(_id._id);
     return result;
+};
+export const RequestPickCount = async (id) => {
+    const picksCount = await RequestPicks.countDocuments({
+        _id: id,
+    })
+        .exec();
+    return picksCount;
 };
 export const searchTemplate = async (template) => {
     const data = await Template.find({}).lean();

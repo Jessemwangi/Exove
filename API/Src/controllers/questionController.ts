@@ -24,7 +24,7 @@ export const getQuestionId = async (req: Request, res: Response) => {
   try {
      
       await dbconnect()
-      const qusetions:IQuestion = await Question.findOne({"_id":id}).select('-__v').lean();
+      const qusetions = await Question.findOne({"_id":id}).select('-__v').lean();
       await dbclose()
       res.status(200).json(qusetions)
   } catch (error) {

@@ -33,7 +33,7 @@ export const getFeed = async (req: Request, res: Response , next: NextFunction) 
       return res.status(404).json("Post data not found or empty");
     }
     await dbconnect();
-    const feedBacks: IFeedBacks[] = await FeedBacks.findOne({ _id: id })
+    const feedBacks: IFeedBacks | null = await FeedBacks.findOne({ _id: id })
       .lean();
     await dbclose();
     return res.status(200).json(feedBacks);
@@ -123,12 +123,12 @@ const verifiyFeedbackFrom = async (
     feedbackTo,
     userId,
     roleLevel }:IVerifyFeedRole
-): Promise<IRequestPicks> => {
+): Promise<IRequestPicks | null> => {
   console.log(requestpicksId,
     feedbackTo,
     userId,
     roleLevel) 
-  const feedback:IRequestPicks = await RequestPicks.find({
+  const feedback:IRequestPicks | null = await RequestPicks.findOne({
     _id: requestpicksId,
      requestedTo: feedbackTo,
      "SelectedList.roleLevel":roleLevel,

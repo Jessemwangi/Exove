@@ -76,7 +76,7 @@ export const getIdRequestPick = async (req: Request, res: Response) => {
   //     await RequestPicks.find({ 'SelectedList.userId': httpData, 'SelectedList.selectionStatus': true }, { 'SelectedList.$': 1 }).lean().exec();
   try {
     await dbconnect();
-    const userRequestPicks: IRequestPicks = await RequestPicks.findOne({
+    const userRequestPicks: IRequestPicks | null = await RequestPicks.findOne({
       _id: id,
     })
       .lean()
@@ -98,7 +98,7 @@ export const WhoToGiveFeedbackTo = async (req: Request, res: Response) => {
   // get only the from the selectedlist
   try {
     await dbconnect();
-    const selectedLists: ISelectedList[][] = await RequestPicks.find(
+    const selectedLists = await RequestPicks.find(
       { "SelectedList.userId": userId, "SelectedList.selectionStatus": true },
       { "SelectedList.$": 1, "requestedTo": 1 }
     )
@@ -264,12 +264,12 @@ export const submitRequestPicks = async (
       createdOn: new Date(),
     };
 
-    const result = await RequestPicks.findByIdAndUpdate(
+    const result = await RequestPicks.updateOne(
       { _id: id, submitted: false },
       { $push: { SelectedList: newPick } },
       { new: true }
     );
-    if (result.modifiedCount === 0) {
+    if (result?.modifiedCount === 0) {
       res.status(404).json("No document was updated");
       return;
     } else {
@@ -393,7 +393,7 @@ export const finalPickSubmit = async (
   const pickId: string = req.params.id;
   try {
     await dbconnect();
-    const submit: IRequestPicks = await RequestPicks.findOneAndUpdate(
+    const submit = await RequestPicks.findOneAndUpdate(
       {
         _id: pickId,
         submitted: false,

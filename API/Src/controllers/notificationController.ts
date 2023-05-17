@@ -3,8 +3,62 @@ import { IEntityName, ILdapAuth, INotifier } from "../dbcontext/Interfaces.js";
 import { v4 as uuidv4 } from "uuid";
 import { Entity, Notifer } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { countIdNotfication } from "../utilities/functions.js";
+import { applicationIdValidation, countIdNotfication } from "../utilities/functions.js";
 
+// export const postNotification = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   const httpData: INotifier = req.body;
+//   const user: ILdapAuth = req.body.user;
+//   const userId: string = user.uid;
+//   try {
+//     const applicationid = httpData.applicationid;
+//     const newNotification: INotifier = {
+//       _id: uuidv4(),
+//       applicationid,
+//       entityname: httpData.entityname,
+//       messageBody: httpData.messageBody,
+//       link: httpData.link,
+//       from: httpData.from,
+//       to: httpData.to,
+//       notifierstatus: httpData.notifierstatus,
+//       sendOn: httpData.sendOn,
+//       createdBy: userId,
+//     };
+
+//     const notiInstance = new Notifer(newNotification);
+//     const validationError = notiInstance.validateSync();
+//     if (validationError) {
+//       res.status(400).json(validationError.message);
+//       return;
+//     }
+//     await dbconnect();
+//     const countNotfication = await countIdNotfication(applicationid);
+//     if (countNotfication !== 0) {
+//       res
+//         .status(409)
+//         .json(
+//           "Notification with the same application ID already in our system please retrieve it in https://exove.vercel.app/api/notify"
+//         );
+//       return;
+//     }
+//     const notification = await notiInstance.save();
+//     await dbclose();
+//     if (notification) {
+//       res
+//         .status(200)
+//         .json(
+//           "saved, you can view notifivation in https://exove.vercel.app/api/notify"
+//         );
+//       return;
+//     }
+//   } catch (error: any) {
+//     console.log(error);
+//     next(error.message);
+//   }
+// };
 export const postNotification = async (
   req: Request,
   res: Response,
@@ -12,7 +66,7 @@ export const postNotification = async (
 ) => {
   const httpData: INotifier = req.body;
   const user: ILdapAuth = req.body.user;
-  const userId: string = user.uid;
+  const userId: string = 'user.uid';
   try {
     const applicationid = httpData.applicationid;
     const newNotification: INotifier = {
@@ -44,6 +98,17 @@ export const postNotification = async (
         );
       return;
     }
+      const entityCount = await applicationIdValidation(applicationid,httpData.entityname)
+      console.log(entityCount)
+      if (entityCount === 0) {
+        res
+          .status(409)
+          .json(
+            "Notification can only be posted with valid Entity primary key"
+          );
+        return;
+      }
+
     const notification = await notiInstance.save();
     await dbclose();
     if (notification) {
@@ -59,6 +124,7 @@ export const postNotification = async (
     next(error.message);
   }
 };
+
 
 export const getNotifications = async (
   req: Request,
@@ -99,15 +165,15 @@ export const getNotification = async (
 
   try {
     await dbconnect();
-    const entityName: INotifier = await Notifer.findOne({
+    const entityName: INotifier | null = await Notifer.findOne({
       _id: notificationId,
     }).select("entityname");
 
-    const notification: INotifier[] = await Notifer.findOne({
+    const notification:INotifier | null= await Notifer.findOne({
       _id: notificationId,
     }).populate({
       path: "applicationid",
-      model: entityName.entityname,
+      model: entityName?.entityname,
       select: "-__v",
     });
     await dbclose();

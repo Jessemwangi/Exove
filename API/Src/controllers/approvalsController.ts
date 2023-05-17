@@ -7,7 +7,7 @@ import { dbclose, dbconnect } from '../Configs/dbConnect.js';
 export const getApps = async (req: Request, res: Response , next: NextFunction) => {
     try {
         await dbconnect()
-        const approvals: IApprovals = await Approvals.find({}).lean().sort({ 'createdOn': 1 }).exec();
+        const approvals: IApprovals[] = await Approvals.find({}).lean().sort({ 'createdOn': 1 }).exec();
         await dbclose()
        return res.status(200).json(approvals);
     } catch (error) {

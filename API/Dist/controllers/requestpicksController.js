@@ -196,8 +196,8 @@ export const submitRequestPicks = async (req, res, next) => {
             sendNotification: true,
             createdOn: new Date(),
         };
-        const result = await RequestPicks.findByIdAndUpdate({ _id: id, submitted: false }, { $push: { SelectedList: newPick } }, { new: true });
-        if (result.modifiedCount === 0) {
+        const result = await RequestPicks.updateOne({ _id: id, submitted: false }, { $push: { SelectedList: newPick } }, { new: true });
+        if (result?.modifiedCount === 0) {
             res.status(404).json("No document was updated");
             return;
         }

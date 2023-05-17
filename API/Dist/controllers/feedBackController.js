@@ -86,7 +86,7 @@ const updateRequestPicks = async (requestpicksId, userId) => {
 };
 const verifiyFeedbackFrom = async ({ requestpicksId, feedbackTo, userId, roleLevel }) => {
     console.log(requestpicksId, feedbackTo, userId, roleLevel);
-    const feedback = await RequestPicks.find({
+    const feedback = await RequestPicks.findOne({
         _id: requestpicksId,
         requestedTo: feedbackTo,
         "SelectedList.roleLevel": roleLevel,

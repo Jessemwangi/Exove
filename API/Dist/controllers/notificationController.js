@@ -1,11 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
 import { Entity, Notifer } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { countIdNotfication } from "../utilities/functions.js";
+import { applicationIdValidation, countIdNotfication } from "../utilities/functions.js";
 export const postNotification = async (req, res, next) => {
     const httpData = req.body;
     const user = req.body.user;
-    const userId = user.uid;
+    const userId = 'user.uid';
     try {
         const applicationid = httpData.applicationid;
         const newNotification = {
@@ -32,6 +32,14 @@ export const postNotification = async (req, res, next) => {
             res
                 .status(409)
                 .json("Notification with the same application ID already in our system please retrieve it in https://exove.vercel.app/api/notify");
+            return;
+        }
+        const entityCount = await applicationIdValidation(applicationid, httpData.entityname);
+        console.log(entityCount);
+        if (entityCount === 0) {
+            res
+                .status(409)
+                .json("Notification can only be posted with valid Entity primary key");
             return;
         }
         const notification = await notiInstance.save();
@@ -85,7 +93,7 @@ export const getNotification = async (req, res, next) => {
             _id: notificationId,
         }).populate({
             path: "applicationid",
-            model: entityName.entityname,
+            model: entityName?.entityname,
             select: "-__v",
         });
         await dbclose();
