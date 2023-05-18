@@ -52,7 +52,6 @@ export const postReports = async (req: Request, res: Response, next: NextFunctio
    return next(validationError);
    
   }
-  res.send(newReport)
     try {
         await dbconnect()
         await new Reports(newReport).save()
