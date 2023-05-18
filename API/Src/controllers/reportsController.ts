@@ -53,15 +53,15 @@ export const postReports = async (req: Request, res: Response, next: NextFunctio
    
   }
   res.send(newReport)
-    // try {
-    //     await dbconnect()
-    //     await new Reports(newReport).save()
-    //     await dbclose()
-    //     res.status(200).json(savedSuccess.toString())
-    //     return
-    // } catch (error:any) {
-    //     next(error.message)
-    // }
+    try {
+        await dbconnect()
+        await new Reports(newReport).save()
+        await dbclose()
+        res.status(200).json(savedSuccess.toString())
+        return
+    } catch (error:any) {
+        next(error.message)
+    }
     
 };
 
