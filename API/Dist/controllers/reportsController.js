@@ -1,6 +1,7 @@
 import { FeedBacks, Reports, RequestPicks } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { v4 as uuidv4 } from "uuid";
+import { savedSuccess } from "../Configs/serverConfig.js";
 export const getReports = async (req, res, next) => {
     try {
         await dbconnect();
@@ -41,7 +42,16 @@ export const postReports = async (req, res, next) => {
     if (validationError) {
         return next(validationError);
     }
-    res.send(newReport);
+    try {
+        await dbconnect();
+        await new Reports(newReport).save();
+        await dbclose();
+        res.status(200).json(savedSuccess.toString());
+        return;
+    }
+    catch (error) {
+        next(error.message);
+    }
 };
 export const putReports = (req, res, next) => {
 };
