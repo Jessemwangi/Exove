@@ -32,15 +32,21 @@ export const getTemplate = async (req: Request, res: Response) => {
     // Find the active template
     await dbconnect();
     const template: ITemplates | null = await Template.findOne({ active: true }). select("-__v")
-    .populate({
-      path: "categories.category",
-      select:'categoryName',
-      populate: {
-        path: "questions",
-        select:'-__v',
-        //  match: {"question.active":true },
-      },
-    })
+      .populate({
+        path: "categories.category",
+        select: 'categoryName',
+      })
+      .populate( {
+        path: "categories.questions",
+        select:'_id question type',
+populate: {
+  path: 'question',
+          model: 'Question',
+          match: {"question.active":true },
+        },
+      
+      })
+    
       .exec();
     await dbclose();
     // Send the template data in the response

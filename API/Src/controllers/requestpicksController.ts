@@ -98,12 +98,24 @@ export const WhoToGiveFeedbackTo = async (req: Request, res: Response) => {
   // get only the from the selectedlist
   try {
     await dbconnect();
-    const selectedLists = await RequestPicks.find(
-      { "SelectedList.userId": userId, "SelectedList.selectionStatus": true },
-      { "SelectedList.$": 1, "requestedTo": 1 }
-    )
-      .lean()
-      .exec();
+    
+    const selectedLists = await RequestPicks.aggregate([
+      { $match: { "SelectedList.userId": userId } },
+      {
+        $project: {
+          SelectedList: {
+            $filter: {
+              input: "$SelectedList",
+              as: "selected",
+              cond: { $and: [{ $eq: ["$$selected.userId", userId] }, { $eq: ["$$selected.selectionStatus", true] }] }
+            }
+          },
+          requestedTo: 1,
+          _id: 1
+        }
+      }
+    ]);
+    
 
     await dbclose();
     res.status(200).json(selectedLists);
