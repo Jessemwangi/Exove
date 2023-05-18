@@ -218,7 +218,8 @@ export const summaryByName = async (req, res, next) => {
             populate({
             path: 'template',
             model: 'Template',
-            select: '_id template active'
+            select: '_id template active',
+            match: { active: true }
         });
         await dbclose();
         res.status(200).json({ reports });

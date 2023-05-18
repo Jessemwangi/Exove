@@ -89,15 +89,15 @@ export const postNotification = async (
       return;
     }
     await dbconnect();
-    const countNotfication = await countIdNotfication(applicationid);
-    if (countNotfication !== 0) {
-      res
-        .status(409)
-        .json(
-          "Notification with the same application ID already in our system please retrieve it in https://exove.vercel.app/api/notify"
-        );
-      return;
-    }
+    // const countNotfication = await countIdNotfication(applicationid);
+    // if (countNotfication !== 0) {
+    //   res
+    //     .status(409)
+    //     .json(
+    //       "Notification with the same application ID already in our system please retrieve it in https://exove.vercel.app/api/notify"
+    //     );
+    //   return;
+    // }
       const entityCount = await applicationIdValidation(applicationid,httpData.entityname)
       console.log(entityCount)
       if (entityCount === 0) {

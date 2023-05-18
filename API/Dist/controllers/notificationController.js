@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { Entity, Notifer } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
-import { applicationIdValidation, countIdNotfication } from "../utilities/functions.js";
+import { applicationIdValidation } from "../utilities/functions.js";
 export const postNotification = async (req, res, next) => {
     const httpData = req.body;
     const user = req.body.user;
@@ -27,13 +27,6 @@ export const postNotification = async (req, res, next) => {
             return;
         }
         await dbconnect();
-        const countNotfication = await countIdNotfication(applicationid);
-        if (countNotfication !== 0) {
-            res
-                .status(409)
-                .json("Notification with the same application ID already in our system please retrieve it in https://exove.vercel.app/api/notify");
-            return;
-        }
         const entityCount = await applicationIdValidation(applicationid, httpData.entityname);
         console.log(entityCount);
         if (entityCount === 0) {

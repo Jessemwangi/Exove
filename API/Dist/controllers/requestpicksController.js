@@ -155,7 +155,7 @@ export const createRequestPicks = async (req, res, next) => {
                 createdBy: userId,
             };
             await addToNotification(newNotification);
-            res.status(200).json("Data saved successfully!");
+            res.status(200).json(primaryKey);
             await dbclose();
         }
         else {

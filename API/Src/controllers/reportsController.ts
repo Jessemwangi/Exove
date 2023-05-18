@@ -264,8 +264,8 @@ export const summaryByName = async (req: Request, res: Response, next: NextFunct
       {
       path: 'template',
       model: 'Template',
-      select: '_id template active'
-      // match: { active: true }
+      select: '_id template active',
+       match: { active: true }
       }
       );
 

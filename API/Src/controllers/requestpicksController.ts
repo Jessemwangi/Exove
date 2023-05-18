@@ -212,7 +212,7 @@ export const createRequestPicks = async (
         createdBy: userId,
       };
       await addToNotification(newNotification);
-      res.status(200).json("Data saved successfully!");
+      res.status(200).json(primaryKey);
       await dbclose();
     } else {
       res.status(404).json("Post data not found or empty");
