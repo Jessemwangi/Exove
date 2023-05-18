@@ -190,7 +190,7 @@ export const summaryById = async (req, res, next) => {
 export const summaryByName = async (req, res, next) => {
     try {
         await dbconnect();
-        const reports = await Reports.findOne({ userId: req.params.name })
+        const reports = await Reports.find({ userId: req.params.name })
             .select('_id userId createdBy')
             .populate({
             path: 'feedbacks',
@@ -210,23 +210,8 @@ export const summaryByName = async (req, res, next) => {
             model: 'Template',
             select: '_id template active'
         });
-        const summary = await FeedBacks.aggregate([
-            { $unwind: '$categories' },
-            {
-                $group: {
-                    _id: '$_id',
-                    totalCategories: { $sum: 1 },
-                    questionsPerCategory: {
-                        $push: {
-                            category: '$categories.category',
-                            totalQuestions: { $size: '$categories.questions' },
-                        },
-                    },
-                },
-            },
-        ]);
         await dbclose();
-        res.json({ reports, summary });
+        res.status(200).json({ reports });
     }
     catch (err) {
         console.log(err);

@@ -110,7 +110,7 @@ export const WhoToGiveFeedbackTo = async (req: Request, res: Response) => {
               cond: { $and: [{ $eq: ["$$selected.userId", userId] }, { $eq: ["$$selected.selectionStatus", true] }] }
             }
           },
-          requestedTo: 1,
+          requestedTo: 1, submitted:1,
           _id: 1
         }
       }

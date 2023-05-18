@@ -30,7 +30,7 @@ export const getTemplate = async (req, res) => {
             .populate({
             path: "categories.category",
             select: 'categoryName',
-        })
+        }).select('-_id')
             .populate({
             path: "categories.questions",
             select: '_id question type',
@@ -39,8 +39,7 @@ export const getTemplate = async (req, res) => {
                 model: 'Question',
                 match: { "question.active": true },
             },
-        })
-            .exec();
+        }).exec();
         await dbclose();
         res.status(200).json(template);
     }

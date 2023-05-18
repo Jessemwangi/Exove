@@ -241,7 +241,7 @@ export const summaryById = async (req: Request, res: Response, next: NextFunctio
 export const summaryByName = async (req: Request, res: Response, next: NextFunction) => {
   try {
   await dbconnect()
-  const reports = await Reports.findOne({userId:req.params.name})
+  const reports:IReports[] = await Reports.find({userId:req.params.name})
   .select('_id userId createdBy')
   .populate({
   path: 'feedbacks',
@@ -268,26 +268,10 @@ export const summaryByName = async (req: Request, res: Response, next: NextFunct
       select: '_id template active'
       // match: { active: true }
       }
-      )
-  
-    ;
-    const summary = await FeedBacks.aggregate([
-      { $unwind: '$categories' },
-      {
-        $group: {
-          _id: '$_id',
-          totalCategories: { $sum: 1 },
-          questionsPerCategory: {
-            $push: {
-              category: '$categories.category',
-              totalQuestions: { $size: '$categories.questions' },
-            },
-          },
-        },
-      },
-    ]);
+      );
+
     await dbclose()
-    res.json({ reports, summary });
+    res.status(200).json({ reports });
 } catch (err: any) {
   console.log(err)
     res.status(500).json(err.message );

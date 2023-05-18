@@ -35,7 +35,7 @@ export const getTemplate = async (req: Request, res: Response) => {
       .populate({
         path: "categories.category",
         select: 'categoryName',
-      })
+      }).select('-_id')
       .populate( {
         path: "categories.questions",
         select:'_id question type',
@@ -44,10 +44,8 @@ populate: {
           model: 'Question',
           match: {"question.active":true },
         },
-      
-      })
-    
-      .exec();
+
+      }).exec();
     await dbclose();
     // Send the template data in the response
     res.status(200).json(template);
