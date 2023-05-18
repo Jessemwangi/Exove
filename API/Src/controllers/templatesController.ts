@@ -35,7 +35,7 @@ export const getTemplate = async (req: Request, res: Response) => {
       .populate({
         path: "categories.category",
         select: 'categoryName',
-      }).select('-_id')
+      })
       .populate( {
         path: "categories.questions",
         select:'_id question type',
