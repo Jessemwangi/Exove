@@ -30,9 +30,14 @@ export const getTemplate = async (req, res) => {
             .populate({
             path: "categories.category",
             select: 'categoryName',
+        })
+            .populate({
+            path: "categories.questions",
+            select: '_id question type',
             populate: {
-                path: "questions",
-                select: '-__v',
+                path: 'question',
+                model: 'Question',
+                match: { "question.active": true },
             },
         })
             .exec();

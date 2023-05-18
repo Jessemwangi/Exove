@@ -187,4 +187,50 @@ export const summaryById = async (req, res, next) => {
         res.status(500).json(err.message);
     }
 };
+export const summaryByName = async (req, res, next) => {
+    try {
+        await dbconnect();
+        const reports = await Reports.findOne({ userId: req.params.name })
+            .select('_id userId createdBy')
+            .populate({
+            path: 'feedbacks',
+            select: '_id userId roleLevel categories',
+            populate: {
+                path: 'categories.category',
+                model: 'Category',
+                select: '_id categoryName',
+            }
+        }).populate({
+            path: 'requestPicks',
+            model: 'RequestPicks',
+            select: 'SelectedList _id'
+        }).
+            populate({
+            path: 'template',
+            model: 'Template',
+            select: '_id template active'
+        });
+        const summary = await FeedBacks.aggregate([
+            { $unwind: '$categories' },
+            {
+                $group: {
+                    _id: '$_id',
+                    totalCategories: { $sum: 1 },
+                    questionsPerCategory: {
+                        $push: {
+                            category: '$categories.category',
+                            totalQuestions: { $size: '$categories.questions' },
+                        },
+                    },
+                },
+            },
+        ]);
+        await dbclose();
+        res.json({ reports, summary });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json(err.message);
+    }
+};
 //# sourceMappingURL=reportsController.js.map
