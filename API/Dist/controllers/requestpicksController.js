@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { RequestPicks } from "../dbcontext/dbContext.js";
+import { RequestPicks, Template } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import { addToNotification, checkUserRoles, getUserPrevPicksAndTemplate, getUserReportTo, isUserInRequestPick, } from "../utilities/functions.js";
 import { SelectedListModel } from "../models/requestpicksModel.js";
@@ -67,8 +67,9 @@ export const WhoToGiveFeedbackTo = async (req, res) => {
     }
     try {
         await dbconnect();
+        const activeTemplate = await Template.findOne({ active: true });
         const selectedLists = await RequestPicks.aggregate([
-            { $match: { "SelectedList.userId": userId } },
+            { $match: { "SelectedList.userId": userId, 'template': activeTemplate?._id } },
             {
                 $project: {
                     SelectedList: {
@@ -78,7 +79,7 @@ export const WhoToGiveFeedbackTo = async (req, res) => {
                             cond: { $and: [{ $eq: ["$$selected.userId", userId] }, { $eq: ["$$selected.selectionStatus", true] }] }
                         }
                     },
-                    requestedTo: 1, submitted: 1,
+                    requestedTo: 1, submitted: 1, template: 1,
                     _id: 1
                 }
             }
@@ -87,6 +88,7 @@ export const WhoToGiveFeedbackTo = async (req, res) => {
         res.status(200).json(selectedLists);
     }
     catch (error) {
+        console.log(error);
         res.status(500).json("Internal server error");
     }
 };

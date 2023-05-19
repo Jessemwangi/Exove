@@ -8,7 +8,7 @@ import {
 } from "../dbcontext/Interfaces.js";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
-import { Approvals, RequestPicks } from "../dbcontext/dbContext.js";
+import { Approvals, RequestPicks, Template } from "../dbcontext/dbContext.js";
 import { dbclose, dbconnect } from "../Configs/dbConnect.js";
 import {
   IUserTemplateInPicks,
@@ -98,9 +98,9 @@ export const WhoToGiveFeedbackTo = async (req: Request, res: Response) => {
   // get only the from the selectedlist
   try {
     await dbconnect();
-    
+   const activeTemplate = await Template.findOne({active:true})
     const selectedLists = await RequestPicks.aggregate([
-      { $match: { "SelectedList.userId": userId } },
+      { $match: { "SelectedList.userId": userId, 'template':activeTemplate?._id} },
       {
         $project: {
           SelectedList: {
@@ -110,7 +110,7 @@ export const WhoToGiveFeedbackTo = async (req: Request, res: Response) => {
               cond: { $and: [{ $eq: ["$$selected.userId", userId] }, { $eq: ["$$selected.selectionStatus", true] }] }
             }
           },
-          requestedTo: 1, submitted:1,
+          requestedTo: 1, submitted: 1,template:1,
           _id: 1
         }
       }
@@ -120,6 +120,7 @@ export const WhoToGiveFeedbackTo = async (req: Request, res: Response) => {
     await dbclose();
     res.status(200).json(selectedLists);
   } catch (error) {
+    console.log(error)
     res.status(500).json("Internal server error");
   }
 };
